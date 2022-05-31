@@ -1,6 +1,2 @@
-from django.shortcuts import render
-
-# Create your views here.
-def index(request):
-    context = {}
-    return render(request,'MainFrame/index/index.html',context)
+from MainFrame.pages.page import *
+from MainFrame.api.api import *
