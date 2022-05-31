@@ -1,9 +1,12 @@
-#Django ignore
+# Django ignore
 *.sqlite3
 **/__pycache__
 /static/*
 /userfile/*
 
+# Deep Learning models ignore
+/publicstatic/swinT_weights/*
+/publicstatic/yolo_model/*
 
-#MacOS ignore
+# MacOS ignore
 *.DS_Store
