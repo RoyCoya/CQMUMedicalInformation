@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Dicom数据库｜骨龄评分系统{% endblock %}
+
+{% block nav_boneage_active %}active{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<div class="row mt-5">
+    <div class="col-6 border-end">
+        <h2 class="text-center">已完成任务</h2>
+        {% if finished_tasks %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>患者（ID）</th>
+                        <th>SOP Instance ID</th>
+                        <th>Study Date</th>
+                        <th>分配给</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in finished_tasks %}
+                        <tr id="{{task.id}}">
+                            <td>{{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_Id}}）</td>
+                            {% if task.dcm_file.SOP_Instance_UID %}
+                                <td>{{task.dcm_file.SOP_Instance_UID}}</td>
+                            {% else %}
+                                <td><span class="text-danger">读取失败</span></td>
+                            {% endif %}
+                            {% if task.dcm_file.Study_Date %}
+                                <td>{{task.dcm_file.Study_Date}}</td>
+                            {% else %}
+                                <td><span class="text-danger">读取失败</span></td>
+                            {% endif %}
+                            <td>{{task.allocated_to.last_name}}{{task.allocated_to.first_name}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            暂无任务。
+        {% endif %}
+    </div>
+    <div class="col-6">
+        <h2 class="text-center text-success">未完结任务</h2>
+        {% if unfinished_tasks %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>患者（ID）</th>
+                        <th>SOP Instance ID</th>
+                        <th>Study Date</th>
+                        <th>分配给</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in unfinished_tasks %}
+                        <tr id="{{task.id}}">
+                            <td>{{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_Id}}）</td>
+                            {% if task.dcm_file.SOP_Instance_UID %}
+                                <td>{{task.dcm_file.SOP_Instance_UID}}</td>
+                            {% else %}
+                                <td><span class="text-danger">读取失败</span></td>
+                            {% endif %}
+                            {% if task.dcm_file.Study_Date %}
+                                <td>{{task.dcm_file.Study_Date}}</td>
+                            {% else %}
+                                <td><span class="text-danger">读取失败</span></td>
+                            {% endif %}
+                            <td>{{task.allocated_to.last_name}}{{task.allocated_to.first_name}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            暂无任务。
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+<script src="{% static 'BoneAge/js/dcm_library/library.js' %}"></script>
+{% endblock %}

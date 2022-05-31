@@ -1,0 +1,43 @@
+{% load static %}
+<div class="row mb-3">
+    <div class="col-0 col-md-0 col-xl-1 col-xxl-2"></div>
+    <div id="carousel" class="carousel slide carousel-fade col-12 col-md-12 col-xl-10 col-xxl-8" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active"></button>
+          <button type="button" data-bs-target="#carousel" data-bs-slide-to="1"></button>
+          <button type="button" data-bs-target="#carousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item">
+            <img src="{% static 'MainFrame/img/科技创新论坛.jpg' %}" class="d-block w-100">
+            <div class="carousel-caption d-none d-md-block">
+              <h5 class="text-light">【儿院动态】科技创新论坛圆满举行</h5>
+              <p>2021年12月10日，国家儿童健康与疾病临床医学研究中心“2021年两江国际儿科论坛-科技创新论坛”在重庆医科大学附属儿童医院国际会议厅举行。</p>
+            </div>
+          </div>
+          <div class="carousel-item active">
+            <img src="{% static 'MainFrame/img/重庆儿科医院外观.png' %}" class="d-block w-100">
+            <div class="carousel-caption d-none d-md-block">
+              <h5 class="text-light">重庆儿科医院</h5>
+              <p>重庆医科大学附属儿童医院于1956年由上海医学院儿科系迁渝创建，是集医教研为一体的国家三级甲等综合性儿童医院。</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'MainFrame/img/世界狼疮日疾病认知公众宣教活动.jpg' %}" class="d-block w-100">
+            <div class="carousel-caption d-none d-md-block">
+              <h5 class="text-light">【儿院动态】与蝶为友，翩然新生</h5>
+              <p>重医附属儿童医院开展世界狼疮日疾病认知公众宣教活动顺利开展。</p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <div class="col-0 col-md-0 col-xl-1 col-xxl-2"></div>
+</div>

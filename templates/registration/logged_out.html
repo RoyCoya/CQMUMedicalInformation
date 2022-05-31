@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}退出登录{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="alert alert-primary" role="alert">
+            已退出，<a href="{% url 'MainFrame_index' %}">点击返回主页</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

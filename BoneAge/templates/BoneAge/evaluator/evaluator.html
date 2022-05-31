@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}评分面板 | 骨龄评分系统{% endblock %}
+{% block nav_boneage_active %}active{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/BoneAge/image_cropper/cropper.min.css' %}">
+<style>
+    .img-preview {
+        background-color: #f7f7f7;
+        overflow: hidden;
+        width: 100%;
+        text-align: center;
+      }
+    .img-preview > img { max-width: 100%; }
+    .list-group-item{ padding: .7rem 1rem }
+    .list-group-item span{ color: black; }
+    .list-group-item.active span{ color:white }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row mt-2">
+    <div class="col-6 border-end">
+        <div class="row">
+            {% include 'BoneAge/evaluator/main_image.html' %}
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="row">
+            {% include 'BoneAge/evaluator/bone_details.html' %}
+        </div>
+    </div>
+</div>
+
+<!-- 任务未完成提示框 -->
+<div class="modal fade" id="modal_task_notcompleted" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">提交失败</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                有尚未完成的评分评级！
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 完成任务弹出框 -->
+<div class="modal fade" id="modal_finish_task" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">任务完成</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div><label>患者：</label>{{patient.name}}（{{patient.Patient_Id}}）</div>
+                <div><label>DICOM 文件ID：</label>{{dcm.id}}</div>
+                <div><label>DICOM SOP Instance ID：</label>{% if dcm.SOP_Instance_UID %}{{dcm.SOP_Instance_UID}}{% else %}未识别到ID{% endif %}</div>
+            </div>
+            <div class="modal-footer">
+                <a id="finish_task" class="btn btn-primary" href="#" data-bs-dismiss="modal">确认</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static '/BoneAge/image_cropper/cropper.min.js' %}" ></script>
+<script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}" ></script>
+<script>
+    var img_width = {{dcm.dcm_to_image.width}}
+    var img_height = {{dcm.dcm_to_image.height}}
+    var bone_age_instance = {
+        "id" : {{bone_age_instance.id}},
+        "bone_age" : {{bone_age_instance.bone_age}},
+        "closed" : {{bone_age_instance.closed|lower}},
+    }
+    console.log(bone_age_instance)
+    var bones = {
+        {% for bone in bone_details %}
+            "{{bone.name|slugify}}" : {
+                "id" : {{bone.id}},
+                "name" : "{{bone.get_name_display}}",
+                "x" : {{bone.center_x}} * img_width - {{bone.width}} * img_width / 2,
+                "y" : {{bone.center_y}} * img_height - {{bone.height}} * img_height / 2,
+                "width" : {{bone.width}} * img_width,
+                "height" : {{bone.height}} * img_height,
+                "error" : {{bone.error}},
+                "error_message" : "{{bone.get_error_display}}",
+                "level" : {{bone.level}},
+                "level_message" : "{{bone.get_level_display}}",
+                "remarks" : `{{bone.remarks|default_if_none:""}}`,
+            },
+        {% endfor %}
+    }
+    console.log(bones)
+    var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
+    var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"
+    var url_api_modify_bone_age = "{% url 'api_BoneAge_modify_bone_age' %}"
+    var url_api_finish_task = "{% url 'api_BoneAge_finish_task' %}"
+    var url_personal_index = "{% url 'BoneAge_index' %}"
+</script>
+<script src="{% static '/BoneAge/js/evaluator/evaluator.js' %}"></script>
+{% endblock %}

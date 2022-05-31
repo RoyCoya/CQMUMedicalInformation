@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1,,user-scalable=no">
+    <title>{% block title %}{% endblock %}｜重医信息学院智慧医疗平台</title>
+    {% load static %}
+    <link rel="shortcut icon" href="{% static '/img/CQMU_logos/favicon-grayscale.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static '/img/CQMU_logos/favicon-grayscale.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static '/img/CQMU_logos/favicon-grayscale.ico' %}"/>
+    <link rel="stylesheet" href="{% static '/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '/bootstrap-icons/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static '/css/main_theme.css' %}">
+    <!--额外css导入区-->
+    {% block css %}
+    {% endblock %}
+    <!--额外/css导入区-->
+</head>
+<body class="bg-light">
+    <!--正文区-->
+
+    <!-- 导航栏 -->
+    <nav class="sticky-top navbar navbar-expand-lg navbar-dark text-light d-flex justify-content-between">
+        <div class="container-fluid col">
+            <a class="navbar-brand ms-2" href="{% url 'MainFrame_index' %}">
+                <img src="{% static '/img/CQMU_logos/logo-reverse.png' %}" width="40" height="40" alt="">
+                <span class="ms-2 align-middle">重庆医科大学·智慧医疗平台</span>
+            </a>
+            <div class="collapse navbar-collapse" id="nav-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_index_active %}{% endblock %}" href="{% url 'MainFrame_index' %}">首页</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle  {% block nav_boneage_active %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
+                            骨龄评分系统
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'BoneAge_index' %}">个人主页</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
+                            {% if user.is_staff %}
+                                <li><a class="dropdown-item" href="{% url 'BoneAge_dicom_library_admin' %}">数据库后台</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <button class="navbar-toggler col-1 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#nav-collapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        {% if request.user.is_authenticated %}
+            <div class="me-2">您好，{{user.username}}。<a class="text-light" href="{% url 'logout' %}" style="text-decoration: underline;color:white">点此退出登录</a></div>
+        {% endif %}
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+    <!--/正文区-->
+
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/bootstrap/popover.js' %}"></script>
+    <script src="{% static '/bootstrap/bootstrap.min.js' %}"></script>
+    <!--额外JS导入区-->
+    {% block js %}
+    {% endblock %}
+    <!--/额外JS导入区-->
+</body>
+</html>

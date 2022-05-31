@@ -1,0 +1,98 @@
+{% load static %}
+<!-- 骨骼评分表 -->
+<div class="col-5 border-end">
+    <h3>骨骼评分表</h3>
+    <label class="mb-2">标准：</label>
+    <select class="form-select mb-2" disabled>
+        <option selected>以 RUS-CHN 14阶 评级（默认）</option>
+        <option>以 RUS-CHN 8阶 评级</option>
+        <option>以 RUS-CHN 千分制 评分</option>
+    </select>
+    <label class="mb-2">数据：</label>
+    <ul class="list-group mb-2">
+        {% for bone in bone_details %}
+                <div class="list-group-item list-group-item-action d-flex justify-content-between row">
+                    {% if bone.error == 0 %}
+                        <span id="view-{{bone.name|slugify}}" class="col-12">
+                            <span>{{bone.get_name_display}}</span>：
+                            {% if bone.level >= 0 %}
+                                <span id="level-{{bone.name|slugify}}">{{bone.level}} 级</span>
+                            {% else %}
+                                <span id="level-{{bone.name|slugify}}" class="text-secondary">*{{bone.get_level_display}}*</span>
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        <span id="error-{{bone.name|slugify}}" class="col-11">
+                            <span>{{bone.get_name_display}}</span>：
+                            <span id="level-{{bone.name|slugify}}" class="text-danger">*{{bone.get_error_display}}*</span>
+                        </span>
+                        <a id="fix-{{bone.name|slugify}}" href="#" class="bi bi-wrench col-1" hidden></a>
+                    {% endif %}
+                </div>
+        {% endfor %}
+        <div class="list-group-item d-flex justify-content-between row">
+            <span class="col-11">骨龄判断：
+                {% if bone_age_instance.bone_age >= 0 %}
+                    <span id="label_bone_age">{{bone_age_instance.bone_age}}岁</span>
+                {% else %}
+                    <span id="label_bone_age" class="text-danger">*未填写*</span>
+                {% endif %}
+            </span>
+            <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a>
+        </div>
+        <div id="list-sum" class="list-group-item d-flex justify-content-end">
+            <div class="form-check form-switch">
+                {% if bone_age_instance.closed %}
+                    <label class="form-check-label text-primary">任务已完成</label>
+                {% else %}
+                    <label id="label_task_status" class="form-check-label text-success">任务进行中...</label>
+                {% endif %}
+                <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if bone_age_instance.closed %}checked{% endif %}>
+            </div>
+        </div>
+    </ul>
+</div>
+<!-- 单个骨骼放大图、评分评级、备注、提示信息等 -->
+<div class="col-7">
+    <h3 id="bone_details_name">骨骼名称</h3>
+    <div style="height:47vh">
+        <div class="img-preview border-top border border-primary" style="width:100%;height:100%;"></div>
+    </div>
+    <div id="form_bone_details" hidden>
+        <label class="mt-2">评级：<span id="bone_details_level_label">？</span>级</label>
+        <input id="bone_details_level" type="range" class="form-range" min=0 max=0>
+        <label class="form-label">备注：</label>
+        <input id="bone_details_remarks" type="text" class="form-control" maxlength="50">
+        <div class="text-end mt-2">
+            <button id="modify_bone_detail" class="btn btn-success" hidden>修改信息</button>
+            <button id="modify_bone_position" class="btn btn-primary" hidden>校准定位</button>
+        </div>
+        <div class="text-start" id="bone_discription" hidden>
+            <img class="img-fluid" id="bone_discription_img">
+            {% include 'BoneAge/evaluator/bone_discription.html' %}
+        </div>
+    </div>
+</div>
+
+<!-- 编辑骨龄弹出框 -->
+<div class="modal fade" id="modal_edit_bone_age" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">骨龄判断</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label>骨龄：</label>
+                <input id="bone_age" type="number" class="form-control" {% comment %} placeholder="AI推荐骨龄：？岁" {% endcomment %} min=0 max=18 step=0.1 onkeyup="value=value.replace(/[^\d\.]/g,'');if(value<0) value=0;if(value>18)value=18;" required {% if bone_age_instance.bone_age >= 0 %}value="{{bone_age_instance.bone_age}}"{% endif %}>
+                <div id="bone_age_invalid" class="invalid-feedback">* 请填写骨龄！</div>
+                <label class="mt-2">备注：</label>
+                <textarea id="bone_age_remarks" class="form-control" maxlength="300" placeholder="非必填"></textarea>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" href="#" id="confirm_edit_bone_age">确认</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>

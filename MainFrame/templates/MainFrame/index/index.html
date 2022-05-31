@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}首页{% endblock %}
+
+{% block nav_index_active %}active{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+{% comment %} {% load static %} {% endcomment %}
+<!-- 轮播栏 -->
+
+{% include 'MainFrame/index/carousel_head.html' %}
+
+<!-- 新闻通告 -->
+<div class="row mb-3">
+    <div class="col-0 col-md-0 col-xl-1 col-xxl-2"></div>
+    <div class="col-6 col-md-6 col-xl-5 col-xxl-4">
+        <div class="d-flex justify-content-start ps-2">
+            <i class="bi bi-newspaper" style="font-size:1.8rem"></i>
+            <h2 class="ms-2 align-self-center">新闻</h2>
+        </div>
+        <hr>
+        {% include 'MainFrame/index/list_news.html' %}
+    </div>
+    <div class="col-6 col-md-6 col-xl-5 col-xxl-4">
+        <div class="d-flex justify-content-start ps-2">
+            <i class="bi bi-megaphone" style="font-size:1.8rem"></i>
+            <h2 class="ms-2 align-self-center">通告</h2>
+        </div>
+        <hr>
+        {% include 'MainFrame/index/list_announcements.html' %}
+    </div>
+    <div class="col-0 col-md-0 col-xl-1 col-xxl-2"></div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}
