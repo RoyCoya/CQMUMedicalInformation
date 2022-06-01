@@ -83,9 +83,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <label>骨龄：</label>
-                <input id="bone_age" type="number" class="form-control" {% comment %} placeholder="AI推荐骨龄：？岁" {% endcomment %} min=0 max=18 step=0.1 onkeyup="value=value.replace(/[^\d\.]/g,'');if(value<0) value=0;if(value>18)value=18;" required {% if bone_age_instance.bone_age >= 0 %}value="{{bone_age_instance.bone_age}}"{% endif %}>
-                <div id="bone_age_invalid" class="invalid-feedback">* 请填写骨龄！</div>
+                <label>骨龄（实际年龄 {{actual_age|floatformat}} 岁）：</label>
+                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 onkeyup="value=value.replace(/[^\d\.]/g,'');if(value<0) value=0;if(value>18)value=18;" required {% if bone_age_instance.bone_age >= 0 %}value="{{bone_age_instance.bone_age}}"{% endif %}>
+                <div id="bone_age_great_differ_warning" class="invalid-feedback text-warning">* 注意：与实际年龄相差过大！</div>
+                <div id="bone_age_invalid" class="invalid-feedback">* 错误：请填写骨龄！</div>
                 <label class="mt-2">备注：</label>
                 <textarea id="bone_age_remarks" class="form-control" maxlength="300" placeholder="非必填"></textarea>
             </div>

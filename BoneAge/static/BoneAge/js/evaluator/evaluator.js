@@ -1,4 +1,4 @@
-/* 自定函数 */
+/* 自定对象与函数 */
 
 //切换骨骼时对骨骼详情部分（评分评级、备注）的页面变化
 $.fn.switch_bone = function(bone_name_key){
@@ -46,6 +46,27 @@ $.fn.switch_bone = function(bone_name_key){
         $("#form_bone_details").attr('hidden','hidden')
     }
 };
+/* 如果所有骨骼等级数据与定位正常，则计算分数并显示参考年龄 */
+$.fn.update_bone_age = function(){
+    var is_valid = true
+    $.each(bones, function(bone_name_key,bone_details){
+        if(bone_details['level'] < 0) is_valid = false
+        if(bone_details['error'] != 0) is_valid = false
+    })
+    if(is_valid){
+        grade = 0
+        bone_age = -1
+        $.each(bones, function(bone_name_key,bone_details){
+            grade += level_to_grade[sex][bone_name_key][bone_details['level']]
+        })
+        $.each(grade_to_age[sex], function(age,range){
+            if(grade >= range['min'] && grade <= range['max']){
+                bone_age = age
+            }
+        })
+        if(bone_age >= 0) $("#bone_age").attr('placeholder', "合计：" + bone_age + "岁（" + grade + "分）");
+    }
+};
 
 /* 全局对象 */
 //csrf token
@@ -82,6 +103,7 @@ $(document).ready(function () {
     /* 选中骨骼，默认从桡骨开始 */
     $("#view-radius").parent().addClass('active');
     $.fn.switch_bone('radius')
+    $.fn.update_bone_age()
 });
 
 
@@ -145,7 +167,7 @@ $("#bone_details_remarks").on('input', function () {
 });
 
 /* 骨骼修复错误定位 */
-$("a[id^=fix-").click(function (e) { 
+$("a[id^=fix-]").click(function (e) { 
     var bone_name_key = $(this).attr('id').substring(4);
     var bone = bones[bone_name_key]
     bone['error'] = 0
@@ -197,6 +219,7 @@ $("#modify_bone_detail").click(function (e) {
         headers:{'X-CSRFToken': csrftoken}
     });
     $.fn.switch_bone(bone_name_key)
+    $.fn.update_bone_age()
 });
 
 /* 骨骼修改定位保存 */

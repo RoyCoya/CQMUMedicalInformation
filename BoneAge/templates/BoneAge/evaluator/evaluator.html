@@ -62,7 +62,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div><label>患者：</label>{{patient.name}}（{{patient.Patient_Id}}）</div>
+                <div><label>患者：</label>{{patient.name}}（{{patient.Patient_ID}}）</div>
                 <div><label>DICOM 文件ID：</label>{{dcm.id}}</div>
                 <div><label>DICOM SOP Instance ID：</label>{% if dcm.SOP_Instance_UID %}{{dcm.SOP_Instance_UID}}{% else %}未识别到ID{% endif %}</div>
             </div>
@@ -78,6 +78,7 @@
 {% block js %}
 <script src="{% static '/BoneAge/image_cropper/cropper.min.js' %}" ></script>
 <script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}" ></script>
+<script src="{% static '/BoneAge/js/evaluator/RUS_CHN.js' %}" ></script>
 <script>
     var img_width = {{dcm.dcm_to_image.width}}
     var img_height = {{dcm.dcm_to_image.height}}
@@ -86,7 +87,6 @@
         "bone_age" : {{bone_age_instance.bone_age}},
         "closed" : {{bone_age_instance.closed|lower}},
     }
-    console.log(bone_age_instance)
     var bones = {
         {% for bone in bone_details %}
             "{{bone.name|slugify}}" : {
@@ -104,7 +104,8 @@
             },
         {% endfor %}
     }
-    console.log(bones)
+    var actual_age = {{actual_age}}
+    var sex = '{{patient.sex|lower}}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
     var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"
     var url_api_modify_bone_age = "{% url 'api_BoneAge_modify_bone_age' %}"

@@ -23,7 +23,7 @@
             <ul class="list-group list-group-flush mb-2">
                 {% for task in unfinished_tasks %}
                     <a href="{% url 'BoneAge_evaluator' task.id %}" class="list-group-item list-group-item-action d-flex justify-content-between">
-                        <div>· {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_Id}}）</div>
+                        <div>· {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）</div>
                         <div>{{task.dcm_file.patient.get_sex_display}}</div>
                         {% if task.dcm_file.Study_Date %}
                             <div>{{task.dcm_file.Study_Date}}</div>
@@ -44,7 +44,7 @@
             <ul class="list-group list-group-flush mb-2">
                 {% for task in finished_tasks %}
                     <a href="{% url 'BoneAge_evaluator' task.id %}" class="list-group-item list-group-item-action d-flex justify-content-between">
-                        <div>· {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_Id}}）</div>
+                        <div>· {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）</div>
                         {% if task.dcm_file.Study_Date %}
                             <div>{{task.dcm_file.Study_Date}}</div>
                         {% else %}
