@@ -50,17 +50,13 @@ def evaluator(request,bone_age_id):
 
     dcm = bone_age.dcm_file
     patient = dcm.patient
+    actual_age = dcm.Study_Date - patient.birthday
     bone_details = BoneDetail.objects.filter(bone_age_instance=bone_age)
-    selected_bone = None
-    try:
-        selected_bone = request.GET['selected_bone']
-    except:
-        pass
     context = {
         'patient' : patient,
         'dcm' : dcm,
         'bone_age_instance' : bone_age,
         'bone_details' : bone_details,
-        'selected_bone' : selected_bone,
+        'actual_age' : actual_age.days / 365,
     }
     return render(request,'BoneAge/evaluator/evaluator.html',context)

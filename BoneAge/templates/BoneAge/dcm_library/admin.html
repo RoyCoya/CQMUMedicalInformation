@@ -14,7 +14,10 @@
 <div class="alert alert-warning d-flex justify-content-start" role="alert">
     <span>数据库中存在 {{unanalyzed_dcm_count}} 个未解析的dcm文件，</span>
     <a id="analyze" href="{% url 'api_BoneAge_analyze_dcm' %}">点击此处解析</a>
-    <span id="spinner_analyze" class="spinner-border spinner-border-sm text-primary ms-2 align-self-center" role="status" hidden></span>
+    <span id="spinner_analyze" hidden>
+        <span class="spinner-border spinner-border-sm text-primary ms-2 align-self-center" role="status"></span>
+        <span>解析将自动进行，可离开本页面</span>
+    </span>
 </div>
 {% else %}
 <div class="alert alert-success d-flex justify-content-start" role="alert">
@@ -34,7 +37,10 @@
             </form>
             <div class="text-end mb-2">
                 <div id="error_too_many_files" class="text-danger" hidden>请选择小于150张dcm！</div>
-                <div id="spinner_upload" class="spinner-border text-primary mt-2" role="status" hidden></div>
+                <div id="spinner_upload" hidden>
+                    <span class="spinner-border text-primary mt-2" role="status"></span>
+                    <span class="align-self-center">请勿离开此页面！</span>
+                </div>
             </div>
         </div>
         <div class="input-group">
@@ -43,7 +49,7 @@
         </div>
     </div>
     <div class="col-8">
-        <h2 class="text-center">未分配任务</h2>
+        <h2 class="text-center">未分配任务 {{unallocated_tasks|length}}</h2>
         {% if unallocated_tasks %}
             <div class="row">
                 <form action="{% url 'api_BoneAge_allocate_tasks' %}" method="post" class="d-flex justify-content-start col-6">
@@ -59,7 +65,7 @@
                         </select>
                         <button class="btn btn-outline-primary" id="allocate_tasks" type="submit">分配</button>
                         <span class="input-group-text ms-2">或</span>
-                        <a href="{% url 'api_BoneAge_allocate_tasks_random' %}" class="btn btn-outline-primary ms-2" id="allocate_tasks_random">随机分配</a>
+                        <a href="{% url 'api_BoneAge_allocate_tasks_random' %}" class="btn btn-outline-primary ms-2" id="allocate_tasks_random">随机分配所有</a>
                     </div>
                 </form>
             </div>
@@ -74,7 +80,7 @@
                 <tbody>
                     {% for task in unallocated_tasks %}
                         <tr id="{{task.id}}">
-                            <td>{{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_Id}}）</td>
+                            <td>{{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）</td>
                             {% if task.dcm_file.SOP_Instance_UID %}
                                 <td>{{task.dcm_file.SOP_Instance_UID}}</td>
                             {% else %}
