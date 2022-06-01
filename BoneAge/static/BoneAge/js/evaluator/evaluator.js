@@ -1,7 +1,8 @@
 /* 自定对象与函数 */
 
-//切换骨骼时对骨骼详情部分（评分评级、备注）的页面变化
+//切换骨骼时对骨骼详情部分（评分评级、备注、骨龄）的页面变化
 $.fn.switch_bone = function(bone_name_key){
+    $.fn.update_bone_age()
     var bone = bones[bone_name_key]
     if(bone['error'] == 0){
         $("#bone_discription").attr('hidden','hidden')
@@ -33,7 +34,7 @@ $.fn.switch_bone = function(bone_name_key){
                 alert('致命错误：json中未找到该骨骼');
         }
         if(bone['level'] >= 0){
-            $("#bone_details_level_label").text(bone['level'])
+            $("#bone_details_level_label").text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']])
             $("#bone_details_level").val(bone['level'])
         }
         else{
@@ -64,7 +65,14 @@ $.fn.update_bone_age = function(){
                 bone_age = age
             }
         })
-        if(bone_age >= 0) $("#bone_age").attr('placeholder', "合计：" + bone_age + "岁（" + grade + "分）");
+        if(bone_age >= 0){
+            $("#bone_age").val(bone_age);
+            $("#label_bone_age").text(bone_age + "岁");
+        }
+    }
+    else{
+        $("#bone_age").val('');
+        $("#label_bone_age").text('');
     }
 };
 
@@ -149,7 +157,9 @@ $("span[id^=error-]").click(function (e) {
 /* 评分评级修改后弹出保存按钮 */
 $("#bone_details_level").on('input', function (e) { 
     var bone_name_key = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
-    $("#bone_details_level_label").text($(this).val())
+    var bone = bones[bone_name_key]
+    level = bone['level']
+    $("#bone_details_level_label").text($(this).val() + " | " + level14_to_level8[bone_name_key][$(this).val()])
     $("#modify_bone_detail").removeAttr('hidden')
     if($(this).val() > 0){
         $("#bone_discription").removeAttr("hidden", "hidden");
@@ -160,6 +170,10 @@ $("#bone_details_level").on('input', function (e) {
     else{
         $("#bone_discription").attr('hidden','hidden')
     }
+    
+    bone['level'] = $("#bone_details_level").val()
+    $.fn.update_bone_age()
+    bone['level'] = level
 });
 /* 备注修改后弹出保存按钮 */
 $("#bone_details_remarks").on('input', function () {
@@ -219,7 +233,6 @@ $("#modify_bone_detail").click(function (e) {
         headers:{'X-CSRFToken': csrftoken}
     });
     $.fn.switch_bone(bone_name_key)
-    $.fn.update_bone_age()
 });
 
 /* 骨骼修改定位保存 */
