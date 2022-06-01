@@ -32,11 +32,7 @@
         {% endfor %}
         <div class="list-group-item d-flex justify-content-between row">
             <span class="col-11">骨龄判断：
-                {% if bone_age_instance.bone_age >= 0 %}
-                    <span id="label_bone_age">{{bone_age_instance.bone_age}}岁</span>
-                {% else %}
-                    <span id="label_bone_age" class="text-danger">*未填写*</span>
-                {% endif %}
+                <span id="label_bone_age">{{bone_age_instance.bone_age}}岁</span>
             </span>
             <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a>
         </div>
