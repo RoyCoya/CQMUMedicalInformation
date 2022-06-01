@@ -1,19 +1,21 @@
 from django.db import models
 from django.contrib.auth import settings
 
+# 患者，全局唯一
 class Patient(models.Model):
     """患者数据表"""
     class Meta:
         verbose_name = '患者'
         verbose_name_plural = '患者'
     def __str__(self):
-        return str(self.name + ' ' +self.Patient_Id) 
+        return str(self.name + ' ' +self.Patient_ID) 
 
     '''基础信息'''
-    Patient_Id = models.CharField(max_length=64, unique=True, verbose_name='Dicom Patient ID')
+    Patient_ID = models.CharField(max_length=64, unique=True, verbose_name='Dicom Patient ID')
     name = models.CharField(max_length=100, verbose_name='姓名')
     sex_choice = (('Male','男'),('Female','女'))
     sex = models.CharField(max_length=6, choices=sex_choice, verbose_name='性别')
+    birthday = models.DateField(verbose_name='生日')
     
     '''扩展信息（如身高体重等），留以日后用'''
     
@@ -24,6 +26,7 @@ class Patient(models.Model):
     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='patient_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
     
+# Dicom文件，与唯一的患者n:1对应。当Dicom的patient id在数据库中无法找到对应患者时，新建患者并挂载外键
 class DicomFile(models.Model):
     """DICOM 文件表"""
     class Meta:
@@ -31,7 +34,7 @@ class DicomFile(models.Model):
         verbose_name_plural = 'Dicom文件'
     def __str__(self):
         if self.patient:
-            return str(self.patient.name + ' ' +self.patient.Patient_Id + ' | dcm id:' + ' ' + str(self.id)) 
+            return str(self.patient.name + ' ' +self.patient.Patient_ID + ' | dcm id:' + ' ' + str(self.id)) 
         else:
             return str(self.id)
 
@@ -60,19 +63,21 @@ class DicomFile(models.Model):
     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dicomfile_creater', verbose_name='创建者', on_delete=models.PROTECT)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
+# 骨龄标注任务（在前端名为‘task’），与唯一的Dicom文件1:1对应
 class BoneAge(models.Model):
     """骨龄判断结果表"""
     class Meta:
         verbose_name = '骨龄判断结果'
         verbose_name_plural = '骨龄判断结果'
     def __str__(self):
-        return str(self.dcm_file.patient.name + ' ' +self.dcm_file.patient.Patient_Id + ' | dcm id:' + ' ' + str(self.dcm_file.id)) 
+        return str(self.dcm_file.patient.name + ' ' +self.dcm_file.patient.Patient_ID + ' | dcm id:' + ' ' + str(self.dcm_file.id)) 
 
     '''基础信息'''
     dcm_file = models.OneToOneField(DicomFile,on_delete=models.CASCADE,verbose_name='对应dcm')
     bone_age = models.FloatField(default=-1.0, verbose_name='骨龄')
     allocated_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='bone_age_allocated_to', verbose_name='任务分配给', on_delete=models.PROTECT)
     closed = models.BooleanField(default=False, verbose_name='已完成')
+    closed_date = models.DateField(null=True, blank=True, verbose_name='完成时间')
     remarks = models.TextField(null=True, blank=True, max_length=300, verbose_name="备注")
 
     '''系统信息'''
@@ -80,6 +85,7 @@ class BoneAge(models.Model):
     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='grade_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
 
+# 每根骨头的详细数据，和唯一的task为n:1关系
 class BoneDetail(models.Model):
     """骨具体信息"""
     class Meta:
@@ -89,7 +95,7 @@ class BoneDetail(models.Model):
     def __str__(self):
         return str(
             self.bone_age_instance.dcm_file.patient.name + 
-            ' ' +self.bone_age_instance.dcm_file.patient.Patient_Id + 
+            ' ' +self.bone_age_instance.dcm_file.patient.Patient_ID + 
             ' | dcm id:' + ' ' + 
             str(self.bone_age_instance.dcm_file.id) +
             ' | ' + self.name

@@ -7,15 +7,16 @@ class admin_patient(admin.ModelAdmin):
     date_hierarchy = 'modify_date'
     list_display = [
         'id',
-        'Patient_Id',
+        'Patient_ID',
 		'name',
         'sex',
+        'birthday',
         'active',
         'modify_user',
     ]
     fieldsets = (
         (None, {
-            'fields': ('Patient_Id', 'name', 'sex', )
+            'fields': ('Patient_ID', 'name', 'sex', 'birthday' )
         }),
         ('系统信息', {
             'classes': ('collapse',),

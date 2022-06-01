@@ -5,10 +5,10 @@
         <a href="#"><i class="bi bi-three-dots" style="font-size: 1.5em;"></i></a>
     </div>
     <div class="row">   
-        <span class="col-6"><strong>姓名：</strong>{% if patient.name %}{{patient.name}}{% else %}<span class="text-danger">*读取失败*</span>{% endif %}</span>
-        <span class="col-6"><strong>性别：</strong>{% if patient.sex %}{{patient.get_sex_display}}{% else %}<span class="text-danger">*读取失败*</span>{% endif %}</span>
-        <span class="col-6"><strong>ID：</strong>{% if patient.Patient_Id %}{{patient.Patient_Id}}{% else %}<span class="text-danger">*读取失败*</span>{% endif %}</span>
-        <span class="col-6"><strong>日期：</strong>{% if dcm.Study_Date %}{{dcm.Study_Date}}{% else %}<span class="text-danger">*读取失败*</span>{% endif %}</span>
+        <span class="col-6"><strong>姓名：</strong>{{patient.name}}</span>
+        <span class="col-6"><strong>性别：</strong>{{patient.get_sex_display}}</span>
+        <span class="col-6"><strong>ID：</strong>{{patient.Patient_ID}}</span>
+        <span class="col-6"><strong>年龄：</strong>{{actual_age|floatformat}} 岁</span>
     </div>
 </div>
 <div class="col-6">

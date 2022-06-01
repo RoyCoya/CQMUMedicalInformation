@@ -86,6 +86,7 @@ def api_finish_task(request):
     if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
 
     if request.POST['closed'] == 'true': bone_age.closed = True
+    bone_age.closed_date = datetime.now()
     bone_age.modify_user = request.user
     bone_age.save()
     return HttpResponse('任务已标记为完成')
@@ -131,20 +132,21 @@ def api_upload_dcm(request):
                 continue
         new_file.SOP_Instance_UID = sop_instance_uid
         # 挂载患者或创建新患者并挂载dcm
-        patient = Patient.objects.filter(Patient_Id=reader.PatientID)
+        patient = Patient.objects.filter(Patient_ID=reader.PatientID)
         if(patient): 
             new_file.patient = patient[0]
         else:
             name = None
-            patient_id = None
+            Patient_ID = None
             sex = None
+            birthday = None
             
             try: name = reader.PatientName
             except:
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
-            try: patient_id = reader.PatientID
+            try: Patient_ID = reader.PatientID
             except: 
                 new_file.delete()
                 broken_files.append(file.name)
@@ -154,10 +156,16 @@ def api_upload_dcm(request):
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
+            try: birthday = datetime.strptime(reader.PatientBirthDate,'%Y%m%d')
+            except:
+                new_file.delete()
+                broken_files.append(file.name)
+                continue
             patient = Patient.objects.create(
                 name=name,
-                Patient_Id=patient_id,
+                Patient_ID=Patient_ID,
                 sex=sex,
+                birthday=birthday,
                 modify_user=user,
             )
             new_file.patient = patient
@@ -271,7 +279,7 @@ def api_allocate_tasks(request):
     for task in tasks[0:int(tasks_to_allocate_count)]:
         task.allocated_to = user
         task.save()
-    return HttpResponse(user.last_name + user.first_name + '的' + tasks_to_allocate_count + '个任务已分配完成。')
+    return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
 
 # 平均分配任务给所有用户
 def api_allocate_tasks_random(request):
