@@ -36,7 +36,6 @@
                 </div>
             </form>
             <div class="text-end mb-2">
-                <div id="error_too_many_files" class="text-danger" hidden>请选择小于150张dcm！</div>
                 <div id="spinner_upload" hidden>
                     <span class="spinner-border text-primary mt-2" role="status"></span>
                     <span class="align-self-center">请勿离开此页面！</span>
@@ -49,7 +48,7 @@
         </div>
     </div>
     <div class="col-8">
-        <h2 class="text-center">未分配任务 {{unallocated_tasks|length}}</h2>
+        <h2 class="text-center">未分配任务（共{{unallocated_tasks|length}}个）</h2>
         {% if unallocated_tasks %}
             <div class="row">
                 <form action="{% url 'api_BoneAge_allocate_tasks' %}" method="post" class="d-flex justify-content-start col-6">
