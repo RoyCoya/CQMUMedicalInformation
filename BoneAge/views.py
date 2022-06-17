@@ -26,6 +26,10 @@ def evaluator(request, bone_age_id):
 '''
 接口，与 ./api/api.py中的接口对应
 '''
+# 修改图像亮度、对比度偏移量
+def api_save_image_offset(request):
+    return api.api_save_image_offset(request)
+
 # 修改骨骼评分评级等详细信息
 def api_modify_bone_detail(request):
     return api.api_modify_bone_detail(request)

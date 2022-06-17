@@ -104,6 +104,9 @@
             },
         {% endfor %}
     }
+    var dcm_id = {{dcm.id}}
+    var brightness = {{dcm.brightness}}
+    var contrast = {{dcm.contrast}}
     var actual_age = {{actual_age}}
     var sex = '{{patient.sex|lower}}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
@@ -111,6 +114,7 @@
     var url_api_modify_bone_age = "{% url 'api_BoneAge_modify_bone_age' %}"
     var url_api_finish_task = "{% url 'api_BoneAge_finish_task' %}"
     var url_personal_index = "{% url 'BoneAge_index' %}"
+    var url_api_save_image_offset = "{% url 'api_BoneAge_save_image_offset' %}"
 </script>
 <script src="{% static '/BoneAge/js/evaluator/evaluator.js' %}"></script>
 {% endblock %}

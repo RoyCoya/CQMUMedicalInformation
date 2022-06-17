@@ -30,6 +30,16 @@ def normalize(img_normalize, number):
     return img_normalize
 
 '''特定接口'''
+# 修改图像亮度、对比度偏移量
+def api_save_image_offset(request):
+    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    dcm = DicomFile.objects.get(id=request.POST['dcm_id'])
+    dcm.brightness = request.POST['brightness']
+    dcm.contrast = request.POST['contrast']
+    dcm.save()
+    print(dcm.brightness,dcm.contrast)
+    return HttpResponse('已修改图像亮度对比度偏移量')
+
 # 修改骨骼评分评级等详细信息
 def api_modify_bone_detail(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
@@ -118,13 +128,14 @@ def api_upload_dcm(request):
             broken_files.append(file.name)
             continue
         
-        # 以sop instance uid验证dicom是否重复
+        # 检验dcm能否读取sop_instance_uid
         sop_instance_uid = None
         try: sop_instance_uid = reader.SOPInstanceUID
         except:
             new_file.delete()
             sop_uid_miss_files.append(file.name)
             continue
+        # 以sop instance uid验证dicom是否重复
         if sop_instance_uid:
             if DicomFile.objects.filter(SOP_Instance_UID=sop_instance_uid):
                 new_file.delete()
@@ -184,15 +195,15 @@ def api_upload_dcm(request):
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Radius', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Ulna', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='First Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='First Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='First Distal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Middle Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Distal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Metacarpal', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=bone_age, name='First Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Proximal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Middle Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Middle Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=bone_age, name='First Distal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Distal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Distal Phalange', modify_user=user)
 
     # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件

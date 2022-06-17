@@ -8,6 +8,7 @@ urlpatterns = [
 	path('dicom/library/', views.dicom_library, name='BoneAge_dicom_library'),
 	path('dicom/library/admin/', views.dicom_library_admin, name='BoneAge_dicom_library_admin'),
 	#接口
+	path('evaluator/offset/save/', views.api_save_image_offset, name='api_BoneAge_save_image_offset'),
 	path('evaluator/bone_detail/save/', views.api_modify_bone_detail, name='api_BoneAge_modify_bone_detail'),
 	path('evaluator/bone_postion/save/', views.api_modify_bone_position, name='api_BoneAge_modify_bone_position'),
 	path('evaluator/bone_age/save/', views.api_modify_bone_age, name='api_BoneAge_modify_bone_age'),

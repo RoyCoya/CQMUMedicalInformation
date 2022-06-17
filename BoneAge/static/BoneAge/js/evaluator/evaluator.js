@@ -2,6 +2,7 @@
 
 //切换骨骼时对骨骼详情部分（评分评级、备注、骨龄）的页面变化
 $.fn.switch_bone = function(bone_name_key){
+    $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
     $.fn.update_bone_age()
     var bone = bones[bone_name_key]
     if(bone['error'] == 0){
@@ -35,6 +36,7 @@ $.fn.switch_bone = function(bone_name_key){
         }
         if(bone['level'] >= 0){
             $("#bone_details_level_label").text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']])
+            $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
             $("#bone_details_level").val(bone['level'])
         }
         else{
@@ -93,13 +95,17 @@ image.cropper({
     preview : '.img-preview',
     viewMode : 2,
     guides : false,
-    movable : false,
     data : bones['radius'],
     cropmove(e){
         $("#modify_bone_position").removeAttr('hidden')
     }
 });
 var cropper = image.data('cropper');
+image.on('ready', function () {
+    $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+});
 
 /* 其他初始化 */
 $(document).ready(function () {
@@ -108,12 +114,25 @@ $(document).ready(function () {
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
+
     /* 选中骨骼，默认从桡骨开始 */
     $("#view-radius").parent().addClass('active');
+    //骨骼等级14转8
+    $.fn.switch_bone('fifth-distal-phalange')
+    $.fn.switch_bone('fifth-middle-phalange')
+    $.fn.switch_bone('fifth-proximal-phalange')
+    $.fn.switch_bone('fifth-metacarpal')
+    $.fn.switch_bone('third-distal-phalange')
+    $.fn.switch_bone('third-middle-phalange')
+    $.fn.switch_bone('third-proximal-phalange')
+    $.fn.switch_bone('third-metacarpal')
+    $.fn.switch_bone('first-distal-phalange')
+    $.fn.switch_bone('first-proximal-phalange')
+    $.fn.switch_bone('first-metacarpal')
+    $.fn.switch_bone('ulna')
     $.fn.switch_bone('radius')
     $.fn.update_bone_age()
 });
-
 
 /* image cropper 工具栏 */
 $('#setDragMode').click(function(e){
@@ -128,6 +147,53 @@ $('#zoomOut').click(function(e){
 $('#resetCropper').click(function (e) { 
     var bone = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
     cropper.setData(bones[bone])
+});
+$("#brightness_up").click(function (e) {
+    brightness += 20
+    $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    crop_brightness = brightness - 12
+    $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ crop_brightness +'%)');
+    $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("#save_offset").removeClass('invisible')
+});
+$("#brightness_down").click(function (e) {
+    brightness -= 20
+    $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    crop_brightness = brightness - 12
+    $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ crop_brightness +'%)');
+    $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("#save_offset").removeClass('invisible')
+});
+$("#contrast_up").click(function (e) {
+    contrast += 5
+    $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("#save_offset").removeClass('invisible')
+});
+$("#contrast_down").click(function (e) {
+    contrast -= 5
+    $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
+    $("#save_offset").removeClass('invisible')
+});
+
+/* 图像亮度对比度调整 */
+$("#save_offset").click(function (e) { 
+    $.ajax({
+        type: "post",
+        url: url_api_save_image_offset,
+        data: 
+        {
+            'dcm_id' : dcm_id,
+            'brightness' : brightness,
+            'contrast' : contrast,
+        },
+        dataType: "json",
+        headers:{'X-CSRFToken': csrftoken}
+    });
+    $("#save_offset").addClass('invisible')
 });
 
 /* 骨骼切换列表 */
@@ -160,6 +226,7 @@ $("#bone_details_level").on('input', function (e) {
     var bone = bones[bone_name_key]
     level = bone['level']
     $("#bone_details_level_label").text($(this).val() + " | " + level14_to_level8[bone_name_key][$(this).val()])
+    $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
     $("#modify_bone_detail").removeAttr('hidden')
     if($(this).val() > 0){
         $("#bone_discription").removeAttr("hidden", "hidden");

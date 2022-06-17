@@ -53,6 +53,8 @@ class DicomFile(models.Model):
     error = models.IntegerField(default=202, choices=error_choice, verbose_name="错误类型")
 
     '''扩展信息'''
+    brightness = models.IntegerField(default=100, verbose_name='亮度偏量（百分数）')
+    contrast = models.IntegerField(default=100, verbose_name='对比度偏量（百分数）')
     SOP_Instance_UID = models.CharField(null=True, blank=True, max_length=64, verbose_name='SOP Instance UID')
     Study_Date = models.DateField(null=True, blank=True, verbose_name='Study Date')
 
