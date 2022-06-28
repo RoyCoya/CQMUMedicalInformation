@@ -7,7 +7,7 @@ conn = sqlite3.connect(sys.path[0] + '/../db.sqlite3')
 cursor = conn.cursor()
 
 patients_chinese_name_dic = {}
-with open(sys.path[0] + '/../doc/patients.txt',encoding="utf-8") as patients:
+with open(sys.path[0] + '/../doc/tools/patients.txt',encoding="utf-8") as patients:
     for patient in patients:
         details = patient.split('\t')
         patient_id = details[0]
