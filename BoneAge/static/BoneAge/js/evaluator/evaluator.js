@@ -48,6 +48,7 @@ $.fn.switch_bone = function(bone_name_key){
         $("#bone_details_name").text(bone['name'] + "（" + bone['error_message'] + "）")
         $("#form_bone_details").attr('hidden','hidden')
     }
+    $("#bone_details_level").focus()
 };
 /* 如果所有骨骼等级数据与定位正常，则计算分数并显示参考年龄 */
 $.fn.update_bone_age = function(){
@@ -132,6 +133,9 @@ $(document).ready(function () {
     $.fn.switch_bone('ulna')
     $.fn.switch_bone('radius')
     $.fn.update_bone_age()
+
+    /* 焦点至评级条 */
+    $("#bone_details_level").focus()
 });
 
 /* image cropper 工具栏 */
