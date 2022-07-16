@@ -1,5 +1,3 @@
-from ast import Lambda
-import imp
 from django import template
 import time
 

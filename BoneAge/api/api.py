@@ -37,7 +37,6 @@ def api_save_image_offset(request):
     dcm.brightness = request.POST['brightness']
     dcm.contrast = request.POST['contrast']
     dcm.save()
-    print(dcm.brightness,dcm.contrast)
     return HttpResponse('已修改图像亮度对比度偏移量')
 
 # 修改骨骼评分评级等详细信息
@@ -110,8 +109,9 @@ def api_upload_dcm(request):
     sop_uid_miss_files = []
     duplicate_files = []
     for file in request.FILES.getlist('dcm_files'):
-        # dcm初始化
-        if file.name.split('.')[-1] != 'dcm': continue
+        suffix = file.name.split('.')[-1]
+        if suffix != 'dcm' and suffix != 'DCM' : continue
+        file.name = file.name.lower()
         new_file = DicomFile(
             dcm=File(file),
             create_user=user,
@@ -207,9 +207,6 @@ def api_upload_dcm(request):
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Distal Phalange', modify_user=user)
 
     # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件
-    print(broken_files)
-    print(sop_uid_miss_files)
-    print(duplicate_files)
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
 
 # 解析数据库中未初始化（转png、骨骼定位）的dcm
