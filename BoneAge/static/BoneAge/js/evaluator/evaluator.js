@@ -10,6 +10,7 @@ $.fn.switch_bone = function(bone_name_key){
         $("#form_bone_details").removeAttr('hidden')
         $("#modify_bone_position").attr('hidden','hidden')
         $("#modify_bone_detail").attr('hidden','hidden')
+        $('small[id^=bone_discription_text]').attr('hidden','hidden')
         $("#bone_details_name").text(bone['name'])
         $("#bone_details_remarks").val(bone['remarks'])
         if(bone['level'] > 0){
