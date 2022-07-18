@@ -55,8 +55,8 @@ class DicomFile(models.Model):
     '''扩展信息'''
     brightness = models.IntegerField(default=100, verbose_name='亮度偏量（百分数）')
     contrast = models.IntegerField(default=100, verbose_name='对比度偏量（百分数）')
-    SOP_Instance_UID = models.CharField(null=True, blank=True, max_length=64, verbose_name='SOP Instance UID')
-    Study_Date = models.DateField(null=True, blank=True, verbose_name='Study Date')
+    SOP_Instance_UID = models.CharField(max_length=64, verbose_name='SOP Instance UID')
+    Study_Date = models.DateField(verbose_name='Study Date')
 
     '''系统信息'''
     id = models.AutoField(primary_key=True, verbose_name='ID')
