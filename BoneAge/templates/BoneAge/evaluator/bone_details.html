@@ -31,7 +31,8 @@
                 </div>
         {% endfor %}
         <div class="list-group-item d-flex justify-content-between row">
-            <span class="col-11">骨龄判断：
+            <span class="col-11">
+                <strong>骨龄判断：</strong>
                 <span id="label_bone_age">{{bone_age_instance.bone_age}}岁</span>
             </span>
             <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a>
@@ -39,9 +40,9 @@
         <div id="list-sum" class="list-group-item d-flex justify-content-end">
             <div class="form-check form-switch">
                 {% if bone_age_instance.closed %}
-                    <label class="form-check-label text-primary">任务已完成</label>
+                    <strong class="form-check-label text-primary">任务已完成</strong>
                 {% else %}
-                    <label id="label_task_status" class="form-check-label text-success">任务进行中...</label>
+                    <strong id="label_task_status" class="form-check-label text-success">任务进行中...</strong>
                 {% endif %}
                 <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if bone_age_instance.closed %}checked{% endif %}>
             </div>
