@@ -36,7 +36,7 @@
                             骨龄评分系统
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'BoneAge_index' %}">个人主页</a></li>
+                            <li><a class="dropdown-item" href="{% url 'BoneAge_index' 1 %}">个人主页</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
                             {% if user.is_staff %}

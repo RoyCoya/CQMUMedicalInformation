@@ -8,8 +8,8 @@ from BoneAge.pages import page
 界面，与 ./pages/pages.py中的页面对应
 '''
 #个人主页
-def index(request):
-    return page.index(request)
+def index(request, page_number):
+    return page.index(request, page_number)
 
 # dicom库
 def dicom_library(request):
