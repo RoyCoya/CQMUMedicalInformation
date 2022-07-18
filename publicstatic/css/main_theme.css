@@ -10,7 +10,8 @@ tbody tr{ cursor:pointer;}
 
 /* bootstrap 重写 */
 .bg-primary{background-color: var(--theme_color)!important;}
-
+.page-link{color: var(--theme_color)!important;}
+.page-item.active .page-link{background-color: var(--theme_color)!important;color: white!important;}
 .navbar{background-color: var(--theme_color); }
 .row{ margin:0px; }
 .btn-primary{ background-color: rgb(18, 75, 167); border-color: rgb(18, 75, 167);}
