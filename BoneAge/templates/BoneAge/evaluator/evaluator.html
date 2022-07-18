@@ -17,6 +17,7 @@
     .list-group-item{ padding: .7rem 1rem }
     .list-group-item span{ color: black; }
     .list-group-item.active span{ color:white }
+    .list-group-item:hover{cursor: default!important;}
 </style>
 {% endblock %}
 
@@ -62,9 +63,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <div><label>任务ID：</label>{{bone_age_instance.id}}</div>
                 <div><label>患者：</label>{{patient.name}}（{{patient.Patient_ID}}）</div>
-                <div><label>DICOM 文件ID：</label>{{dcm.id}}</div>
-                <div><label>DICOM SOP Instance ID：</label>{% if dcm.SOP_Instance_UID %}{{dcm.SOP_Instance_UID}}{% else %}未识别到ID{% endif %}</div>
             </div>
             <div class="modal-footer">
                 <a id="finish_task" class="btn btn-primary" href="#" data-bs-dismiss="modal">确认</a>

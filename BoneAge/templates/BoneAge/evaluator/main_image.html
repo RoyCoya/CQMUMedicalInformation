@@ -6,7 +6,15 @@
     </div>
     <div class="row">   
         <span class="col-6"><strong>姓名：</strong>{{patient.name}}</span>
-        <span class="col-6"><strong>性别：</strong>{{patient.get_sex_display}}</span>
+        <span class="col-6">
+            <strong>性别：</strong>
+            {{patient.get_sex_display}}
+            {% if patient.sex == 'Female' %}
+                <i class="bi bi-gender-female" style="color:DeepPink"></i>
+            {% else %}
+                <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
+            {% endif %}
+        </span>
         <span class="col-6"><strong>ID：</strong>{{patient.Patient_ID}}</span>
         <span class="col-6"><strong>年龄：</strong>{{actual_age|floatformat}} 岁</span>
     </div>
