@@ -79,7 +79,7 @@ class BoneAge(models.Model):
     bone_age = models.FloatField(default=-1.0, verbose_name='骨龄')
     allocated_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='bone_age_allocated_to', verbose_name='任务分配给', on_delete=models.PROTECT)
     closed = models.BooleanField(default=False, verbose_name='已完成')
-    closed_date = models.DateField(null=True, blank=True, verbose_name='完成时间')
+    closed_date = models.DateTimeField(null=True, blank=True, verbose_name='完成时间')
     remarks = models.TextField(null=True, blank=True, max_length=300, verbose_name="备注")
 
     '''系统信息'''

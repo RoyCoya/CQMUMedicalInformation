@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 from django.http import *
+import datetime
 
 from BoneAge.models import *
 from BoneAge.api.api import login_check
@@ -9,11 +10,26 @@ from BoneAge.api.api import login_check
 # 个人主页
 def index(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user).order_by('-dcm_file__Study_Date')
-    finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-dcm_file__Study_Date')
+    unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user).order_by('-modify_date')
+    unfinished_tasks_count = len(unfinished_tasks)
+    finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
+    finished_tasks_count = len(finished_tasks)
+    finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
+    
+    # 查询每个患者的历史评测记录数量
+    for task in unfinished_tasks:
+        task.history = 1
+
+    # 完结任务大于7个折叠，跳转给完结任务界面
+    if finished_tasks_count > 7:
+        finished_tasks = finished_tasks[0:7]
+    
     context = {
         'unfinished_tasks' : unfinished_tasks,
+        'unfinished_tasks_count' : unfinished_tasks_count,
         'finished_tasks' : finished_tasks,
+        'finished_tasks_count' : finished_tasks_count,
+        'finished_today_count' : finished_today_count,
     }
     return render(request,'BoneAge/index/index.html',context)
 

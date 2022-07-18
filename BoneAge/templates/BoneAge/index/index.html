@@ -1,68 +1,38 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load BoneAge_global_tags %}
 
 {% block title %}{{ user.username }} 的主页｜骨龄评分系统{% endblock %}
 
 {% block nav_boneage_active %}active{% endblock %}
 
 {% block css %}
-{% endblock %}
+<style>
+    .list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: #198754;}
+    td a:hover{color: #1fc075 !important;}
+</style>
+{% endblock css %}
 
 {% block content %}
-{% load static %}
-{% load BoneAge_global_tags %}
-
+<!-- 欢迎栏、个人设置按钮 -->
 <div class="alert alert-primary d-flex justify-content-between" role="alert">
     <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
     <a data-bs-toggle="offcanvas" href="#toolbar_right">个人设置 <i class="bi bi-gear"></i></a>
 </div>
 
 <div class="row">
-    <div class="col-6 border-end">
-        <h2 class="text-center">待完成任务</h2>
-        {% if unfinished_tasks %}
-            <ul class="list-group list-group-flush mb-2">
-                {% for task in unfinished_tasks %}
-                    <a href="{% url 'BoneAge_evaluator' task.id %}" class="list-group-item list-group-item-action d-flex justify-content-between">
-                        <div>· {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）</div>
-                        <div>{{task.dcm_file.patient.get_sex_display}}</div>
-                        {% if task.dcm_file.Study_Date %}
-                            <div>{{task.dcm_file.Study_Date}}</div>
-                        {% else %}
-                            <div><span class="text-danger">Study Date读取失败</span></div>
-                        {% endif %}
-                        <div>dcm ID：{{task.dcm_file.id}}</div>
-                    </a>
-                {% endfor %}
-            </ul>
-        {% else %}
-            暂无未完成的任务。
-        {% endif %}
+    <!-- 未完成评测任务表 -->
+    <div class="col-9 border-end ps-5 pe-5">
+        {% include 'BoneAge/index/tasks.html' %}
     </div>
-    <div class="col-6 border-end">
-        <h2 class="text-center text-success">已完成任务</h2>
-        {% if finished_tasks %}
-            <ul class="list-group list-group-flush mb-2">
-                {% for task in finished_tasks %}
-                    <a href="{% url 'BoneAge_evaluator' task.id %}" class="list-group-item list-group-item-action d-flex justify-content-between">
-                        <div>· {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）</div>
-                        {% if task.dcm_file.Study_Date %}
-                            <div>{{task.dcm_file.Study_Date}}</div>
-                        {% else %}
-                            <div><span class="text-danger">Study Date读取失败</span></div>
-                        {% endif %}
-                        <div>{{task.dcm_file.id}}</div>
-                    </a>
-                {% endfor %}
-            </ul>
-        {% else %}
-            暂无已完成的任务。
-        {% endif %}
+    <!-- 面板 -->
+    <div class="col-3">
+        {% include 'BoneAge/index/pannel.html' %}
     </div>
 </div>
-
-{% include 'BoneAge/index/tool_bar.html' %}
-
-{% endblock %}
+{% include 'BoneAge/index/settings.html' %}
+{% endblock content %}
 
 {% block js %}
-{% endblock %}
+<script src="{% static '/BoneAge/js/index/index.js' %}"></script>
+{% endblock js %}

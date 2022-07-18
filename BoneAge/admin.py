@@ -32,7 +32,16 @@ class admin_dicomfile(admin.ModelAdmin):
         'error',
         'modify_user',
     ]
+class admin_boneage(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'dcm_file',
+		'bone_age',
+        'allocated_to',
+        'closed',
+        'closed_date',
+    ]
 admin.site.register(Patient, admin_patient)
 admin.site.register(DicomFile, admin_dicomfile)
-admin.site.register(BoneAge)
+admin.site.register(BoneAge,admin_boneage)
 admin.site.register(BoneDetail)

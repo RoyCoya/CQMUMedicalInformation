@@ -1,4 +1,5 @@
 from django import template
+import datetime
 import time
 
 register = template.Library()
@@ -15,3 +16,8 @@ def convert_time_to_period(value):
         return "下午好，" + value + "医生"
     elif time_hour >18 and time_hour <= 24:
         return "晚上好，" + value + "医生"
+
+@register.filter(name='actual_age')
+def calculate_actual_age(value):
+    now = datetime.date.today()
+    return (now - value).days / 365

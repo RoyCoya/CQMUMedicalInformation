@@ -1,26 +1,35 @@
-/* 自建主题色渲染 */
-a, i, h1, h2, h3, h4, h5, h6, label, strong{ color: rgb(17,64,141);text-decoration: none;}
-tbody tr{ cursor:pointer; }
+:root {
+    /* 主题色 */
+    --theme_color: rgb(17,64,141);
+}
 
-/* bootstrap 元素修改为主题色 */
-.navbar{background-color: rgb(17,64,141); }
+a, i, h1, h2, h3, h4, h5, h6, label, strong{color: var(--theme_color)}
+a {text-decoration: none;}
+/* 表格项目指针改为a类型 */
+tbody tr{ cursor:pointer;}
+
+/* bootstrap 重写 */
+.bg-primary{background-color: var(--theme_color)!important;}
+
+.navbar{background-color: var(--theme_color); }
 .row{ margin:0px; }
 .btn-primary{ background-color: rgb(18, 75, 167); border-color: rgb(18, 75, 167);}
 .btn-danger{ background-color: rgb(199, 14, 54) }
 .btn-danger:hover{ background-color:rgb(162, 3, 38); border-color: rgb(162, 3, 38); }
-.btn-primary:hover{ background-color: rgb(17,64,141); border-color: rgb(17,64,141);}
-.btn-outline-primary:hover{ background-color: rgb(17,64,141); border-color: rgb(17,64,141); color:white}
+.btn-primary:hover{ background-color: var(--theme_color); border-color: var(--theme_color);}
+.btn-outline-primary:hover{ background-color: var(--theme_color); border-color: var(--theme_color); color:white}
 
 .list-group{background-color: white;}
-.list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: rgb(17,64,141);}
+.list-group-item:hover{cursor: pointer!important;}
+.list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: var(--theme_color);}
 .list-group-item-action:focus, .list-group-item-action:hover a{color:white;}
 .list-group-item-action:focus, .list-group-item-action:hover i{color:white;}
 .list-group-item-action:focus, .list-group-item-action:hover span{color:white;cursor:pointer;}
-.list-group-item.active{color:white;background-color: rgb(17,64,141);}
+.list-group-item.active{color:white;background-color: var(--theme_color);}
 .list-group-item.active a{color:white}
 
 /* popover 修改为底色主题色，文字白色 */
-.tooltip-inner{background-color: rgb(17,64,141);color: white;font-size: large;}
-.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-start .tooltip-arrow::before{border-left-color: rgb(17,64,141);}
+.tooltip-inner{background-color: var(--theme_color);color: white;font-size: large;}
+.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-start .tooltip-arrow::before{border-left-color: var(--theme_color);}
 
 
