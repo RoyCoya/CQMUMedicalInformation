@@ -230,6 +230,7 @@ $("#bone_details_level").on('input', function (e) {
     var bone_name_key = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
     var bone = bones[bone_name_key]
     level = bone['level']
+    $("#level-fifth-metacarpal").removeClass('text-danger')
     $("#bone_details_level_label").text($(this).val() + " | " + level14_to_level8[bone_name_key][$(this).val()])
     $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
     $("#modify_bone_detail").removeAttr('hidden')
