@@ -11,7 +11,7 @@
             <th>性别</th>
             <th class="bg-primary"><a href="#" class="text-light">年龄 <i class="bi bi-caret-up-fill text-light"></i></a></th>
             <th class="bg-primary"><a href="#" class="text-light">检查日期 <i class="bi bi-caret-up-fill text-light"></i></a></th>
-            <th class="bg-primary"><a href="#" class="text-light">最后编辑时间 <i class="bi bi-caret-up-fill text-light"></i></a></th>
+            <th class="bg-primary"><a href="#" class="text-light">任务分配时间 <i class="bi bi-caret-up-fill text-light"></i></a></th>
             <th>历史记录</th>
         </tr>
     </thead>
@@ -38,7 +38,7 @@
                            未知
                         {% endif %}
                     </td>
-                    <td>{{task.modify_date}}</td>
+                    <td>{{task.allocated_datetime}}</td>
                     <td>
                         {% if task.history > 0 %}
                             <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-clock-history" style="font-size:1.2rem">：{{task.history}}</a>

@@ -12,6 +12,7 @@ from BoneAge.api.api import login_check
 # 个人主页
 def index(request, page_number):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    if request.user.is_staff: return dicom_library_admin(request)
     unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user).order_by('id')
     unfinished_tasks_count = len(unfinished_tasks)
     finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
@@ -61,8 +62,6 @@ def dicom_library(request):
 
 # dicom库后台
 def dicom_library_admin(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    if not request.user.is_staff: return HttpResponseBadRequest("您无权查看此页面")
     unanalyzed_dcm_count = DicomFile.objects.filter(error=202).count()
     unallocated_tasks = BoneAge.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
     user_model = get_user_model()

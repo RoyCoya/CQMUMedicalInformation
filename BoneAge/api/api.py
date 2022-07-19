@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from datetime import datetime
+from datetime import date, datetime
 from pydicom.filereader import dcmread
 
 from django.conf import settings
@@ -243,11 +243,18 @@ def api_analyze_dcm(request):
         
         # 目标检测，录入骨骼位置
         bones = BoneDetail.objects.filter(bone_age_instance__dcm_file=dcm)
+        # 所有骨骼初始化为404
+        for bone in bones:
+            bone.error = 404
+            bone.save()
         bone_detected = object_model.infer(img_array)
+        print(bone_detected)
+        
         for name,position in bone_detected.items():
             try: 
                 position = position[1]
                 bone = bones.get(name=name)
+                print(bone)
                 bone.center_x = position[0]
                 bone.center_y = position[1]
                 bone.width = position[2]
@@ -255,9 +262,7 @@ def api_analyze_dcm(request):
                 bone.error = 0
                 bone.save()
             except Exception as e:
-                bone = bones.get(name=name)
-                bone.error = 404
-                bone.save()
+                print(e)
                 pass
         # 骨龄评级
         for name,position in bone_detected.items():
@@ -270,7 +275,7 @@ def api_analyze_dcm(request):
                 bone.save()
             except Exception as e:
                 print(e)
-                return HttpResponseBadRequest("骨骼等级预测程序有误！")
+                pass
         
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
 
@@ -286,6 +291,7 @@ def api_allocate_tasks(request):
     tasks_to_allocate_count = request.POST['tasks_to_allocate_count']
     for task in tasks[0:int(tasks_to_allocate_count)]:
         task.allocated_to = user
+        task.allocated_datetime = datetime.now()
         task.save()
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
 
@@ -306,5 +312,6 @@ def api_allocate_tasks_random(request):
         tasks_for_user = tasks[i:(i+step)]
         for task in tasks_for_user:
             task.allocated_to = user
+            task.allocated_datetime = datetime.now()
             task.save()
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))

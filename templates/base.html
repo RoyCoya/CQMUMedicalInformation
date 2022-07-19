@@ -39,9 +39,6 @@
                             <li><a class="dropdown-item" href="{% url 'BoneAge_index' 1 %}">个人主页</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
-                            {% if user.is_staff %}
-                                <li><a class="dropdown-item" href="{% url 'BoneAge_dicom_library_admin' %}">数据库后台</a></li>
-                            {% endif %}
                         </ul>
                     </li>
                 </ul>
@@ -50,9 +47,8 @@
         <button class="navbar-toggler col-1 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#nav-collapse">
             <span class="navbar-toggler-icon"></span>
         </button>
-        {% if request.user.is_authenticated %}
-            <div class="me-2">您好，{{user.username}}。<a class="text-light" href="{% url 'logout' %}" style="text-decoration: underline;color:white">点此退出登录</a></div>
-        {% endif %}
+        {% block logout %}
+        {% endblock logout%}
     </nav>
 
     {% block content %}
