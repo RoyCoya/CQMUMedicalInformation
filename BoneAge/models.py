@@ -78,6 +78,7 @@ class BoneAge(models.Model):
     dcm_file = models.OneToOneField(DicomFile,on_delete=models.CASCADE,verbose_name='对应dcm')
     bone_age = models.FloatField(default=-1.0, verbose_name='骨龄')
     allocated_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='bone_age_allocated_to', verbose_name='任务分配给', on_delete=models.PROTECT)
+    allocated_datetime = models.DateTimeField(null=True, blank=True, verbose_name="任务分配时间")
     closed = models.BooleanField(default=False, verbose_name='已完成')
     closed_date = models.DateTimeField(null=True, blank=True, verbose_name='完成时间')
     remarks = models.TextField(null=True, blank=True, max_length=300, verbose_name="备注")
