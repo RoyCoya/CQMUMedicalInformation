@@ -111,6 +111,8 @@ LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'Asia/Shanghai'
 
+DATETIME_FORMAT = 'Y-n-j H:i:s'
+
 USE_I18N = True
 
 USE_TZ = False

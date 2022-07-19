@@ -33,7 +33,7 @@
                     </td>
                     <td>{{task.dcm_file.patient.birthday|actual_age|floatformat}}</td>
                     <td>{% if task.dcm_file.Study_Date %}
-                            {{task.dcm_file.Study_Date}}
+                            {{task.dcm_file.Study_Date|date:"Y-n-j"}}
                         {% else %}
                            未知
                         {% endif %}
