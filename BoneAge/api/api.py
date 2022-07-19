@@ -1,7 +1,9 @@
 import cv2
+import os
 import numpy as np
 from datetime import date, datetime
 from pydicom.filereader import dcmread
+from shutil import copyfile
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -315,3 +317,36 @@ def api_allocate_tasks_random(request):
             task.allocated_datetime = datetime.now()
             task.save()
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
+
+def api_export_bone_data(request):
+    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    user = request.user
+    if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
+
+    tasks = BoneAge.objects.filter(closed=True)
+    for task in tasks:
+        bones = BoneDetail.objects.filter(bone_age_instance=task)
+        image_path = task.dcm_file.dcm_to_image.path
+        # 导出图片
+        out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
+        copyfile(image_path, out_path)
+        # 导出标签
+        out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
+        with open(out_path,'w') as f:
+            label_content = ''
+            for bone in bones:
+                label_content += str(bone.name)
+                label_content += '\t'
+                label_content += str(bone.center_x)
+                label_content += '\t'
+                label_content += str(bone.center_y)
+                label_content += '\t'
+                label_content += str(bone.width)
+                label_content += '\t'
+                label_content += str(bone.height)
+                label_content += '\t'
+                label_content += str(bone.level)
+                label_content += '\n'
+            f.write(label_content)
+    
+    return HttpResponse(r'导出数据完毕，目录 E:/CQMU/export/bone_data/')

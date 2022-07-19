@@ -61,3 +61,7 @@ def api_allocate_tasks(request):
 # 平均分配任务给所有用户
 def api_allocate_tasks_random(request):
     return api.api_allocate_tasks_random(request)
+
+# 导出骨骼数据（模型用）
+def api_export_bone_data(request):
+    return api.api_export_bone_data(request)

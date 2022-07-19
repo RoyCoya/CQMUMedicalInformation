@@ -17,4 +17,5 @@ urlpatterns = [
 	path('dicom/library/admin/dicom/analyze/', views.api_analyze_dcm, name='api_BoneAge_analyze_dcm'),
 	path('dicom/library/admin/tasks/allocate/', views.api_allocate_tasks, name="api_BoneAge_allocate_tasks"),
 	path('dicom/library/admin/tasks/allocate/random/', views.api_allocate_tasks_random, name="api_BoneAge_allocate_tasks_random"),
+	path('dicom/library/admin/export_bone_data/', views.api_export_bone_data, name="api_BoneAge_export_bone_data"),
 ]
