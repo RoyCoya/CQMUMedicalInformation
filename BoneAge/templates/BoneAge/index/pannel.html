@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="col-7">
-        <div class="mt-2"><strong>姓名：</strong>{{user.last_name}}{{user.first_name}} <i class="bi bi-pen ms-5"></i></div>
+        <div class="mt-2"><strong>姓名：</strong>{{user.last_name}}{{user.first_name}}</div>
         <div class="mt-2"><strong>身份：</strong>{% if user.is_staff %}管理员{% else %}评测员{% endif %}</div>
         <div class="mt-2"><strong>上次登陆：</strong>{{user.last_login|date:"Y-m-d H:i"}}</div>
         <hr>

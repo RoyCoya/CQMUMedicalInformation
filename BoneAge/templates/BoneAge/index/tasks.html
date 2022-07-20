@@ -38,7 +38,7 @@
                            未知
                         {% endif %}
                     </td>
-                    <td>{{task.allocated_datetime}}</td>
+                    <td>{{task.allocated_datetime|date:"Y-n-j H:i"}}</td>
                     <td>
                         {% if task.history > 0 %}
                             <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-clock-history" style="font-size:1.2rem">：{{task.history}}</a>
