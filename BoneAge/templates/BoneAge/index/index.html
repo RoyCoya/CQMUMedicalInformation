@@ -31,5 +31,10 @@
 {% endblock content %}
 
 {% block js %}
+<script>
+    var order = {{order}}
+    var is_descend = {{is_descend}}
+    var page_number = {{page_number}}
+</script>
 <script src="{% static '/BoneAge/js/index/index.js' %}"></script>
 {% endblock js %}

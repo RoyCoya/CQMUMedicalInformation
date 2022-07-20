@@ -1,4 +1,3 @@
-{% load BoneAge_global_tags %}
 <h2 class="text-center">
     <i class="bi bi-receipt"></i>
     任务列表
@@ -6,12 +5,13 @@
 <table class="table table-hover">
     <thead>
         <tr>
-            <th id="order_taskID"><a href="#">任务ID <i class="bi bi-caret-up-fill"></i></a></th>
-            <th id="order_patienID"><a href="#">患者（Patient ID）<i class="bi bi-caret-up-fill"></i></a></th>
+            <th id="order_0"><a href="#">任务ID <i class="bi"></i></a></th>
+            <th>姓名</th>
+            <th id="order_1"><a href="#">患者ID <i class="bi"></i></a></th>
             <th>性别</th>
-            <th id="order_age"><a href="#">实际年龄 <i class="bi bi-caret-up-fill"></i></a></th>
-            <th id="order_studyDate"><a href="#">检查日期 <i class="bi bi-caret-up-fill"></i></a></th>
-            <th id="order_taskAllocatedDate"><a href="#">任务分配时间 <i class="bi bi-caret-up-fill"></i></a></th>
+            <th id="order_2"><a href="#">实际年龄 <i class="bi"></i></a></th>
+            <th id="order_3"><a href="#">检查日期 <i class="bi"></i></a></th>
+            <th id="order_4"><a href="#">任务分配时间 <i class="bi"></i></a></th>
             <th>历史记录</th>
         </tr>
     </thead>
@@ -21,8 +21,9 @@
                 <tr id="evaluator_{{task.id}}">
                     <td>{{task.id}}</td>
                     <td><a href="#">
-                        {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）
+                        {{task.dcm_file.patient.name}}
                     </a></td>
+                    <td>{{task.dcm_file.patient.Patient_ID}}</td>
                     <td>
                         {{task.dcm_file.patient.get_sex_display}}
                         {% if task.dcm_file.patient.sex == 'Female' %}

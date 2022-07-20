@@ -7,7 +7,7 @@ from shutil import copyfile
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.http import *
 from django.urls import reverse
 from django.core.files import File

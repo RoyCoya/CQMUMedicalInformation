@@ -1,7 +1,9 @@
+from lib2to3.pytree import convert
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 from django.http import *
+from django.urls import reverse
 from django.core.paginator import Paginator
 import datetime
 
@@ -13,12 +15,20 @@ def index(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
 
-    # 按所需排序查询任务列表
-    order_name = {
+    unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user)
+    # 按所需排序条件对未完成任务列表进行排序
+    if order > 4:
+        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__patient__Patient_ID',
+        2 : lambda : 'dcm_file__age',
+        3 : lambda : 'dcm_file__Study_Date',
+        4 : lambda : 'allocated_datetime',
     }[order]()
-    unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user).order_by('id')
+    if is_descend:
+        order_para = '-' + order_para
+    unfinished_tasks = unfinished_tasks.order_by(order_para)
     unfinished_tasks_count = len(unfinished_tasks)
     finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
     finished_tasks_count = len(finished_tasks)
