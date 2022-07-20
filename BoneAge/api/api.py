@@ -123,9 +123,9 @@ def api_upload_dcm(request):
         new_file.save()
 
         # 检验dcm能否读取（reader是否可以启动）
-        reader = None
         try: reader = dcmread(new_file.dcm, force=True)
-        except: 
+        except Exception as e:
+            print(e)
             new_file.delete()
             broken_files.append(file.name)
             continue
@@ -133,7 +133,8 @@ def api_upload_dcm(request):
         # 检验dcm能否读取sop_instance_uid
         sop_instance_uid = None
         try: sop_instance_uid = reader.SOPInstanceUID
-        except:
+        except Exception as e:
+            print(e)
             new_file.delete()
             sop_uid_miss_files.append(file.name)
             continue
@@ -155,22 +156,26 @@ def api_upload_dcm(request):
             birthday = None
             
             try: name = reader.PatientName
-            except:
+            except Exception as e:
+                print(e)
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
             try: Patient_ID = reader.PatientID
-            except: 
+            except Exception as e:
+                print(e) 
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
             try: sex = 'Male' if reader.PatientSex == 'M' else 'Female'
-            except:
+            except Exception as e:
+                print(e)
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
-            try: birthday = datetime.strptime(reader.PatientBirthDate,'%Y%m%d')
-            except:
+            try: birthday = datetime.strptime(reader.PatientBirthDate,'%Y%m%d').date()
+            except Exception as e:
+                print(e)
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
@@ -182,13 +187,12 @@ def api_upload_dcm(request):
                 modify_user=user,
             )
             new_file.patient = patient
-
-        # 扩展信息（dcm中读不到时可以pass，并设置为空）
+        # 扩展信息
         study_date = None
-        try: study_date = datetime.strptime(reader.StudyDate,'%Y%m%d')
-        except: pass
+        try: study_date = datetime.strptime(reader.StudyDate,'%Y%m%d').date()
+        except Exception as e: print(e)
         new_file.Study_Date = study_date
-        
+        new_file.age = (new_file.Study_Date - new_file.patient.birthday).days / 365
         # 结束dcm校验，保存
         new_file.save()
 
@@ -207,6 +211,10 @@ def api_upload_dcm(request):
         BoneDetail.objects.create(bone_age_instance=bone_age, name='First Distal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Distal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Distal Phalange', modify_user=user)
+
+    print(broken_files)
+    print(sop_uid_miss_files)
+    print(duplicate_files)
 
     # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
@@ -234,11 +242,13 @@ def api_analyze_dcm(request):
             img = img_array.squeeze()
             img = np.expand_dims(img, axis=2)
             img_array = np.concatenate((img, img, img), axis=-1)
+            print('cv2')
             cv2.imwrite(settings.MEDIA_ROOT+dcm.dcm.name + ".png", img_array, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
             dcm.dcm_to_image = dcm.dcm.name + ".png"
             # TODO:二分类
             dcm.error = 0
         except Exception as e:
+            print(e)
             dcm.error = 415
             continue
         dcm.save()
@@ -250,13 +260,11 @@ def api_analyze_dcm(request):
             bone.error = 404
             bone.save()
         bone_detected = object_model.infer(img_array)
-        print(bone_detected)
         
         for name,position in bone_detected.items():
             try: 
                 position = position[1]
                 bone = bones.get(name=name)
-                print(bone)
                 bone.center_x = position[0]
                 bone.center_y = position[1]
                 bone.width = position[2]

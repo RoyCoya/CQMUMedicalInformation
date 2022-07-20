@@ -1,4 +1,3 @@
-from traceback import print_tb
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
@@ -10,17 +9,23 @@ from BoneAge.models import *
 from BoneAge.api.api import login_check
 
 # 个人主页
-def index(request, page_number):
+def index(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
+
+    # 按所需排序查询任务列表
+    order_name = {
+        0 : lambda : 'id',
+        1 : lambda : 'dcm_file__patient__Patient_ID',
+    }[order]()
     unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user).order_by('id')
     unfinished_tasks_count = len(unfinished_tasks)
     finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
     finished_tasks_count = len(finished_tasks)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
     
+    # 任务列表分页
     unfinished_tasks_paged = Paginator(unfinished_tasks, 15)
-    print(unfinished_tasks_paged)
     unfinished_tasks_current_page = None
     try: unfinished_tasks_current_page = unfinished_tasks_paged.page(page_number)
     except: return HttpResponseBadRequest('页面错误！页码小于1或超出上限。')
@@ -38,6 +43,8 @@ def index(request, page_number):
     context = {
         'unfinished_tasks' : unfinished_tasks_current_page,
         'unfinished_tasks_count' : unfinished_tasks_count,
+        'order' : order,
+        'is_descend' : is_descend,
         'page_number' : page_number,
         'page_count' : unfinished_tasks_paged.num_pages,
         'has_previous_page' : has_previous_page,

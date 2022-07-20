@@ -6,12 +6,12 @@
 <table class="table table-hover">
     <thead>
         <tr>
-            <th class="bg-primary"><a href="#" class="text-light">任务ID <i class="bi bi-caret-up-fill text-light"></i></a></th>
-            <th class="bg-primary"><a href="#" class="text-light">患者（Patient ID） <i class="bi bi-caret-up-fill text-light"></i></a></th>
+            <th id="order_taskID"><a href="#">任务ID <i class="bi bi-caret-up-fill"></i></a></th>
+            <th id="order_patienID"><a href="#">患者（Patient ID）<i class="bi bi-caret-up-fill"></i></a></th>
             <th>性别</th>
-            <th class="bg-primary"><a href="#" class="text-light">年龄 <i class="bi bi-caret-up-fill text-light"></i></a></th>
-            <th class="bg-primary"><a href="#" class="text-light">检查日期 <i class="bi bi-caret-up-fill text-light"></i></a></th>
-            <th class="bg-primary"><a href="#" class="text-light">任务分配时间 <i class="bi bi-caret-up-fill text-light"></i></a></th>
+            <th id="order_age"><a href="#">实际年龄 <i class="bi bi-caret-up-fill"></i></a></th>
+            <th id="order_studyDate"><a href="#">检查日期 <i class="bi bi-caret-up-fill"></i></a></th>
+            <th id="order_taskAllocatedDate"><a href="#">任务分配时间 <i class="bi bi-caret-up-fill"></i></a></th>
             <th>历史记录</th>
         </tr>
     </thead>
@@ -20,7 +20,7 @@
             {% for task in unfinished_tasks %}
                 <tr id="evaluator_{{task.id}}">
                     <td>{{task.id}}</td>
-                    <td><a href="{% url 'BoneAge_index' 1 %}">
+                    <td><a href="#">
                         {{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）
                     </a></td>
                     <td>
@@ -31,7 +31,7 @@
                             <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
                         {% endif %}
                     </td>
-                    <td>{{task.dcm_file.patient.birthday|actual_age|floatformat}}</td>
+                    <td>{{task.dcm_file.age|floatformat}}</td>
                     <td>{% if task.dcm_file.Study_Date %}
                             {{task.dcm_file.Study_Date|date:"Y-n-j"}}
                         {% else %}
@@ -41,7 +41,7 @@
                     <td>{{task.allocated_datetime|date:"Y-n-j H:i"}}</td>
                     <td>
                         {% if task.history > 0 %}
-                            <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-clock-history" style="font-size:1.2rem">：{{task.history}}</a>
+                            <a href="#" class="bi bi-clock-history" style="font-size:1.2rem">：{{task.history}}</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -49,49 +49,4 @@
         </tbody>
     {% endif %}
 </table>
-<div class="d-flex justify-content-end">
-    <span class="align-self-center me-3">共 {{unfinished_tasks_count}} 项</span>
-    <nav>
-        <ul class="pagination">
-            {% if has_previous_page %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' 1 %}">首页</a></li>
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'-1' %}">上一页</a></li>
-            {% endif %}
-            {% if page_number|add:'-5' >= 1 %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'-5' %}">...</a></li>
-            {% endif %}
-            {% if page_number|add:'-4' >= 1 %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'-4' %}">{{page_number|add:'-4'}}</a></li>
-            {% endif %}
-            {% if page_number|add:'-3' >= 1 %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'-3' %}">{{page_number|add:'-3'}}</a></li>
-            {% endif %}
-            {% if page_number|add:'-2' >= 1 %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'-2' %}">{{page_number|add:'-2'}}</a></li>
-            {% endif %}
-            {% if page_number|add:'-1' >= 1 %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'-1' %}">{{page_number|add:'-1'}}</a></li>
-            {% endif %}
-                <li class="page-item active"><a class="page-link" href="{% url 'BoneAge_index' page_number %}">{{page_number}}</a></li>
-            {% if page_number|add:'1' <= page_count %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'1' %}">{{page_number|add:'1'}}</a></li>
-            {% endif %}
-            {% if page_number|add:'2' <= page_count %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'2' %}">{{page_number|add:'2'}}</a></li>
-            {% endif %}
-            {% if page_number|add:'3' <= page_count %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'3' %}">{{page_number|add:'3'}}</a></li>
-            {% endif %}
-            {% if page_number|add:'4' <= page_count %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'4' %}">{{page_number|add:'4'}}</a></li>
-            {% endif %}
-            {% if page_number|add:'5' <= page_count %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'5' %}">...</a></li>
-            {% endif %}
-            {% if has_next_page %}
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_number|add:'1' %}">下一页</a></li>
-                <li class="page-item"><a class="page-link" href="{% url 'BoneAge_index' page_count %}">尾页</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-</div>
+{% include 'BoneAge/index/paginater.html' %}

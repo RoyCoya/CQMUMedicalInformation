@@ -1,0 +1,14 @@
+/* 表头链接 */
+th a{color: black}
+th i{color: black}
+th a:hover{color: black}
+th[id^=order]:hover{background-color: rgb(229, 231, 231);}
+
+/* 当前排序 */
+.order{background-color: rgb(17,64,141)!important;}
+.order a{color: white}
+.order i{color: white}
+
+/* 表内链接 */
+td a:hover{color: #1fc075 !important;}
+.list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: #198754;}
