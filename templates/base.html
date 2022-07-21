@@ -29,16 +29,16 @@
             <div class="collapse navbar-collapse" id="nav-collapse">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_index_active %}{% endblock %}" href="{% url 'MainFrame_index' %}">首页</a>
+                        <a class="nav-link {% block nav_index %}{% endblock %}" href="{% url 'MainFrame_index' %}">首页</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle  {% block nav_boneage_active %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle {% block nav_BoneAge %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
                             骨龄评分系统
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'BoneAge_index' 1 0 0 %}">个人主页</a></li>
+                            <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 0 0 %}">个人主页</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
+                            <li><a class="dropdown-item {% block nav_BoneAge_library %}{% endblock %}" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
                         </ul>
                     </li>
                 </ul>
