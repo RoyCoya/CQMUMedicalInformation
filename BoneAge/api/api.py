@@ -28,7 +28,7 @@ def normalize(img_normalize, number):
     high = np.max(img_normalize)
     low = np.min(img_normalize)
     img_normalize = (img_normalize - low) / (high - low)
-    img_normalize = (img_normalize * number)
+    img_normalize = (img_normalize * number).astype('uint8')
     return img_normalize
 
 '''特定接口'''
@@ -279,6 +279,13 @@ def api_analyze_dcm(request):
             try: 
                 position = position[0]
                 img_crop = img_array[int(position[1]):int(position[3]), int(position[0]):int(position[2])]
+                clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+                r, g, b = cv2.split(img_crop)
+                r1 = clahe.apply(r)
+                g1 = clahe.apply(g)
+                b1 = clahe.apply(b)
+                img_crop = cv2.merge([r1, g1, b1])
+                img_crop = normalize(img_crop, 255)
                 level = grade_model.pre_gray(img_crop, name)
                 bone = bones.get(name=name)
                 bone.level = level
