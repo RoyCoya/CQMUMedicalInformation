@@ -1,0 +1,38 @@
+{% if tasks_finished %}
+<h2 class="text-center text-success">
+    <i class="bi bi-check2-all text-success"></i>
+    完结任务
+</h2>
+{% else %}
+<h2 class="text-center">
+    <i class="bi bi-receipt"></i>
+    任务列表
+</h2>
+{% endif %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th id="order_0"><a href="#">任务ID <i class="bi"></i></a></th>
+            <th>姓名</th>
+            <th id="order_1"><a href="#">患者ID <i class="bi"></i></a></th>
+            <th>性别</th>
+            <th id="order_2"><a href="#">实际年龄 <i class="bi"></i></a></th>
+            <th id="order_3"><a href="#">检查日期 <i class="bi"></i></a></th>
+            {% if tasks_finished %}
+            <th id="order_5"><a href="#">任务完成时间 <i class="bi"></i></a></th>
+            {% endif %}
+            <th id="order_4"><a href="#">任务分配时间 <i class="bi"></i></a></th>
+            <th>历史记录</th>
+        </tr>
+    </thead>
+    {% if tasks_finished %}
+        {% include 'BoneAge/index/tasks/table.html' with task_list=finished_tasks %}
+    {% else %}
+        {% include 'BoneAge/index/tasks/table.html' with task_list=unfinished_tasks %}
+    {% endif %}
+</table>
+{% if tasks_finished %}
+    {% include 'BoneAge/index/paginater.html' with tasks_count=finished_tasks_count redirect_url='BoneAge_finished_tasks' %}
+{% else %}
+    {% include 'BoneAge/index/paginater.html' with tasks_count=unfinished_tasks_count redirect_url='BoneAge_index' %}
+{% endif %}

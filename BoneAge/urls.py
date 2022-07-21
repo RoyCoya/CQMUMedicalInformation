@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
 	#页面
 	path('page/<int:page_number>/order/<int:order>/descend/<int:is_descend>/', views.index, name='BoneAge_index'),
+	path('finished/page/<int:page_number>/order/<int:order>/descend/<int:is_descend>/', views.finished_tasks, name='BoneAge_finished_tasks'),
 	path('evaluator/<int:bone_age_id>/', views.evaluator, name='BoneAge_evaluator'),
 	path('dicom/library/', views.dicom_library, name='BoneAge_dicom_library'),
 	path('dicom/library/admin/', views.dicom_library_admin, name='BoneAge_dicom_library_admin'),

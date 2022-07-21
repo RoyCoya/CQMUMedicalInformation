@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load BoneAge_global_tags %}
+
+{% block title %}完结任务｜骨龄评分系统{% endblock %}
+
+{% block nav_BoneAge %}active{% endblock %}
+{% block nav_BoneAge_index %}active{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/BoneAge/css/finished_tasks.css' %}">
+{% endblock css %}
+
+{% block content %}
+<!-- 欢迎栏、个人设置按钮 -->
+<div class="alert alert-primary d-flex justify-content-between" role="alert">
+    <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
+    <a data-bs-toggle="offcanvas" href="#toolbar_right">个人设置 <i class="bi bi-gear"></i></a>
+</div>
+
+<div class="row">
+    <!-- 未完成评测任务表 -->
+    <div class="col-9 border-end ps-5 pe-5">
+        {% include 'BoneAge/index/tasks/tasks.html' with tasks_finished=True %}
+    </div>
+    <!-- 面板 -->
+    <div class="col-3">
+        {% include 'BoneAge/index/pannel.html' %}
+    </div>
+</div>
+{% include 'BoneAge/index/settings.html' %}
+{% endblock content %}
+
+{% block js %}
+<script>
+    var order = {{order}}
+    var is_descend = {{is_descend}}
+    var page_number = {{page_number}}
+    var tasks_finished = true
+</script>
+<script src="{% static '/BoneAge/js/index/index.js' %}"></script>
+{% endblock js %}

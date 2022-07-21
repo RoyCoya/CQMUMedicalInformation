@@ -7,8 +7,10 @@ from BoneAge.pages import page
 '''
 界面，与 ./pages/pages.py中的页面对应
 '''
-#个人主页
+# 个人主页
 def index(request, page_number, order, is_descend): return page.index(request, page_number, order, is_descend)
+# 已完结任务
+def finished_tasks(request, page_number, order, is_descend): return page.finished_tasks(request, page_number, order, is_descend)
 # dicom库
 def dicom_library(request): return page.dicom_library(request)
 # dicom库后台

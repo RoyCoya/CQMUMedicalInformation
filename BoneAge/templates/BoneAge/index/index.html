@@ -21,11 +21,11 @@
 <div class="row">
     <!-- 未完成评测任务表 -->
     <div class="col-9 border-end ps-5 pe-5">
-        {% include 'BoneAge/index/tasks.html' %}
+        {% include 'BoneAge/index/tasks/tasks.html' with tasks_finished=False %}
     </div>
     <!-- 面板 -->
     <div class="col-3">
-        {% include 'BoneAge/index/pannel.html' %}
+        {% include 'BoneAge/index/pannel.html' with pannel_finished=True %}
     </div>
 </div>
 {% include 'BoneAge/index/settings.html' %}
@@ -36,6 +36,7 @@
     var order = {{order}}
     var is_descend = {{is_descend}}
     var page_number = {{page_number}}
+    var tasks_finished = false
 </script>
 <script src="{% static '/BoneAge/js/index/index.js' %}"></script>
 {% endblock js %}

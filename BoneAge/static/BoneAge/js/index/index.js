@@ -11,12 +11,14 @@ $("th[id^=order_]").click(function () {
     order_next = $(this).attr("id").replace("order_","")
     if(order == order_next)
         is_descend = is_descend == 1 ? 0 : 1
-    url = "/boneage/page/" +
+    url = "page/" +
         page_number +
         "/order/" +
         order_next
         + '/descend/' +
         is_descend + '/'
+    if(tasks_finished) url = "/boneage/finished/" + url
+    else url = "/boneage/" + url
     window.location.href = url
 });
 
