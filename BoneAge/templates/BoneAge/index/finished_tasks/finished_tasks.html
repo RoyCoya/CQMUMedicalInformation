@@ -1,17 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'BoneAge/base.html' %}
 {% load static %}
 {% load BoneAge_global_tags %}
 
-{% block title %}完结任务｜骨龄评分系统{% endblock %}
+{% block title_BoneAge %}完结任务{% endblock title_BoneAge %}
 
-{% block nav_BoneAge %}active{% endblock %}
-{% block nav_BoneAge_index %}active{% endblock %}
+{% block nav_BoneAge_index %}active{% endblock nav_BoneAge_index %}
 
-{% block css %}
+{% block css_BoneAge %}
 <link rel="stylesheet" href="{% static '/BoneAge/css/finished_tasks.css' %}">
-{% endblock css %}
+{% endblock css_BoneAge %}
 
-{% block content %}
+{% block content_BoneAge %}
 <!-- 欢迎栏、个人设置按钮 -->
 <div class="alert alert-primary d-flex justify-content-between" role="alert">
     <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
@@ -29,9 +28,9 @@
     </div>
 </div>
 {% include 'BoneAge/index/settings.html' %}
-{% endblock content %}
+{% endblock content_BoneAge %}
 
-{% block js %}
+{% block js_BoneAge %}
 <script>
     var order = {{order}}
     var is_descend = {{is_descend}}
@@ -39,4 +38,4 @@
     var tasks_finished = true
 </script>
 <script src="{% static '/BoneAge/js/index/index.js' %}"></script>
-{% endblock js %}
+{% endblock js_BoneAge %}

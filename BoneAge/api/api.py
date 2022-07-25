@@ -242,7 +242,6 @@ def api_analyze_dcm(request):
             img = img_array.squeeze()
             img = np.expand_dims(img, axis=2)
             img_array = np.concatenate((img, img, img), axis=-1)
-            print('cv2')
             cv2.imwrite(settings.MEDIA_ROOT+dcm.dcm.name + ".png", img_array, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
             dcm.dcm_to_image = dcm.dcm.name + ".png"
             # TODO:二分类
