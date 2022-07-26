@@ -40,6 +40,7 @@ class admin_boneage(admin.ModelAdmin):
         'allocated_to',
         'closed',
         'closed_date',
+        'modify_date',
     ]
 admin.site.register(Patient, admin_patient)
 admin.site.register(DicomFile, admin_dicomfile)

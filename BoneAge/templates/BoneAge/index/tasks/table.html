@@ -1,0 +1,35 @@
+<tbody>
+    {% for task in task_list %}
+        <tr id="evaluator_{{task.id}}">
+            <td>{{task.id}}</td>
+            <td><a href="#">
+                {{task.dcm_file.patient.name}}
+            </a></td>
+            <td>{{task.dcm_file.patient.Patient_ID}}</td>
+            <td>
+                {{task.dcm_file.patient.get_sex_display}}
+                {% if task.dcm_file.patient.sex == 'Female' %}
+                    <i class="bi bi-gender-female" style="color:DeepPink"></i>
+                {% else %}
+                    <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
+                {% endif %}
+            </td>
+            <td>{{task.dcm_file.age|floatformat}}</td>
+            <td>{% if task.dcm_file.Study_Date %}
+                    {{task.dcm_file.Study_Date|date:"Y-n-j"}}
+                {% else %}
+                未知
+                {% endif %}
+            </td>
+            {% if tasks_finished %}
+                <td>{{task.closed_date|date:"Y-n-j H:i"}}</td>
+            {% endif %}
+            <td>{{task.allocated_datetime|date:"Y-n-j H:i"}}</td>
+            <td>
+                {% if task.history > 0 %}
+                    <a href="#" class="bi bi-clock-history" style="font-size:1.2rem">：{{task.history}}</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>

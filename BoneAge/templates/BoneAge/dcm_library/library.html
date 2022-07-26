@@ -1,13 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'BoneAge/base.html' %}
 
-{% block title %}Dicom数据库｜骨龄评分系统{% endblock %}
+{% block title_BoneAge %}Dicom数据库{% endblock title_BoneAge %}
 
-{% block nav_boneage_active %}active{% endblock %}
+{% block nav_BoneAge_library %}active{% endblock %}
 
-{% block css %}
-{% endblock %}
+{% block css_BoneAge %}
+{% endblock css_BoneAge %}
 
-{% block content %}
+{% block content_BoneAge %}
 {% load static %}
 
 <div class="row mt-5">
@@ -79,7 +79,7 @@
     </div>
 </div>
 
-{% endblock %}
-{% block js %}
+{% endblock content_BoneAge %}
+{% block js_BoneAge %}
 <script src="{% static 'BoneAge/js/dcm_library/library.js' %}"></script>
-{% endblock %}
+{% endblock js_BoneAge %}

@@ -7,7 +7,7 @@ from shutil import copyfile
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.http import *
 from django.urls import reverse
 from django.core.files import File
@@ -28,7 +28,7 @@ def normalize(img_normalize, number):
     high = np.max(img_normalize)
     low = np.min(img_normalize)
     img_normalize = (img_normalize - low) / (high - low)
-    img_normalize = (img_normalize * number)
+    img_normalize = (img_normalize * number).astype('uint8')
     return img_normalize
 
 '''特定接口'''
@@ -39,9 +39,11 @@ def api_save_image_offset(request):
     dcm.brightness = request.POST['brightness']
     dcm.contrast = request.POST['contrast']
     dcm.save()
+    task = BoneAge.objects.get(dcm_file=dcm)
+    task.save()
     return HttpResponse('已修改图像亮度对比度偏移量')
 
-# 修改骨骼评分评级等详细信息
+# 修改骨骼评分评级备注等详细信息
 def api_modify_bone_detail(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_detail_id = request.POST['id']
@@ -54,6 +56,7 @@ def api_modify_bone_detail(request):
     bone_detail.remarks = request.POST['remarks']
     bone_detail.modify_user = request.user
     bone_detail.save()
+    bone_age.save()
     return HttpResponse('成功修改骨骼信息')
 
 # 修改骨骼定位
@@ -123,9 +126,9 @@ def api_upload_dcm(request):
         new_file.save()
 
         # 检验dcm能否读取（reader是否可以启动）
-        reader = None
         try: reader = dcmread(new_file.dcm, force=True)
-        except: 
+        except Exception as e:
+            print(e)
             new_file.delete()
             broken_files.append(file.name)
             continue
@@ -133,7 +136,8 @@ def api_upload_dcm(request):
         # 检验dcm能否读取sop_instance_uid
         sop_instance_uid = None
         try: sop_instance_uid = reader.SOPInstanceUID
-        except:
+        except Exception as e:
+            print(e)
             new_file.delete()
             sop_uid_miss_files.append(file.name)
             continue
@@ -155,22 +159,26 @@ def api_upload_dcm(request):
             birthday = None
             
             try: name = reader.PatientName
-            except:
+            except Exception as e:
+                print(e)
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
             try: Patient_ID = reader.PatientID
-            except: 
+            except Exception as e:
+                print(e) 
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
             try: sex = 'Male' if reader.PatientSex == 'M' else 'Female'
-            except:
+            except Exception as e:
+                print(e)
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
-            try: birthday = datetime.strptime(reader.PatientBirthDate,'%Y%m%d')
-            except:
+            try: birthday = datetime.strptime(reader.PatientBirthDate,'%Y%m%d').date()
+            except Exception as e:
+                print(e)
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
@@ -182,13 +190,12 @@ def api_upload_dcm(request):
                 modify_user=user,
             )
             new_file.patient = patient
-
-        # 扩展信息（dcm中读不到时可以pass，并设置为空）
+        # 扩展信息
         study_date = None
-        try: study_date = datetime.strptime(reader.StudyDate,'%Y%m%d')
-        except: pass
+        try: study_date = datetime.strptime(reader.StudyDate,'%Y%m%d').date()
+        except Exception as e: print(e)
         new_file.Study_Date = study_date
-        
+        new_file.age = (new_file.Study_Date - new_file.patient.birthday).days / 365
         # 结束dcm校验，保存
         new_file.save()
 
@@ -207,6 +214,10 @@ def api_upload_dcm(request):
         BoneDetail.objects.create(bone_age_instance=bone_age, name='First Distal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Distal Phalange', modify_user=user)
         BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Distal Phalange', modify_user=user)
+
+    print(broken_files)
+    print(sop_uid_miss_files)
+    print(duplicate_files)
 
     # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
@@ -239,6 +250,7 @@ def api_analyze_dcm(request):
             # TODO:二分类
             dcm.error = 0
         except Exception as e:
+            print(e)
             dcm.error = 415
             continue
         dcm.save()
@@ -250,13 +262,11 @@ def api_analyze_dcm(request):
             bone.error = 404
             bone.save()
         bone_detected = object_model.infer(img_array)
-        print(bone_detected)
         
         for name,position in bone_detected.items():
             try: 
                 position = position[1]
                 bone = bones.get(name=name)
-                print(bone)
                 bone.center_x = position[0]
                 bone.center_y = position[1]
                 bone.width = position[2]
@@ -271,6 +281,13 @@ def api_analyze_dcm(request):
             try: 
                 position = position[0]
                 img_crop = img_array[int(position[1]):int(position[3]), int(position[0]):int(position[2])]
+                clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+                r, g, b = cv2.split(img_crop)
+                r1 = clahe.apply(r)
+                g1 = clahe.apply(g)
+                b1 = clahe.apply(b)
+                img_crop = cv2.merge([r1, g1, b1])
+                img_crop = normalize(img_crop, 255)
                 level = grade_model.pre_gray(img_crop, name)
                 bone = bones.get(name=name)
                 bone.level = level

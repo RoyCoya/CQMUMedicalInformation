@@ -1,8 +1,9 @@
-from traceback import print_tb
+from lib2to3.pytree import convert
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 from django.http import *
+from django.urls import reverse
 from django.core.paginator import Paginator
 import datetime
 
@@ -10,17 +11,31 @@ from BoneAge.models import *
 from BoneAge.api.api import login_check
 
 # 个人主页
-def index(request, page_number):
+def index(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
-    unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user).order_by('id')
+
+    unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user)
+    # 按所需排序条件对未完成任务列表进行排序
+    if order > 4:
+        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    order_para = {
+        0 : lambda : 'id',
+        1 : lambda : 'dcm_file__patient__Patient_ID',
+        2 : lambda : 'dcm_file__age',
+        3 : lambda : 'dcm_file__Study_Date',
+        4 : lambda : 'allocated_datetime',
+    }[order]()
+    if is_descend:
+        order_para = '-' + order_para
+    unfinished_tasks = unfinished_tasks.order_by(order_para)
     unfinished_tasks_count = len(unfinished_tasks)
     finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
     finished_tasks_count = len(finished_tasks)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
     
+    # 任务列表分页
     unfinished_tasks_paged = Paginator(unfinished_tasks, 15)
-    print(unfinished_tasks_paged)
     unfinished_tasks_current_page = None
     try: unfinished_tasks_current_page = unfinished_tasks_paged.page(page_number)
     except: return HttpResponseBadRequest('页面错误！页码小于1或超出上限。')
@@ -28,7 +43,7 @@ def index(request, page_number):
     has_next_page = unfinished_tasks_current_page.has_next()
 
     # 查询每个患者的历史评测记录数量
-    for task in unfinished_tasks:
+    for task in unfinished_tasks_current_page:
         task.history = 1
 
     # 完结任务大于6个折叠，跳转给完结任务界面
@@ -38,6 +53,8 @@ def index(request, page_number):
     context = {
         'unfinished_tasks' : unfinished_tasks_current_page,
         'unfinished_tasks_count' : unfinished_tasks_count,
+        'order' : order,
+        'is_descend' : is_descend,
         'page_number' : page_number,
         'page_count' : unfinished_tasks_paged.num_pages,
         'has_previous_page' : has_previous_page,
@@ -48,6 +65,63 @@ def index(request, page_number):
         'page_count' : unfinished_tasks_paged.num_pages,
     }
     return render(request,'BoneAge/index/index.html',context)
+
+# 完结任务
+def finished_tasks(request, page_number, order, is_descend):
+    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    if request.user.is_staff: return dicom_library_admin(request)
+
+    finished_tasks = BoneAge.objects.filter(closed=True).filter(allocated_to=request.user)
+    finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
+    # 按所需排序条件对完结任务列表进行排序
+    if order > 5:
+        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    order_para = {
+        0 : lambda : 'id',
+        1 : lambda : 'dcm_file__patient__Patient_ID',
+        2 : lambda : 'dcm_file__age',
+        3 : lambda : 'dcm_file__Study_Date',
+        4 : lambda : 'allocated_datetime',
+        5 : lambda : 'closed_date'
+    }[order]()
+    if is_descend:
+        order_para = '-' + order_para
+    finished_tasks = finished_tasks.order_by(order_para)
+    finished_tasks_count = len(finished_tasks)
+    unfinished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=False).order_by('id')
+    unfinished_tasks_count = len(unfinished_tasks)
+    
+    # 完结任务列表分页
+    finished_tasks_paged = Paginator(finished_tasks, 15)
+    finished_tasks_current_page = None
+    try: finished_tasks_current_page = finished_tasks_paged.page(page_number)
+    except: return HttpResponseBadRequest('页面错误！页码小于1或超出上限。')
+    has_previous_page = finished_tasks_current_page.has_previous()
+    has_next_page = finished_tasks_current_page.has_next()
+
+    # 查询每个患者的历史评测记录数量
+    for task in finished_tasks_current_page:
+        task.history = 1
+
+    # 未完结任务大于6个折叠，跳转给个人主页
+    if unfinished_tasks_count > 6:
+        unfinished_tasks = unfinished_tasks[0:6]
+    
+    context = {
+        'finished_tasks' : finished_tasks_current_page,
+        'finished_tasks_count' : finished_tasks_count,
+        'order' : order,
+        'is_descend' : is_descend,
+        'page_number' : page_number,
+        'page_count' : finished_tasks_paged.num_pages,
+        'has_previous_page' : has_previous_page,
+        'has_next_page' : has_next_page,
+        'unfinished_tasks' : unfinished_tasks,
+        'unfinished_tasks_count' : unfinished_tasks_count,
+        'finished_today_count' : finished_today_count,
+        'page_count' : finished_tasks_paged.num_pages,
+    }
+    return render(request,'BoneAge/index/finished_tasks/finished_tasks.html',context)
 
 # dicom库
 def dicom_library(request):

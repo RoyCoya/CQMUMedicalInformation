@@ -1,10 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'BoneAge/base.html' %}
 {% load static %}
 
-{% block title %}评分面板 | 骨龄评分系统{% endblock %}
-{% block nav_boneage_active %}active{% endblock %}
+{% block title_BoneAge %}{{patient.name}}｜评测器{% endblock title_BoneAge %}
 
-{% block css %}
+{% block css_BoneAge %}
 <link rel="stylesheet" href="{% static '/BoneAge/image_cropper/cropper.min.css' %}">
 <style>
     .img-preview {
@@ -19,9 +18,9 @@
     .list-group-item.active span{ color:white }
     .list-group-item:hover{cursor: default!important;}
 </style>
-{% endblock %}
+{% endblock css_BoneAge %}
 
-{% block content %}
+{% block content_BoneAge %}
 
 <div class="row mt-2">
     <div class="col-6 border-end">
@@ -73,9 +72,9 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock content_BoneAge %}
 
-{% block js %}
+{% block js_BoneAge %}
 <script src="{% static '/BoneAge/image_cropper/cropper.min.js' %}" ></script>
 <script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}" ></script>
 <script src="{% static '/BoneAge/js/evaluator/RUS_CHN.js' %}" ></script>
@@ -113,8 +112,8 @@
     var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"
     var url_api_modify_bone_age = "{% url 'api_BoneAge_modify_bone_age' %}"
     var url_api_finish_task = "{% url 'api_BoneAge_finish_task' %}"
-    var url_personal_index = "{% url 'BoneAge_index' 1 %}"
+    var url_personal_index = "{% url 'BoneAge_index' 1 0 0 %}"
     var url_api_save_image_offset = "{% url 'api_BoneAge_save_image_offset' %}"
 </script>
 <script src="{% static '/BoneAge/js/evaluator/evaluator.js' %}"></script>
-{% endblock %}
+{% endblock js_BoneAge %}

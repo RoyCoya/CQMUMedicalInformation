@@ -1,13 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'BoneAge/base.html' %}
 
-{% block title %}Dicom数据库后台｜骨龄评分系统{% endblock %}
+{% block title_BoneAge %}管理后台{% endblock title_BoneAge %}
 
-{% block nav_boneage_active %}active{% endblock %}
+{% block nav_BoneAge_index %}active{% endblock nav_BoneAge_index %}
 
-{% block css %}
-{% endblock %}
+{% block css_BoneAge %}
+{% endblock css_BoneAge %}
 
-{% block content %}
+{% block content_BoneAge %}
 {% load static %}
 
 {% if unanalyzed_dcm_count > 0 %}
@@ -104,12 +104,12 @@
 </div>
 
 
-{% endblock %}
+{% endblock content_BoneAge %}
 
-{% block js %}
+{% block js_BoneAge %}
 <script>
     var task_count = {{unallocated_tasks|length}}
     var url_api_upload_dcm = "{% url 'api_BoneAge_upload_dcm' %}"
 </script>
 <script src="{% static 'BoneAge/js/dcm_library/admin.js' %}"></script>
-{% endblock %}
+{% endblock js_BoneAge %}
