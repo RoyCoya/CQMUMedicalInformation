@@ -39,9 +39,11 @@ def api_save_image_offset(request):
     dcm.brightness = request.POST['brightness']
     dcm.contrast = request.POST['contrast']
     dcm.save()
+    task = BoneAge.objects.get(dcm_file=dcm)
+    task.save()
     return HttpResponse('已修改图像亮度对比度偏移量')
 
-# 修改骨骼评分评级等详细信息
+# 修改骨骼评分评级备注等详细信息
 def api_modify_bone_detail(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_detail_id = request.POST['id']
@@ -54,6 +56,7 @@ def api_modify_bone_detail(request):
     bone_detail.remarks = request.POST['remarks']
     bone_detail.modify_user = request.user
     bone_detail.save()
+    bone_age.save()
     return HttpResponse('成功修改骨骼信息')
 
 # 修改骨骼定位
