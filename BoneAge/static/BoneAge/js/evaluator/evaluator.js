@@ -96,6 +96,7 @@ var image = $('#dcm');
 image.cropper({
     preview : '.img-preview',
     viewMode : 2,
+    modal: false,
     guides : false,
     data : bones['radius'],
     cropmove(e){
