@@ -53,6 +53,10 @@ $.fn.switch_bone = function(bone_name_key){
 };
 /* 如果所有骨骼等级数据与定位正常，则计算分数并显示参考年龄 */
 $.fn.update_bone_age = function(){
+    $("#bone_age").removeAttr('disabled');
+    $("#bone_age").attr('placeholder','')
+    $('#label_bone_age').removeClass('text-danger');
+    $("#label_bone_age").text('');
     var is_valid = true
     $.each(bones, function(bone_name_key,bone_details){
         if(bone_details['level'] < 0) is_valid = false
@@ -75,8 +79,10 @@ $.fn.update_bone_age = function(){
         }
     }
     else{
-        $("#bone_age").val('');
-        $("#label_bone_age").text('');
+        $("#bone_age").attr('disabled', 'disabled');
+        $("#bone_age").attr('placeholder', '*无法计算，骨骼数据存在错误*');
+        $("#label_bone_age").addClass('text-danger');
+        $("#label_bone_age").text('*无法计算*');
     }
 };
 
@@ -233,6 +239,7 @@ $("#bone_details_level").on('input', function (e) {
     level = bone['level']
     $("#level-fifth-metacarpal").removeClass('text-danger')
     $("#bone_details_level_label").text($(this).val() + " | " + level14_to_level8[bone_name_key][$(this).val()])
+    console.log(bone['level']);
     $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
     $("#modify_bone_detail").removeAttr('hidden')
     if($(this).val() > 0){
@@ -297,7 +304,7 @@ $("#modify_bone_detail").click(function (e) {
     bone['level'] = $("#bone_details_level").val()
     bone['level_message'] = $("#bone_details_level").val() + " 级"
     $("span[id=level-" + bone_name_key + "]").text(bone['level_message'])
-    $("span[id=level-" + bone_name_key + "]").removeClass('text-secondary')
+    $("span[id=level-" + bone_name_key + "]").removeClass('text-danger')
     bone['remarks'] = $("#bone_details_remarks").val()
     $.ajax({
         type: "post",

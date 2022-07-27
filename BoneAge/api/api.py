@@ -77,6 +77,7 @@ def api_modify_bone_position(request):
     bone_detail.width = box_width / img.width
     bone_detail.height = box_height / img.height
     bone_detail.modify_user = request.user
+    bone_detail.error = 0
     bone_detail.save()
     return HttpResponse('成功修改骨骼标注位置')
 

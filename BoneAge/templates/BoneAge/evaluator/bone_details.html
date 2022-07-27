@@ -18,7 +18,7 @@
                             {% if bone.level >= 0 %}
                                 <span id="level-{{bone.name|slugify}}">{{bone.level}} 级</span>
                             {% else %}
-                                <span id="level-{{bone.name|slugify}}" class="text-secondary">*{{bone.get_level_display}}*</span>
+                                <span id="level-{{bone.name|slugify}}" class="text-danger">*{{bone.get_level_display}}*</span>
                             {% endif %}
                         </span>
                     {% else %}
