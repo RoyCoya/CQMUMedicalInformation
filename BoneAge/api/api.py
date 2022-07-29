@@ -336,6 +336,7 @@ def api_allocate_tasks_random(request):
             task.save()
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
 
+# 导出数据
 def api_export_bone_data(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
@@ -364,6 +365,10 @@ def api_export_bone_data(request):
                 label_content += str(bone.height)
                 label_content += '\t'
                 label_content += str(bone.level)
+                label_content += '\t'
+                label_content += str(bone.bone_age_instance.dcm_file.patient.sex)
+                label_content += '\t'
+                label_content += str(bone.bone_age_instance.dcm_file.age)
                 label_content += '\n'
             f.write(label_content)
     
