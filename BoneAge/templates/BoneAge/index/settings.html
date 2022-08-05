@@ -3,13 +3,48 @@
         <h4>个人设置</h4>
     </div>
     <div class="offcanvas-body">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-                这个功能还没做
-            </li>
-            <li class="list-group-item">
-                诶嘿(´▽｀)
-            </li>
-        </ul>
+        <div class="container">
+            <div class="d-flex justify-content-between mt-1">
+                <span>
+                    启用快捷键
+                    <i class="bi bi-question-circle-fill" data-bs-toggle="popover" title="使用提示" 
+                    data-bs-content="在评测器中，按W或S切换骨骼。"></i>
+                    ：
+                </span>    
+                <div class="form-check form-switch">
+                    <input id="preference_shortcut" class="form-check-input" type="checkbox" role="switch" {% if preference.shortcut %}checked{% endif %}>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="align-self-center col-4 ps-0">评测标准：</div>
+                <div class="col-8 pe-0">
+                    <select class="form-select" id="preference_standard">
+                        <option value="RUS">RUS-CHN（默认）</option>
+                        <option value="CHN" disabled>CHN（未上线）</option>
+                    </select> 
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="align-self-center col-4 ps-0">默认骨骼：</div>
+                <div class="col-8 pe-0">
+                    <select class="form-select" id="preference_default_bone">
+                        <option value="RUS_radius">RUS 桡骨（默认）</option>
+                        <option value="RUS_ulna">RUS 尺骨</option>
+                        <option value="RUS_first-metacarpal">RUS 第一掌骨</option>
+                        <option value="RUS_third-metacarpal">RUS 第三掌骨</option>
+                        <option value="RUS_fifth-metacarpal">RUS 第五掌骨</option>
+                        <option value="RUS_first-proximal-phalange">RUS 第一近节指骨</option>
+                        <option value="RUS_third-proximal-phalange">RUS 第三近节指骨</option>
+                        <option value="RUS_fifth-proximal-phalange">RUS 第五近节指骨</option>
+                        <option value="RUS_third-middle-phalange">RUS 第三中节指骨</option>
+                        <option value="RUS_fifth-middle-phalange">RUS 第五中节指骨</option>
+                        <option value="RUS_first-distal-phalange">RUS 第一远节指骨</option>
+                        <option value="RUS_third-distal-phalange">RUS 第三远节指骨</option>
+                        <option value="RUS_fifth-distal-phalange">RUS 第五远节指骨</option>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

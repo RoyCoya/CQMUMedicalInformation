@@ -3,7 +3,6 @@ from django.contrib.auth import settings
 
 # 患者，全局唯一
 class Patient(models.Model):
-    """患者数据表"""
     class Meta:
         verbose_name = '患者'
         verbose_name_plural = '患者'
@@ -28,7 +27,6 @@ class Patient(models.Model):
     
 # Dicom文件，与唯一的患者n:1对应。当Dicom的patient id在数据库中无法找到对应患者时，新建患者并挂载外键
 class DicomFile(models.Model):
-    """DICOM 文件表"""
     class Meta:
         verbose_name = 'Dicom文件'
         verbose_name_plural = 'Dicom文件'
@@ -68,7 +66,6 @@ class DicomFile(models.Model):
 
 # 骨龄标注任务（在前端名为‘task’），与唯一的Dicom文件1:1对应
 class BoneAge(models.Model):
-    """骨龄判断结果表"""
     class Meta:
         verbose_name = '骨龄判断结果'
         verbose_name_plural = '骨龄判断结果'
@@ -91,7 +88,6 @@ class BoneAge(models.Model):
 
 # 每根骨头的详细数据，和唯一的task为n:1关系
 class BoneDetail(models.Model):
-    """骨具体信息"""
     class Meta:
         verbose_name = '骨骼具体数据'
         verbose_name_plural = '骨骼具体数据'
@@ -103,7 +99,7 @@ class BoneDetail(models.Model):
             ' | dcm id:' + ' ' + 
             str(self.bone_age_instance.dcm_file.id) +
             ' | ' + self.name
-        ) 
+        )
 
     '''基础信息'''
     bone_name_choice = (
@@ -158,3 +154,36 @@ class BoneDetail(models.Model):
     id = models.AutoField(primary_key=True,verbose_name='ID')
     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='bone_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
+
+# 用户个人偏好设置
+class Preference(models.Model):
+    class Meta:
+        verbose_name = '偏好设置'
+        verbose_name_plural = '偏好设置'
+    def __str__(self):
+        return str()
+
+    '''基础设置'''
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name='用户', on_delete=models.CASCADE, primary_key=True)
+    standard_choice = (
+        ('RUS','RUS-CHN标准'),
+        ('CHN','CHN标准'),
+    )
+    standard = models.CharField(choices=standard_choice, max_length=10, default='RUS',verbose_name='默认骨龄标准')
+    default_bone_choice = (
+        ('RUS_radius','RUS 桡骨'),
+        ('RUS_ulna','RUS 尺骨'),
+        ('RUS_first-metacarpal','RUS 第一掌骨'),
+        ('RUS_third-metacarpal','RUS 第三掌骨'),
+        ('RUS_fifth-metacarpal','RUS 第五掌骨'),
+        ('RUS_first-proximal-phalange','RUS 第一近节指骨'),
+        ('RUS_third-proximal-phalange','RUS 第三近节指骨'),
+        ('RUS_fifth-proximal-phalange','RUS 第五近节指骨'),
+        ('RUS_third-middle-phalange','RUS 第三中节指骨'),
+        ('RUS_fifth-middle-phalange','RUS 第五中节指骨'),
+        ('RUS_first-distal-phalange','RUS 第一远节指骨'),
+        ('RUS_third-distal-phalange','RUS 第三远节指骨'),
+        ('RUS_fifth-distal-phalange','RUS 第五远节指骨'),
+    )
+    default_bone = models.CharField(choices=default_bone_choice, max_length=100, default='RUS_radius',verbose_name='默认骨骼')
+    shortcut = models.BooleanField(default=True, verbose_name='启用快捷键')

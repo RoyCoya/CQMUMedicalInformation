@@ -8,12 +8,15 @@ from django.core.paginator import Paginator
 import datetime
 
 from BoneAge.models import *
-from BoneAge.api.api import login_check
+from BoneAge.api.api import login_check, load_preference
 
 # 个人主页
 def index(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
+    
+    # 加载用户偏好
+    preference = load_preference(request)
 
     unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user)
     # 按所需排序条件对未完成任务列表进行排序
@@ -51,6 +54,7 @@ def index(request, page_number, order, is_descend):
         finished_tasks = finished_tasks[0:6]
     
     context = {
+        'preference' : preference,
         'unfinished_tasks' : unfinished_tasks_current_page,
         'unfinished_tasks_count' : unfinished_tasks_count,
         'order' : order,
@@ -70,6 +74,9 @@ def index(request, page_number, order, is_descend):
 def finished_tasks(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
+
+    # 加载用户偏好
+    preference = load_preference(request)
 
     finished_tasks = BoneAge.objects.filter(closed=True).filter(allocated_to=request.user)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
@@ -108,6 +115,7 @@ def finished_tasks(request, page_number, order, is_descend):
         unfinished_tasks = unfinished_tasks[0:6]
     
     context = {
+        'preference' : preference,
         'finished_tasks' : finished_tasks_current_page,
         'finished_tasks_count' : finished_tasks_count,
         'order' : order,
@@ -152,11 +160,15 @@ def evaluator(request,bone_age_id):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_age = BoneAge.objects.get(id=bone_age_id)
 
+    # 加载用户偏好
+    preference = load_preference(request)
+
     dcm = bone_age.dcm_file
     patient = dcm.patient
     actual_age = dcm.Study_Date - patient.birthday
     bone_details = BoneDetail.objects.filter(bone_age_instance=bone_age)
     context = {
+        'preference' : preference,
         'patient' : patient,
         'dcm' : dcm,
         'bone_age_instance' : bone_age,

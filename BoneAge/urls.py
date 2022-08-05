@@ -9,6 +9,8 @@ urlpatterns = [
 	path('dicom/library/', views.dicom_library, name='BoneAge_dicom_library'),
 	path('dicom/library/admin/', views.dicom_library_admin, name='BoneAge_dicom_library_admin'),
 	#接口
+	path('preference/shortcut/', views.api_preference_switch_shortcut, name='api_BoneAge_preference_switch_shortcut'),
+	path('preference/defaultbone/', views.api_preference_switch_default_bone, name="api_BoneAge_preference_switch_default_bone"),
 	path('evaluator/offset/save/', views.api_save_image_offset, name='api_BoneAge_save_image_offset'),
 	path('evaluator/bone_detail/save/', views.api_modify_bone_detail, name='api_BoneAge_modify_bone_detail'),
 	path('evaluator/bone_postion/save/', views.api_modify_bone_position, name='api_BoneAge_modify_bone_position'),
