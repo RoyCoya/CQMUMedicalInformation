@@ -104,7 +104,7 @@ image.cropper({
     viewMode : 2,
     modal: false,
     guides : false,
-    data : bones['radius'],
+    data : bones[default_bone],
     cropmove(e){
         $("#modify_bone_position").removeAttr('hidden')
     }
@@ -124,8 +124,6 @@ $(document).ready(function () {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    /* 选中骨骼，默认从桡骨开始 */
-    $("#view-radius").parent().addClass('active');
     //骨骼等级14转8
     $.fn.switch_bone('fifth-distal-phalange')
     $.fn.switch_bone('fifth-middle-phalange')
@@ -141,6 +139,10 @@ $(document).ready(function () {
     $.fn.switch_bone('ulna')
     $.fn.switch_bone('radius')
     $.fn.update_bone_age()
+
+    /* 选中默认骨骼 */
+    $("#view-" + default_bone).parent().addClass('active');
+    $.fn.switch_bone(default_bone)
 
     /* 焦点至评级条 */
     $("#bone_details_level").focus()

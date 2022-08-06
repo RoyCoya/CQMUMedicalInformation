@@ -114,6 +114,10 @@
     var url_api_finish_task = "{% url 'api_BoneAge_finish_task' %}"
     var url_personal_index = "{% url 'BoneAge_index' 1 0 0 %}"
     var url_api_save_image_offset = "{% url 'api_BoneAge_save_image_offset' %}"
+    var default_bone = ("{{preference.default_bone}}").replace('RUS_', "").replace('CHN', "")
 </script>
 <script src="{% static '/BoneAge/js/evaluator/evaluator.js' %}"></script>
+{% if preference.shortcut %}
+<script src="{% static '/BoneAge/js/evaluator/shortcut.js' %}"></script>
+{% endif %}
 {% endblock js_BoneAge %}

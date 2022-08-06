@@ -36,6 +36,11 @@
     var is_descend = {{is_descend}}
     var page_number = {{page_number}}
     var tasks_finished = true
+    var preference_shortcut = {% if preference.shortcut %}true{% else %}false{% endif %}
+    var preference_standard = '{{preference.standard}}'
+    var preference_default_bone = '{{preference.default_bone}}'
+    var url_api_preference_switch_shortcut = "{% url 'api_BoneAge_preference_switch_shortcut' %}"
+    var url_api_preference_switch_default_bone = "{% url 'api_BoneAge_preference_switch_default_bone' %}"
 </script>
 <script src="{% static '/BoneAge/js/index/index.js' %}"></script>
 {% endblock js_BoneAge %}
