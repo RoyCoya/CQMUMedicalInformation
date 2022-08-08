@@ -189,7 +189,6 @@ def evaluator(request,bone_age_id):
 
     dcm = task.dcm_file
     patient = dcm.patient
-    actual_age = dcm.Study_Date - patient.birthday
     context = {
         'preference' : preference,
         'patient' : patient,
@@ -198,6 +197,5 @@ def evaluator(request,bone_age_id):
         'pre_task' : pre_task,
         'next_task' : next_task,
         'bone_details' : bone_details,
-        'actual_age' : actual_age.days / 365,
     }
     return render(request,'BoneAge/evaluator/evaluator.html',context)

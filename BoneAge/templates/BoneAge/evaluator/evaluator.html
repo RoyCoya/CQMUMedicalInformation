@@ -5,19 +5,7 @@
 
 {% block css_BoneAge %}
 <link rel="stylesheet" href="{% static '/BoneAge/image_cropper/cropper.min.css' %}">
-<style>
-    .img-preview {
-        background-color: #f7f7f7;
-        overflow: hidden;
-        width: 100%;
-        text-align: center;
-      }
-    .img-preview > img { max-width: 100%; }
-    .list-group-item{ padding: .7rem 1rem }
-    .list-group-item span{ color: black; }
-    .list-group-item.active span{ color:white }
-    .list-group-item:hover{cursor: default!important;}
-</style>
+<link rel="stylesheet" href="{% static '/BoneAge/css/evaluator.css' %}">
 {% endblock css_BoneAge %}
 
 {% block content_BoneAge %}
@@ -114,6 +102,10 @@
 <script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}" ></script>
 <script src="{% static '/BoneAge/js/evaluator/RUS_CHN.js' %}" ></script>
 <script>
+    var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
     var img_width = {{dcm.dcm_to_image.width}}
     var img_height = {{dcm.dcm_to_image.height}}
     var task = {
@@ -141,7 +133,7 @@
     var dcm_id = {{dcm.id}}
     var brightness = {{dcm.brightness}}
     var contrast = {{dcm.contrast}}
-    var actual_age = {{actual_age}}
+    var actual_age = {{dcm.age}}
     var sex = '{{patient.sex|lower}}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
     var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"

@@ -24,7 +24,9 @@
                     {% else %}
                         <span id="error-{{bone.name|slugify}}" class="col-11">
                             <span>{{bone.get_name_display}}</span>：
-                            <span id="level-{{bone.name|slugify}}" class="text-danger">*{{bone.get_error_display}}*</span>
+                            <span id="level-{{bone.name|slugify}}" class="text-danger">
+                                <i class="bi bi-exclamation-triangle-fill"></i> {{bone.get_error_display}}
+                            </span>
                         </span>
                         <a id="fix-{{bone.name|slugify}}" href="#" class="bi bi-wrench col-1" hidden></a>
                     {% endif %}
@@ -34,6 +36,9 @@
             <span class="col-11">
                 <strong>骨龄判断：</strong>
                 <span id="label_bone_age">{{task.bone_age}}岁</span>
+                <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger"
+                data-bs-toggle="tooltip" data-bs-placement="top"
+                title="注意：判断年龄与实际年龄差距大于1年！" hidden></i>
             </span>
             <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a>
         </div>
@@ -72,7 +77,7 @@
 </div>
 
 <!-- 编辑骨龄弹出框 -->
-<div class="modal fade" id="modal_edit_bone_age" tabindex="-1">
+<div class="modal fade" id="modal_edit_bone_age" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -80,10 +85,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <label>骨龄（实际年龄 {{actual_age|floatformat}} 岁）：</label>
-                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 onkeyup="value=value.replace(/[^\d\.]/g,'');if(value<0) value=0;if(value>18)value=18;" required {% if task.bone_age >= 0 %}value="{{task.bone_age}}"{% endif %}>
-                <div id="bone_age_great_differ_warning" class="invalid-feedback text-warning">* 注意：与实际年龄相差过大！</div>
-                <div id="bone_age_invalid" class="invalid-feedback">* 错误：请填写骨龄！</div>
+                <label>骨龄（实际年龄 {{dcm.age|floatformat}} 岁）：</label>
+                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 required {% if task.bone_age >= 0 %}value="{{task.bone_age}}"{% endif %}>
+                <div id="bone_age_great_differ_warning" class="invalid-feedback text-danger">
+                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> 注意：判断年龄与实际年龄差距大于1年！
+                </div>
+                <div id="bone_age_invalid" class="invalid-feedback text-danger">
+                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> 错误：请填写骨龄！
+                </div>
                 <label class="mt-2">备注：</label>
                 <textarea id="bone_age_remarks" class="form-control" maxlength="300" placeholder="非必填"></textarea>
             </div>
