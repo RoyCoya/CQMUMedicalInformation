@@ -158,20 +158,45 @@ def dicom_library_admin(request):
 # 评分器
 def evaluator(request,bone_age_id):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    bone_age = BoneAge.objects.get(id=bone_age_id)
+    task = BoneAge.objects.get(id=bone_age_id)
 
     # 加载用户偏好
     preference = load_preference(request)
+    bone_details = []
+    bone_order = {
+        'RUS' : lambda : preference.bone_order_RUS.split('|'),
+        # 'CHN' : lambda : preference.bone_order_RUS, （未实装）
+    }[preference.standard]()
+    preference.bone_order = bone_order
+    for bone_name in bone_order:
+        try: bone_detail = BoneDetail.objects.get(name=bone_name,bone_age_instance=task)
+        except Exception as e:return HttpResponseBadRequest(e)
+        bone_details.append(bone_detail)
 
-    dcm = bone_age.dcm_file
+    # 上下一个任务（用于快捷键切换），若当前任务完结则以时间倒序为准，若当前任务未完成则以任务id为准
+    pre_task = None
+    next_task = None
+    if task.closed:
+        try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__gt=task.closed_date).order_by('closed_date').first()
+        except Exception as e: print(e)
+        try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__lt=task.closed_date).order_by('closed_date').last()
+        except Exception as e: print(e)
+    else:
+        try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__lt=task.id).last()
+        except Exception as e: print(e)
+        try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__gt=task.id).first()
+        except Exception as e: print(e)
+
+    dcm = task.dcm_file
     patient = dcm.patient
     actual_age = dcm.Study_Date - patient.birthday
-    bone_details = BoneDetail.objects.filter(bone_age_instance=bone_age)
     context = {
         'preference' : preference,
         'patient' : patient,
         'dcm' : dcm,
-        'bone_age_instance' : bone_age,
+        'task' : task,
+        'pre_task' : pre_task,
+        'next_task' : next_task,
         'bone_details' : bone_details,
         'actual_age' : actual_age.days / 365,
     }

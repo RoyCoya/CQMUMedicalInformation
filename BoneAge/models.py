@@ -187,3 +187,11 @@ class Preference(models.Model):
     )
     default_bone = models.CharField(choices=default_bone_choice, max_length=100, default='RUS_radius',verbose_name='默认骨骼')
     shortcut = models.BooleanField(default=True, verbose_name='启用快捷键')
+    bone_order_RUS = models.CharField(
+        default='Radius|Ulna|First Metacarpal|Third Metacarpal|Fifth Metacarpal|'
+        'First Proximal Phalange|Third Proximal Phalange|Fifth Proximal Phalange|'
+        'Third Middle Phalange|Fifth Middle Phalange|'
+        'First Distal Phalange|Third Distal Phalange|Fifth Distal Phalange',
+        max_length= 500,
+        verbose_name="RUS 骨骼排序"
+    )

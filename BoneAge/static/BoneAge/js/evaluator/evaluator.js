@@ -338,7 +338,7 @@ $('#modify_bone_position').click(function (e) {
     $.fn.switch_bone(bone_name_key)
 });
 
-/* 修改骨龄 */
+/* 手动修改骨龄 */
 $("#confirm_edit_bone_age").click(function (e) { 
     var bone_age = $("#bone_age").val()
     if(bone_age == ''){
@@ -349,11 +349,11 @@ $("#confirm_edit_bone_age").click(function (e) {
         bone_age = parseFloat(bone_age)
         $("#label_bone_age").text(bone_age + " 岁")
         $("#label_bone_age").removeClass('text-danger')
-        bone_age_instance['bone_age'] = bone_age
+        task['bone_age'] = bone_age
         $.ajax({
             type: "post",
             url: url_api_modify_bone_age,
-            data: bone_age_instance,
+            data: task,
             dataType: "json",
             headers:{'X-CSRFToken': csrftoken}
         });
@@ -371,16 +371,16 @@ $("#task_closed").click(function (e) {
     })
     if(bone_age == '') is_valid = false
     if(is_valid){
-        finish_task_modal.show()
+        if(!is_shortcut_enable) finish_task_modal.show();
         this.checked = true
         $('#label_task_status').text('任务已完成')
         $('#label_task_status').removeClass('text-success')
         $('#label_task_status').addClass('text-primary')
-        bone_age_instance['closed'] = true
+        task['closed'] = true
         $.ajax({
             type: "post",
             url: url_api_finish_task,
-            data: bone_age_instance,
+            data: task,
             dataType: "json",
             headers:{'X-CSRFToken': csrftoken}
         });

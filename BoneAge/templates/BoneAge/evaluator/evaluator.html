@@ -21,7 +21,6 @@
 {% endblock css_BoneAge %}
 
 {% block content_BoneAge %}
-
 <div class="row mt-2">
     <div class="col-6 border-end">
         <div class="row">
@@ -53,7 +52,7 @@
     </div>
 </div>
 
-<!-- 完成任务弹出框 -->
+<!-- 完成任务提示框 -->
 <div class="modal fade" id="modal_finish_task" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -62,11 +61,47 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div><label>任务ID：</label>{{bone_age_instance.id}}</div>
+                <div><label>任务ID：</label>{{task.id}}</div>
                 <div><label>患者：</label>{{patient.name}}（{{patient.Patient_ID}}）</div>
             </div>
             <div class="modal-footer">
                 <a id="finish_task" class="btn btn-primary" href="#" data-bs-dismiss="modal">确认</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 快捷键切换任务无上一项提示框 -->
+<div class="modal fade" id="modal_task_no_pre" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">切换失败</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                已经是第一项任务！
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 快捷键切换任务无下一项提示框 -->
+<div class="modal fade" id="modal_task_no_next" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">切换失败</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                已经是最后一项任务！
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
             </div>
         </div>
     </div>
@@ -81,10 +116,10 @@
 <script>
     var img_width = {{dcm.dcm_to_image.width}}
     var img_height = {{dcm.dcm_to_image.height}}
-    var bone_age_instance = {
-        "id" : {{bone_age_instance.id}},
-        "bone_age" : {{bone_age_instance.bone_age}},
-        "closed" : {{bone_age_instance.closed|lower}},
+    var task = {
+        "id" : {{task.id}},
+        "bone_age" : {{task.bone_age}},
+        "closed" : {{task.closed|lower}},
     }
     var bones = {
         {% for bone in bone_details %}
@@ -115,9 +150,24 @@
     var url_personal_index = "{% url 'BoneAge_index' 1 0 0 %}"
     var url_api_save_image_offset = "{% url 'api_BoneAge_save_image_offset' %}"
     var default_bone = ("{{preference.default_bone}}").replace('RUS_', "").replace('CHN', "")
+    var is_shortcut_enable = false
 </script>
 <script src="{% static '/BoneAge/js/evaluator/evaluator.js' %}"></script>
 {% if preference.shortcut %}
+<script>
+    is_shortcut_enable = true
+    var bone_order = [{% for bone in preference.bone_order %}'{{bone|slugify}}',{% endfor %}]
+    var is_task_has_pre = false
+    var is_task_has_next = false
+    {% if pre_task %}
+        is_task_has_pre = {{pre_task.id}}
+        var url_task_pre = '{% url 'BoneAge_evaluator' pre_task.id %}'
+    {% endif %}
+    {% if next_task %}
+        is_task_has_next = {{next_task.id}}
+        var url_task_next = '{% url 'BoneAge_evaluator' next_task.id %}'
+    {% endif %}
+</script>
 <script src="{% static '/BoneAge/js/evaluator/shortcut.js' %}"></script>
 {% endif %}
 {% endblock js_BoneAge %}

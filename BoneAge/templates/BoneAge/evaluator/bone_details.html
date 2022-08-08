@@ -33,18 +33,18 @@
         <div class="list-group-item d-flex justify-content-between row">
             <span class="col-11">
                 <strong>骨龄判断：</strong>
-                <span id="label_bone_age">{{bone_age_instance.bone_age}}岁</span>
+                <span id="label_bone_age">{{task.bone_age}}岁</span>
             </span>
             <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a>
         </div>
         <div id="list-sum" class="list-group-item d-flex justify-content-end">
             <div class="form-check form-switch">
-                {% if bone_age_instance.closed %}
+                {% if task.closed %}
                     <strong class="form-check-label text-primary">任务已完成</strong>
                 {% else %}
                     <strong id="label_task_status" class="form-check-label text-success">任务进行中...</strong>
                 {% endif %}
-                <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if bone_age_instance.closed %}checked{% endif %}>
+                <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if task.closed %}checked{% endif %}>
             </div>
         </div>
     </ul>
@@ -81,7 +81,7 @@
             </div>
             <div class="modal-body">
                 <label>骨龄（实际年龄 {{actual_age|floatformat}} 岁）：</label>
-                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 onkeyup="value=value.replace(/[^\d\.]/g,'');if(value<0) value=0;if(value>18)value=18;" required {% if bone_age_instance.bone_age >= 0 %}value="{{bone_age_instance.bone_age}}"{% endif %}>
+                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 onkeyup="value=value.replace(/[^\d\.]/g,'');if(value<0) value=0;if(value>18)value=18;" required {% if task.bone_age >= 0 %}value="{{task.bone_age}}"{% endif %}>
                 <div id="bone_age_great_differ_warning" class="invalid-feedback text-warning">* 注意：与实际年龄相差过大！</div>
                 <div id="bone_age_invalid" class="invalid-feedback">* 错误：请填写骨龄！</div>
                 <label class="mt-2">备注：</label>
