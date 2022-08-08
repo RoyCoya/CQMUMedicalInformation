@@ -18,14 +18,16 @@
                             {% if bone.level >= 0 %}
                                 <span id="level-{{bone.name|slugify}}">{{bone.level}} 级</span>
                             {% else %}
-                                <span id="level-{{bone.name|slugify}}" class="text-danger">*{{bone.get_level_display}}*</span>
+                                <span id="level-{{bone.name|slugify}}" class="text-danger">
+                                    <i class="bi bi-exclamation-triangle-fill text-danger"></i>{{bone.get_level_display}}
+                                </span>
                             {% endif %}
                         </span>
                     {% else %}
                         <span id="error-{{bone.name|slugify}}" class="col-11">
                             <span>{{bone.get_name_display}}</span>：
                             <span id="level-{{bone.name|slugify}}" class="text-danger">
-                                <i class="bi bi-exclamation-triangle-fill"></i> {{bone.get_error_display}}
+                                <i class="bi bi-exclamation-triangle-fill text-danger"></i> {{bone.get_error_display}}
                             </span>
                         </span>
                         <a id="fix-{{bone.name|slugify}}" href="#" class="bi bi-wrench col-1" hidden></a>

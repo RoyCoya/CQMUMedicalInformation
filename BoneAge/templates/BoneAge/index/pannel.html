@@ -15,9 +15,13 @@
         <div class="mt-2"><strong>上次登陆：</strong>{{user.last_login|date:"Y-m-d H:i"}}</div>
         <hr>
         <div><strong>最后编辑：</strong>
-            <a id="task_last_modified" href="{% url 'BoneAge_evaluator' task_last_modified.id %}">
-                任务{{task_last_modified.id}}（{{task_last_modified.dcm_file.patient.name}}）
-            </a>
+            {% if task_last_modified %}
+                <a id="task_last_modified" href="{% url 'BoneAge_evaluator' task_last_modified.id %}">
+                    任务{{task_last_modified.id}}（{{task_last_modified.dcm_file.patient.name}}）
+                </a>
+            {% else %}
+                无
+            {% endif %}
         </div>
     </div>
 </div>
