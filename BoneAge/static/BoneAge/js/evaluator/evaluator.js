@@ -245,7 +245,6 @@ $("#bone_details_level").on('input', function (e) {
     level = bone['level']
     $("#level-fifth-metacarpal").removeClass('text-danger')
     $("#bone_details_level_label").text($(this).val() + " | " + level14_to_level8[bone_name_key][$(this).val()])
-    console.log(bone['level']);
     $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
     $("#modify_bone_detail").removeAttr('hidden')
     if($(this).val() > 0){
@@ -374,7 +373,6 @@ $("#bone_age").on('input', function (e) {
     $("#warning_age_misregistration").attr('hidden','hidden')
     bone_age = $(this).val()
     $("#label_bone_age").text(bone_age + '岁');
-    console.log(Math.abs(actual_age - bone_age))
     if(bone_age >= 0 && Math.abs(actual_age - bone_age) >= 1){
         $("#warning_age_misregistration").removeAttr('hidden');
         $("#bone_age_great_differ_warning").show()

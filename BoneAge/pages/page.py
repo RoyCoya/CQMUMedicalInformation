@@ -178,14 +178,14 @@ def evaluator(request,bone_age_id):
     next_task = None
     if task.closed:
         try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__gt=task.closed_date).order_by('closed_date').first()
-        except Exception as e: print(e)
+        except: pass
         try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__lt=task.closed_date).order_by('closed_date').last()
-        except Exception as e: print(e)
+        except: pass
     else:
         try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__lt=task.id).last()
-        except Exception as e: print(e)
+        except: pass
         try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__gt=task.id).first()
-        except Exception as e: print(e)
+        except: pass
 
     dcm = task.dcm_file
     patient = dcm.patient
