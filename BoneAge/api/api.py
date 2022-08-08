@@ -342,7 +342,7 @@ def api_export_bone_data(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 
-    tasks = BoneAge.objects.filter(closed=True)
+    tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
     for task in tasks:
         bones = BoneDetail.objects.filter(bone_age_instance=task)
         image_path = task.dcm_file.dcm_to_image.path
