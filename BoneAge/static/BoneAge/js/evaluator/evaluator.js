@@ -53,12 +53,14 @@ $.fn.switch_bone = function(bone_name_key){
 };
 /* 如果所有骨骼等级数据与定位正常，则计算分数并显示参考年龄 */
 $.fn.update_bone_age = function(){
+    $('#warning_age_misregistration').attr('hidden', 'hidden');
+    $('#bone_age_great_differ_warning').hide();
     $("#bone_age").removeAttr('disabled');
     $("#bone_age").attr('placeholder','')
     $('#label_bone_age').removeClass('text-danger');
     $("#label_bone_age").text('');
     var is_valid = true
-    $.each(bones, function(bone_name_key,bone_details){
+    $.each(bones, function(bone_name_key, bone_details){
         if(bone_details['level'] < 0) is_valid = false
         if(bone_details['error'] != 0) is_valid = false
     })
@@ -76,6 +78,10 @@ $.fn.update_bone_age = function(){
         if(bone_age >= 0){
             $("#bone_age").val(bone_age);
             $("#label_bone_age").text(bone_age + "岁");
+            if(Math.abs(actual_age - bone_age) >= 1){
+                $("#warning_age_misregistration").removeAttr('hidden');
+                $("#bone_age_great_differ_warning").show()
+            }
         }
     }
     else{
@@ -104,7 +110,7 @@ image.cropper({
     viewMode : 2,
     modal: false,
     guides : false,
-    data : bones['radius'],
+    data : bones[default_bone],
     cropmove(e){
         $("#modify_bone_position").removeAttr('hidden')
     }
@@ -124,8 +130,6 @@ $(document).ready(function () {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    /* 选中骨骼，默认从桡骨开始 */
-    $("#view-radius").parent().addClass('active');
     //骨骼等级14转8
     $.fn.switch_bone('fifth-distal-phalange')
     $.fn.switch_bone('fifth-middle-phalange')
@@ -141,6 +145,10 @@ $(document).ready(function () {
     $.fn.switch_bone('ulna')
     $.fn.switch_bone('radius')
     $.fn.update_bone_age()
+
+    /* 选中默认骨骼 */
+    $("#view-" + default_bone).parent().addClass('active');
+    $.fn.switch_bone(default_bone)
 
     /* 焦点至评级条 */
     $("#bone_details_level").focus()
@@ -230,8 +238,6 @@ $("span[id^=error-]").click(function (e) {
     cropper.setDragMode('crop')
 });
 
-/* 骨骼修复定位 */
-
 /* 评分评级修改后弹出保存按钮 */
 $("#bone_details_level").on('input', function (e) { 
     var bone_name_key = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
@@ -239,7 +245,6 @@ $("#bone_details_level").on('input', function (e) {
     level = bone['level']
     $("#level-fifth-metacarpal").removeClass('text-danger')
     $("#bone_details_level_label").text($(this).val() + " | " + level14_to_level8[bone_name_key][$(this).val()])
-    console.log(bone['level']);
     $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
     $("#modify_bone_detail").removeAttr('hidden')
     if($(this).val() > 0){
@@ -336,7 +341,7 @@ $('#modify_bone_position').click(function (e) {
     $.fn.switch_bone(bone_name_key)
 });
 
-/* 修改骨龄 */
+/* 手动修改骨龄 */
 $("#confirm_edit_bone_age").click(function (e) { 
     var bone_age = $("#bone_age").val()
     if(bone_age == ''){
@@ -347,16 +352,35 @@ $("#confirm_edit_bone_age").click(function (e) {
         bone_age = parseFloat(bone_age)
         $("#label_bone_age").text(bone_age + " 岁")
         $("#label_bone_age").removeClass('text-danger')
-        bone_age_instance['bone_age'] = bone_age
+        task['bone_age'] = bone_age
         $.ajax({
             type: "post",
             url: url_api_modify_bone_age,
-            data: bone_age_instance,
+            data: task,
             dataType: "json",
             headers:{'X-CSRFToken': csrftoken}
         });
         bone_age_modal.hide()
     }
+});
+/* 修改时骨龄差距过大显示 */
+$("#bone_age").on('input', function (e) {
+    $(this).val($(this).val().replace(/[^\d\.]/g,''))
+    bone_age = $(this).val()
+    if($(this).val() < 0) $(this).val(0);
+    if($(this).val() > 18) $(this).val(18);
+    $("#bone_age_great_differ_warning").hide()
+    $("#warning_age_misregistration").attr('hidden','hidden')
+    bone_age = $(this).val()
+    $("#label_bone_age").text(bone_age + '岁');
+    if(bone_age >= 0 && Math.abs(actual_age - bone_age) >= 1){
+        $("#warning_age_misregistration").removeAttr('hidden');
+        $("#bone_age_great_differ_warning").show()
+    }
+});
+/* 关闭骨龄输入页面时刷新骨龄 */
+$('#modal_edit_bone_age button[data-bs-dismiss=modal]').click(function (e) { 
+    $.fn.update_bone_age()
 });
 
 /* 将本条评测任务标记为已完成 */
@@ -369,16 +393,16 @@ $("#task_closed").click(function (e) {
     })
     if(bone_age == '') is_valid = false
     if(is_valid){
-        finish_task_modal.show()
+        if(!is_shortcut_enable) finish_task_modal.show();
         this.checked = true
         $('#label_task_status').text('任务已完成')
         $('#label_task_status').removeClass('text-success')
         $('#label_task_status').addClass('text-primary')
-        bone_age_instance['closed'] = true
+        task['closed'] = true
         $.ajax({
             type: "post",
             url: url_api_finish_task,
-            data: bone_age_instance,
+            data: task,
             dataType: "json",
             headers:{'X-CSRFToken': csrftoken}
         });

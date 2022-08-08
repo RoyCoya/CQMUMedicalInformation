@@ -14,7 +14,11 @@
         <div class="mt-2"><strong>身份：</strong>{% if user.is_staff %}管理员{% else %}评测员{% endif %}</div>
         <div class="mt-2"><strong>上次登陆：</strong>{{user.last_login|date:"Y-m-d H:i"}}</div>
         <hr>
-        <div><strong>其他信息：</strong><span class="text-secondary">暂无</span></div>
+        <div><strong>最后编辑：</strong>
+            <a id="task_last_modified" href="{% url 'BoneAge_evaluator' task_last_modified.id %}">
+                任务{{task_last_modified.id}}（{{task_last_modified.dcm_file.patient.name}}）
+            </a>
+        </div>
     </div>
 </div>
 

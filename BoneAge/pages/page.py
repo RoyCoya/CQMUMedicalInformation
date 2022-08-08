@@ -8,12 +8,15 @@ from django.core.paginator import Paginator
 import datetime
 
 from BoneAge.models import *
-from BoneAge.api.api import login_check
+from BoneAge.api.api import login_check, load_preference
 
 # 个人主页
 def index(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
+    
+    # 加载用户偏好
+    preference = load_preference(request)
 
     unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user)
     # 按所需排序条件对未完成任务列表进行排序
@@ -50,7 +53,11 @@ def index(request, page_number, order, is_descend):
     if finished_tasks_count > 6:
         finished_tasks = finished_tasks[0:6]
     
+    # 最后编辑的任务
+    task_last_modified = BoneAge.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
+    
     context = {
+        'preference' : preference,
         'unfinished_tasks' : unfinished_tasks_current_page,
         'unfinished_tasks_count' : unfinished_tasks_count,
         'order' : order,
@@ -63,6 +70,7 @@ def index(request, page_number, order, is_descend):
         'finished_tasks_count' : finished_tasks_count,
         'finished_today_count' : finished_today_count,
         'page_count' : unfinished_tasks_paged.num_pages,
+        'task_last_modified' : task_last_modified,
     }
     return render(request,'BoneAge/index/index.html',context)
 
@@ -70,6 +78,9 @@ def index(request, page_number, order, is_descend):
 def finished_tasks(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
+
+    # 加载用户偏好
+    preference = load_preference(request)
 
     finished_tasks = BoneAge.objects.filter(closed=True).filter(allocated_to=request.user)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
@@ -107,7 +118,11 @@ def finished_tasks(request, page_number, order, is_descend):
     if unfinished_tasks_count > 6:
         unfinished_tasks = unfinished_tasks[0:6]
     
+    # 最后编辑的任务
+    task_last_modified = BoneAge.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
+
     context = {
+        'preference' : preference,
         'finished_tasks' : finished_tasks_current_page,
         'finished_tasks_count' : finished_tasks_count,
         'order' : order,
@@ -120,6 +135,7 @@ def finished_tasks(request, page_number, order, is_descend):
         'unfinished_tasks_count' : unfinished_tasks_count,
         'finished_today_count' : finished_today_count,
         'page_count' : finished_tasks_paged.num_pages,
+        'task_last_modified' : task_last_modified,
     }
     return render(request,'BoneAge/index/finished_tasks/finished_tasks.html',context)
 
@@ -150,17 +166,44 @@ def dicom_library_admin(request):
 # 评分器
 def evaluator(request,bone_age_id):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    bone_age = BoneAge.objects.get(id=bone_age_id)
+    task = BoneAge.objects.get(id=bone_age_id)
 
-    dcm = bone_age.dcm_file
+    # 加载用户偏好
+    preference = load_preference(request)
+    bone_details = []
+    bone_order = {
+        'RUS' : lambda : preference.bone_order_RUS.split('|'),
+        # 'CHN' : lambda : preference.bone_order_RUS, （未实装）
+    }[preference.standard]()
+    preference.bone_order = bone_order
+    for bone_name in bone_order:
+        try: bone_detail = BoneDetail.objects.get(name=bone_name,bone_age_instance=task)
+        except Exception as e:return HttpResponseBadRequest(e)
+        bone_details.append(bone_detail)
+
+    # 上下一个任务（用于快捷键切换），若当前任务完结则以时间倒序为准，若当前任务未完成则以任务id为准
+    pre_task = None
+    next_task = None
+    if task.closed:
+        try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__gt=task.closed_date).order_by('closed_date').first()
+        except: pass
+        try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__lt=task.closed_date).order_by('closed_date').last()
+        except: pass
+    else:
+        try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__lt=task.id).last()
+        except: pass
+        try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__gt=task.id).first()
+        except: pass
+
+    dcm = task.dcm_file
     patient = dcm.patient
-    actual_age = dcm.Study_Date - patient.birthday
-    bone_details = BoneDetail.objects.filter(bone_age_instance=bone_age)
     context = {
+        'preference' : preference,
         'patient' : patient,
         'dcm' : dcm,
-        'bone_age_instance' : bone_age,
+        'task' : task,
+        'pre_task' : pre_task,
+        'next_task' : next_task,
         'bone_details' : bone_details,
-        'actual_age' : actual_age.days / 365,
     }
     return render(request,'BoneAge/evaluator/evaluator.html',context)

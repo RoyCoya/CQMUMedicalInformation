@@ -12,6 +12,8 @@ th[id^=order_]:hover{background-color: rgb(229, 231, 231);}
 .order a{color: white}
 .order i{color: white}
 
-/* 表内链接 */
-td a:hover{color: #1fc075 !important;}
+/* 链接 */
+tbody td a:hover{text-decoration: underline !important;}
+#task_last_modified:hover{text-decoration: underline !important;}
 .list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: var(--theme_color);}
+.list-group-item a:hover{text-decoration: underline !important;}
