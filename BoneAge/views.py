@@ -21,6 +21,10 @@ def evaluator(request, bone_age_id): return page.evaluator(request,bone_age_id)
 '''
 接口，与 ./api/api.py中的接口对应
 '''
+# 切换快捷键开启状态
+def api_preference_switch_shortcut(request):return api.api_preference_switch_shortcut(request)
+# 切换评分器进入时的默认骨骼
+def api_preference_switch_default_bone(request): return api.api_preference_switch_default_bone(request)
 # 修改图像亮度、对比度偏移量
 def api_save_image_offset(request): return api.api_save_image_offset(request)
 # 修改骨骼评分评级等详细信息

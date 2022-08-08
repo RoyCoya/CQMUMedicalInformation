@@ -31,6 +31,7 @@ tbody tr{ cursor:pointer;}
 
 /* popover 修改为底色主题色，文字白色 */
 .tooltip-inner{background-color: var(--theme_color);color: white;font-size: large;}
-.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-start .tooltip-arrow::before{border-left-color: var(--theme_color);}
-
-
+.bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before, .bs-tooltip-start .tooltip-arrow::before{border-left-color: var(--theme_color);}
+.bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before, .bs-tooltip-end .tooltip-arrow::before{border-right-color: var(--theme_color);}
+.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-top .tooltip-arrow::before{border-top-color: var(--theme_color);}
+.bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before, .bs-tooltip-bottom .tooltip-arrow::before{border-bottom-color: var(--theme_color);}

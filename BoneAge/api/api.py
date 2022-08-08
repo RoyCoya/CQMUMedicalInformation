@@ -16,12 +16,20 @@ from BoneAge.yolo.yolo_onnx import YOLOV5_ONNX
 from BoneAge.models import *
 from BoneAge.object_swinT.BoneGrade import BoneGrade
 
-'''通用接口'''
+'''通用方法'''
 # 登录检查
 def login_check(request):
     user = request.user
     if not user.is_authenticated : return True
     else : return False
+
+# 加载用户偏好设置
+def load_preference(request):
+    user = request.user
+    preference = None
+    try: preference = Preference.objects.get(user=user)
+    except: preference = Preference.objects.create(user=user)
+    return preference
 
 # dcm图像像素压缩到255
 def normalize(img_normalize, number):
@@ -32,6 +40,28 @@ def normalize(img_normalize, number):
     return img_normalize
 
 '''特定接口'''
+# 切换快捷键开启状态
+def api_preference_switch_shortcut(request):
+    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    user = request.user
+    preference = Preference.objects.get(user=user)
+    
+    preference.shortcut = request.POST['shortcut'].title()
+    preference.save()
+
+    return HttpResponse("切换快捷键开启状态成功")
+
+# 切换进入评分器时的默认骨骼
+def api_preference_switch_default_bone(request):
+    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    user = request.user
+    preference = Preference.objects.get(user=user)
+    
+    preference.default_bone = request.POST['default_bone']
+    preference.save()
+
+    return HttpResponse("切换默认骨骼成功")
+
 # 修改图像亮度、对比度偏移量
 def api_save_image_offset(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))

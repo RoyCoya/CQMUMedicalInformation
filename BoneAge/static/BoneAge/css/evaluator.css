@@ -1,0 +1,17 @@
+.img-preview {
+    background-color: #f7f7f7;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+  }
+.img-preview > img { max-width: 100%; }
+.list-group-item{ padding: .7rem 1rem }
+.list-group-item span{ color: black; }
+.list-group-item.active span{ color:white }
+.list-group-item:hover{cursor: default!important;}
+/* popover 修改为警告色背景，文字白色 */
+.tooltip-inner{background-color: rgb(203,68,74);color: white;font-size: large;}
+.bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before, .bs-tooltip-start .tooltip-arrow::before{border-left-color: rgb(203,68,74);}
+.bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before, .bs-tooltip-end .tooltip-arrow::before{border-right-color: rgb(203,68,74);}
+.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-top .tooltip-arrow::before{border-top-color: rgb(203,68,74);}
+.bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before, .bs-tooltip-bottom .tooltip-arrow::before{border-bottom-color: rgb(203,68,74);}

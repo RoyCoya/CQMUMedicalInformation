@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Patient, DicomFile, BoneAge, BoneDetail
+from .models import Patient, DicomFile, BoneAge, BoneDetail, Preference
 
 # TODO:找时间优化下。编码参考里有资料
 class admin_patient(admin.ModelAdmin):
@@ -42,7 +42,15 @@ class admin_boneage(admin.ModelAdmin):
         'closed_date',
         'modify_date',
     ]
+class admin_preference(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'shortcut',
+		'standard',
+        'default_bone',
+    ]
 admin.site.register(Patient, admin_patient)
 admin.site.register(DicomFile, admin_dicomfile)
-admin.site.register(BoneAge,admin_boneage)
+admin.site.register(BoneAge, admin_boneage)
 admin.site.register(BoneDetail)
+admin.site.register(Preference, admin_preference)
