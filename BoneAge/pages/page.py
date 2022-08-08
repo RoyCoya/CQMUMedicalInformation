@@ -53,6 +53,9 @@ def index(request, page_number, order, is_descend):
     if finished_tasks_count > 6:
         finished_tasks = finished_tasks[0:6]
     
+    # 最后编辑的任务
+    task_last_modified = BoneAge.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
+    
     context = {
         'preference' : preference,
         'unfinished_tasks' : unfinished_tasks_current_page,
@@ -67,6 +70,7 @@ def index(request, page_number, order, is_descend):
         'finished_tasks_count' : finished_tasks_count,
         'finished_today_count' : finished_today_count,
         'page_count' : unfinished_tasks_paged.num_pages,
+        'task_last_modified' : task_last_modified,
     }
     return render(request,'BoneAge/index/index.html',context)
 
@@ -114,6 +118,9 @@ def finished_tasks(request, page_number, order, is_descend):
     if unfinished_tasks_count > 6:
         unfinished_tasks = unfinished_tasks[0:6]
     
+    # 最后编辑的任务
+    task_last_modified = BoneAge.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
+
     context = {
         'preference' : preference,
         'finished_tasks' : finished_tasks_current_page,
@@ -128,6 +135,7 @@ def finished_tasks(request, page_number, order, is_descend):
         'unfinished_tasks_count' : unfinished_tasks_count,
         'finished_today_count' : finished_today_count,
         'page_count' : finished_tasks_paged.num_pages,
+        'task_last_modified' : task_last_modified,
     }
     return render(request,'BoneAge/index/finished_tasks/finished_tasks.html',context)
 
