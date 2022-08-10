@@ -372,41 +372,42 @@ def api_export_bone_data(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 
-    tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
+    # tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
+    tasks = BoneAge.objects.filter(allocated_to=4, closed=True)
+    if not os.path.isdir('E:/CQMU/export/img_for_chn_labeling/'):
+        os.mkdir('E:/CQMU/export/img_for_chn_labeling/')
+    # if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
+    #     os.mkdir('E:/CQMU/export/bone_data/images/')
+    # if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
+    #     os.mkdir('E:/CQMU/export/bone_data/labels/')
     for task in tasks:
-        bones = BoneDetail.objects.filter(bone_age_instance=task)
+        # bones = BoneDetail.objects.filter(bone_age_instance=task)
         image_path = task.dcm_file.dcm_to_image.path
-        if not os.path.isdir('E:/CQMU/export/bone_data/'):
-            os.mkdir('E:/CQMU/export/bone_data/')
-        if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
-            os.mkdir('E:/CQMU/export/bone_data/images/')
-        if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
-            os.mkdir('E:/CQMU/export/bone_data/labels/')
         # 导出图片
-        out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
+        out_path = 'E:/CQMU/export/img_for_chn_labeling/' + str(task.id) + '.png'
         copyfile(image_path, out_path)
-        # 导出标签
-        out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
-        with open(out_path,'w') as f:
-            label_content = str(task.dcm_file.dcm) + '\t'
-            label_content += str(task.dcm_file.patient.sex)
-            label_content += '\t'
-            label_content += str(task.dcm_file.age)
-            label_content += '\n'
-            for bone in bones:
-                label_content += str(bone.name)
-                label_content += '\t'
-                label_content += str(bone.center_x)
-                label_content += '\t'
-                label_content += str(bone.center_y)
-                label_content += '\t'
-                label_content += str(bone.width)
-                label_content += '\t'
-                label_content += str(bone.height)
-                label_content += '\t'
-                label_content += str(bone.level)
-                label_content += '\t'
-                label_content += '\n'
-            f.write(label_content)
+        # # 导出标签
+        # out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
+        # with open(out_path,'w') as f:
+        #     label_content = str(task.dcm_file.dcm) + '\t'
+        #     label_content += str(task.dcm_file.patient.sex)
+        #     label_content += '\t'
+        #     label_content += str(task.dcm_file.age)
+        #     label_content += '\n'
+        #     for bone in bones:
+        #         label_content += str(bone.name)
+        #         label_content += '\t'
+        #         label_content += str(bone.center_x)
+        #         label_content += '\t'
+        #         label_content += str(bone.center_y)
+        #         label_content += '\t'
+        #         label_content += str(bone.width)
+        #         label_content += '\t'
+        #         label_content += str(bone.height)
+        #         label_content += '\t'
+        #         label_content += str(bone.level)
+        #         label_content += '\t'
+        #         label_content += '\n'
+        #     f.write(label_content)
     
-    return HttpResponse(r'导出数据完毕，目录 E:/CQMU/export/bone_data/')
+    return HttpResponse(r'导出数据完毕，目录 E:/CQMU/export/img_for_chn_labeling/')
