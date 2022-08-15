@@ -70,6 +70,7 @@ def api_save_image_offset(request):
     dcm.contrast = request.POST['contrast']
     dcm.save()
     task = BoneAge.objects.get(dcm_file=dcm)
+    task.modify_user = request.user
     task.save()
     return HttpResponse('已修改图像亮度对比度偏移量')
 
@@ -79,13 +80,13 @@ def api_modify_bone_detail(request):
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
     bone_age = bone_detail.bone_age_instance
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
     
     bone_detail.level = int(request.POST['level'])
     bone_detail.error = int(request.POST['error'])
     bone_detail.remarks = request.POST['remarks']
     bone_detail.modify_user = request.user
     bone_detail.save()
+    bone_age.modify_user = request.user
     bone_age.save()
     return HttpResponse('成功修改骨骼信息')
 
@@ -95,7 +96,6 @@ def api_modify_bone_position(request):
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
     bone_age = bone_detail.bone_age_instance
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
     
     img = bone_detail.bone_age_instance.dcm_file.dcm_to_image
     lefttop_x = float(request.POST['x'])
@@ -109,6 +109,8 @@ def api_modify_bone_position(request):
     bone_detail.modify_user = request.user
     bone_detail.error = 0
     bone_detail.save()
+    bone_age.modify_user = request.user
+    bone_age.save()
     return HttpResponse('成功修改骨骼标注位置')
 
 # 修改骨龄
@@ -116,7 +118,6 @@ def api_modify_bone_age(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_age_id = request.POST['id']
     bone_age = BoneAge.objects.get(id=bone_age_id)
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
     
     bone_age.bone_age = float(request.POST['bone_age'])
     bone_age.modify_user = request.user
@@ -128,7 +129,6 @@ def api_finish_task(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_age_id = request.POST['id']
     bone_age = BoneAge.objects.get(id=bone_age_id)
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
 
     if request.POST['closed'] == 'true': bone_age.closed = True
     bone_age.closed_date = datetime.now()
