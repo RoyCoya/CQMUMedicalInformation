@@ -131,6 +131,8 @@ def api_finish_task(request):
     bone_age = BoneAge.objects.get(id=bone_age_id)
 
     if request.POST['closed'] == 'true': bone_age.closed = True
+    print(request.POST['bone_age'])
+    bone_age.bone_age = request.POST['bone_age']
     bone_age.closed_date = datetime.now()
     bone_age.modify_user = request.user
     bone_age.save()
