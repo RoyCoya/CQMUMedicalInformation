@@ -1,5 +1,6 @@
 {% extends 'BoneAge/base.html' %}
 {% load static %}
+{% load BoneAge_global_tags %}
 
 {% block title_BoneAge %}{{patient.name}}｜评测器{% endblock title_BoneAge %}
 
@@ -133,7 +134,7 @@
     var dcm_id = {{dcm.id}}
     var brightness = {{dcm.brightness}}
     var contrast = {{dcm.contrast}}
-    var actual_age = {{dcm.age}}
+    var actual_age = {{patient.birthday|get_dcm_age:dcm.Study_Date}}
     var sex = '{{patient.sex|lower}}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
     var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"

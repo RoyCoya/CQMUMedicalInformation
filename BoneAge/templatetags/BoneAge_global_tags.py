@@ -16,3 +16,8 @@ def convert_time_to_period(value):
         return "下午好，" + value + "医生"
     elif time_hour >18 and time_hour <= 24:
         return "晚上好，" + value + "医生"
+
+# 根据dicom计算检查时的实际年龄
+@register.filter(name='get_dcm_age')
+def get_dcm_age(birthday, study_date):
+    return (study_date - birthday).days / 365

@@ -78,6 +78,7 @@ $.fn.update_bone_age = function(){
         if(bone_age >= 0){
             $("#bone_age").val(bone_age);
             $("#label_bone_age").text(bone_age + "岁");
+            // 差距过大提示
             if(Math.abs(actual_age - bone_age) >= 1){
                 $("#warning_age_misregistration").removeAttr('hidden');
                 $("#bone_age_great_differ_warning").show()
@@ -152,6 +153,12 @@ $(document).ready(function () {
 
     /* 焦点至评级条 */
     $("#bone_details_level").focus()
+
+    /* 如果数据库中存在骨龄数据，则用数据库中的值 */
+    if(task['bone_age'] >= 0){
+        $("#bone_age").val(task['bone_age']);
+        $("#label_bone_age").text(task['bone_age'] + "岁");
+    }
 });
 
 /* image cropper 工具栏 */
@@ -399,6 +406,7 @@ $("#task_closed").click(function (e) {
         $('#label_task_status').removeClass('text-success')
         $('#label_task_status').addClass('text-primary')
         task['closed'] = true
+        task['bone_age'] = bone_age
         $.ajax({
             type: "post",
             url: url_api_finish_task,

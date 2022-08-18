@@ -70,6 +70,7 @@ def api_save_image_offset(request):
     dcm.contrast = request.POST['contrast']
     dcm.save()
     task = BoneAge.objects.get(dcm_file=dcm)
+    task.modify_user = request.user
     task.save()
     return HttpResponse('已修改图像亮度对比度偏移量')
 
@@ -79,13 +80,13 @@ def api_modify_bone_detail(request):
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
     bone_age = bone_detail.bone_age_instance
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
     
     bone_detail.level = int(request.POST['level'])
     bone_detail.error = int(request.POST['error'])
     bone_detail.remarks = request.POST['remarks']
     bone_detail.modify_user = request.user
     bone_detail.save()
+    bone_age.modify_user = request.user
     bone_age.save()
     return HttpResponse('成功修改骨骼信息')
 
@@ -95,7 +96,6 @@ def api_modify_bone_position(request):
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
     bone_age = bone_detail.bone_age_instance
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
     
     img = bone_detail.bone_age_instance.dcm_file.dcm_to_image
     lefttop_x = float(request.POST['x'])
@@ -109,6 +109,8 @@ def api_modify_bone_position(request):
     bone_detail.modify_user = request.user
     bone_detail.error = 0
     bone_detail.save()
+    bone_age.modify_user = request.user
+    bone_age.save()
     return HttpResponse('成功修改骨骼标注位置')
 
 # 修改骨龄
@@ -116,7 +118,6 @@ def api_modify_bone_age(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_age_id = request.POST['id']
     bone_age = BoneAge.objects.get(id=bone_age_id)
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
     
     bone_age.bone_age = float(request.POST['bone_age'])
     bone_age.modify_user = request.user
@@ -128,9 +129,10 @@ def api_finish_task(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_age_id = request.POST['id']
     bone_age = BoneAge.objects.get(id=bone_age_id)
-    if bone_age.allocated_to != request.user: return HttpResponseBadRequest("该任务未分配与您，无法进行操作。")
 
     if request.POST['closed'] == 'true': bone_age.closed = True
+    print(request.POST['bone_age'])
+    bone_age.bone_age = request.POST['bone_age']
     bone_age.closed_date = datetime.now()
     bone_age.modify_user = request.user
     bone_age.save()
@@ -147,7 +149,7 @@ def api_upload_dcm(request):
     for file in request.FILES.getlist('dcm_files'):
         suffix = file.name.split('.')[-1]
         if suffix != 'dcm' and suffix != 'DCM' : continue
-        file.name = file.name.lower()
+        file.name = 'upload_' + file.name.lower()
         new_file = DicomFile(
             dcm=File(file),
             create_user=user,
@@ -226,7 +228,6 @@ def api_upload_dcm(request):
         try: study_date = datetime.strptime(reader.StudyDate,'%Y%m%d').date()
         except Exception as e: print(e)
         new_file.Study_Date = study_date
-        new_file.age = (new_file.Study_Date - new_file.patient.birthday).days / 365
         # 结束dcm校验，保存
         new_file.save()
 
@@ -373,15 +374,13 @@ def api_export_bone_data(request):
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 
     tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
+    if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
+        os.mkdir('E:/CQMU/export/bone_data/images/')
+    if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
+        os.mkdir('E:/CQMU/export/bone_data/labels/')
     for task in tasks:
         bones = BoneDetail.objects.filter(bone_age_instance=task)
         image_path = task.dcm_file.dcm_to_image.path
-        if not os.path.isdir('E:/CQMU/export/bone_data/'):
-            os.mkdir('E:/CQMU/export/bone_data/')
-        if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
-            os.mkdir('E:/CQMU/export/bone_data/images/')
-        if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
-            os.mkdir('E:/CQMU/export/bone_data/labels/')
         # 导出图片
         out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
         copyfile(image_path, out_path)
