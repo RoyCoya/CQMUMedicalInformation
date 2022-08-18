@@ -392,6 +392,8 @@ def api_export_bone_data(request):
             label_content += str(task.dcm_file.patient.sex)
             label_content += '\t'
             label_content += str(task.dcm_file.age)
+            label_content += '\t'
+            label_content +=  str(task.bone_age)
             label_content += '\n'
             for bone in bones:
                 label_content += str(bone.name)
