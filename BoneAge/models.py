@@ -45,9 +45,9 @@ class DicomFile(models.Model):
 
     '''基础信息'''
     #如果已有DICOM 文件数据，请尽量不要修改保存路径方法（upload_to）。如有必要，请手动保存好所有已有dcm文件再重构数据库
-    dcm = models.FileField(upload_to='BoneAge/DicomFiles/%Y/%m/', verbose_name='dcm源文件')
+    dcm = models.FileField(upload_to='DicomFiles/%Y/%m/', verbose_name='dcm源文件')
     patient = models.ForeignKey(Patient, null=True, blank=True, verbose_name="所属患者", on_delete=models.PROTECT)
-    dcm_to_image = models.ImageField(null=True, blank=True, upload_to='BoneAge/DicomFiles/%Y/%m/', verbose_name='dcm转图像')
+    dcm_to_image = models.ImageField(null=True, blank=True, upload_to='DicomFiles/%Y/%m/', verbose_name='dcm转图像')
     error = models.IntegerField(default=202, choices=error_choice, verbose_name="错误类型")
 
     '''扩展信息'''
@@ -55,7 +55,6 @@ class DicomFile(models.Model):
     contrast = models.IntegerField(default=100, verbose_name='对比度偏量（百分数）')
     SOP_Instance_UID = models.CharField(null=True, blank=True, max_length=64, verbose_name='SOP Instance UID')
     Study_Date = models.DateField(null=True, blank=True, verbose_name='Study Date')
-    age = models.FloatField(null=True, blank=True, verbose_name='当前检查实际年龄')
 
     '''系统信息'''
     id = models.AutoField(primary_key=True, verbose_name='ID')

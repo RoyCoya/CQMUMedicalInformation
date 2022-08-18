@@ -1,4 +1,5 @@
 {% load static %}
+{% load BoneAge_global_tags %}
 <div class="col-6 border-end">
     <div class="d-flex justify-content-between col">
         <h3>相关信息</h3>
@@ -16,7 +17,7 @@
             {% endif %}
         </span>
         <span class="col-6"><strong>ID：</strong>{{patient.Patient_ID}}</span>
-        <span class="col-6"><strong>年龄：</strong>{{dcm.age|floatformat}} 岁</span>
+        <span class="col-6"><strong>年龄：</strong>{{patient.birthday|get_dcm_age:dcm.Study_Date|floatformat}} 岁</span>
     </div>
 </div>
 <div class="col-6">

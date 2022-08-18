@@ -149,7 +149,7 @@ def api_upload_dcm(request):
     for file in request.FILES.getlist('dcm_files'):
         suffix = file.name.split('.')[-1]
         if suffix != 'dcm' and suffix != 'DCM' : continue
-        file.name = file.name.lower()
+        file.name = 'upload_' + file.name.lower()
         new_file = DicomFile(
             dcm=File(file),
             create_user=user,
@@ -228,7 +228,6 @@ def api_upload_dcm(request):
         try: study_date = datetime.strptime(reader.StudyDate,'%Y%m%d').date()
         except Exception as e: print(e)
         new_file.Study_Date = study_date
-        new_file.age = (new_file.Study_Date - new_file.patient.birthday).days / 365
         # 结束dcm校验，保存
         new_file.save()
 
