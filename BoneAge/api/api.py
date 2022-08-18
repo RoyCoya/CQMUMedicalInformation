@@ -373,6 +373,8 @@ def api_export_bone_data(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 
+    if not os.path.isdir('E:/CQMU/export/bone_data/'):
+        os.mkdir('E:/CQMU/export/bone_data/')
     tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
     if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
         os.mkdir('E:/CQMU/export/bone_data/images/')
@@ -390,7 +392,7 @@ def api_export_bone_data(request):
             label_content = str(task.dcm_file.dcm) + '\t'
             label_content += str(task.dcm_file.patient.sex)
             label_content += '\t'
-            label_content += str(task.dcm_file.age)
+            label_content += str((task.dcm_file.Study_Date - task.dcm_file.patient.birthday).days / 365)
             label_content += '\t'
             label_content +=  str(task.bone_age)
             label_content += '\n'
