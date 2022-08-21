@@ -10,7 +10,7 @@ import datetime
 from BoneAge.models import *
 from BoneAge.api.api import login_check, load_preference
 
-# 个人主页
+# 个人主页（未完结任务）
 def index(request, page_number, order, is_descend):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
@@ -18,8 +18,9 @@ def index(request, page_number, order, is_descend):
     # 加载用户偏好
     preference = load_preference(request)
 
+    # 未完成任务
     unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user)
-    # 按所需排序条件对未完成任务列表进行排序
+    # 排序参数
     if order > 4:
         return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
     order_para = {
@@ -33,6 +34,7 @@ def index(request, page_number, order, is_descend):
         order_para = '-' + order_para
     unfinished_tasks = unfinished_tasks.order_by(order_para)
     unfinished_tasks_count = len(unfinished_tasks)
+    # 已完结任务
     finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
     finished_tasks_count = len(finished_tasks)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
@@ -110,7 +112,7 @@ def finished_tasks(request, page_number, order, is_descend):
     has_previous_page = finished_tasks_current_page.has_previous()
     has_next_page = finished_tasks_current_page.has_next()
 
-    # 查询每个患者的历史评测记录数量
+    #TODO: 查询每个患者的历史评测记录数量
     for task in finished_tasks_current_page:
         task.history = 1
 
@@ -155,6 +157,7 @@ def dicom_library_admin(request):
     unanalyzed_dcm_count = DicomFile.objects.filter(error=202).count()
     unallocated_tasks = BoneAge.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
     user_model = get_user_model()
+    # 可用于任务分配的账号
     users = user_model.objects.filter(is_active=True).exclude(is_staff=True)
     context = {
         'unallocated_tasks' : unallocated_tasks,
