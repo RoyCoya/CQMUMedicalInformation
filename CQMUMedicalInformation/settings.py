@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #自建App
     'BoneAge.apps.BoneageConfig',
-    'MainFrame.apps.MainframeConfig'
+    'MainFrame.apps.MainframeConfig',
+    'PatientManagement.apps.PatientmanagementConfig',
+    'DICOMManagement.apps.DicommanagementConfig',
 ]
 
 MIDDLEWARE = [

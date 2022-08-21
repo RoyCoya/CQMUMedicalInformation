@@ -16,6 +16,9 @@ from BoneAge.yolo.yolo_onnx import YOLOV5_ONNX
 from BoneAge.models import *
 from BoneAge.object_swinT.BoneGrade import BoneGrade
 
+from DICOMManagement.models import DicomFile as base_DicomFile
+from PatientManagement.models import Patient as base_Patient
+
 '''通用方法'''
 # 登录检查
 def login_check(request):
@@ -373,43 +376,76 @@ def api_export_bone_data(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 
-    if not os.path.isdir('E:/CQMU/export/bone_data/'):
-        os.mkdir('E:/CQMU/export/bone_data/')
-    tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
-    if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
-        os.mkdir('E:/CQMU/export/bone_data/images/')
-    if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
-        os.mkdir('E:/CQMU/export/bone_data/labels/')
-    for task in tasks:
-        bones = BoneDetail.objects.filter(bone_age_instance=task)
-        image_path = task.dcm_file.dcm_to_image.path
-        # 导出图片
-        out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
-        copyfile(image_path, out_path)
-        # 导出标签
-        out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
-        with open(out_path,'w') as f:
-            label_content = str(task.dcm_file.dcm) + '\t'
-            label_content += str(task.dcm_file.patient.sex)
-            label_content += '\t'
-            label_content += str((task.dcm_file.Study_Date - task.dcm_file.patient.birthday).days / 365)
-            label_content += '\t'
-            label_content +=  str(task.bone_age)
-            label_content += '\n'
-            for bone in bones:
-                label_content += str(bone.name)
-                label_content += '\t'
-                label_content += str(bone.center_x)
-                label_content += '\t'
-                label_content += str(bone.center_y)
-                label_content += '\t'
-                label_content += str(bone.width)
-                label_content += '\t'
-                label_content += str(bone.height)
-                label_content += '\t'
-                label_content += str(bone.level)
-                label_content += '\t'
-                label_content += '\n'
-            f.write(label_content)
+    # if not os.path.isdir('E:/CQMU/export/bone_data/'):
+    #     os.mkdir('E:/CQMU/export/bone_data/')
+    # tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
+    # if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
+    #     os.mkdir('E:/CQMU/export/bone_data/images/')
+    # if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
+    #     os.mkdir('E:/CQMU/export/bone_data/labels/')
+    # for task in tasks:
+    #     bones = BoneDetail.objects.filter(bone_age_instance=task)
+    #     image_path = task.dcm_file.dcm_to_image.path
+    #     # 导出图片
+    #     out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
+    #     copyfile(image_path, out_path)
+    #     # 导出标签
+    #     out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
+    #     with open(out_path,'w') as f:
+    #         label_content = str(task.dcm_file.dcm) + '\t'
+    #         label_content += str(task.dcm_file.patient.sex)
+    #         label_content += '\t'
+    #         label_content += str((task.dcm_file.Study_Date - task.dcm_file.patient.birthday).days / 365)
+    #         label_content += '\t'
+    #         label_content +=  str(task.bone_age)
+    #         label_content += '\n'
+    #         for bone in bones:
+    #             label_content += str(bone.name)
+    #             label_content += '\t'
+    #             label_content += str(bone.center_x)
+    #             label_content += '\t'
+    #             label_content += str(bone.center_y)
+    #             label_content += '\t'
+    #             label_content += str(bone.width)
+    #             label_content += '\t'
+    #             label_content += str(bone.height)
+    #             label_content += '\t'
+    #             label_content += str(bone.level)
+    #             label_content += '\t'
+    #             label_content += '\n'
+    #         f.write(label_content)
     
+    '''RoyCoya 2022-08-20'''
+    patients = Patient.objects.all()
+    for patient in patients:
+        base_Patient.objects.create(
+            Patient_ID = patient.Patient_ID,
+            name = patient.name,
+            sex = patient.sex,
+            birthday = patient.birthday,
+            active = patient.active,
+            modify_user = patient.modify_user,
+            modify_date = patient.modify_date,
+        )
+    for patient in patients:
+        patient.base_Patient = base_Patient.objects.get(Patient_ID=patient.Patient_ID)
+        patient.save()
+    dicoms = DicomFile.objects.all()
+    for dicom in dicoms:
+        base_DicomFile.objects.create(
+            dcm = dicom.dcm,
+            patient = dicom.patient.base_Patient,
+            dcm_to_image = dicom.dcm_to_image,
+            SOP_Instance_UID = dicom.SOP_Instance_UID,
+            Study_Date = dicom.Study_Date,
+            modify_user = dicom.modify_user,
+            modify_date = dicom.modify_date,
+            create_user = dicom.create_user,
+            create_date = dicom.create_date,
+        )
+    for dicom in dicoms:
+        dicom.base_dcm = base_DicomFile.objects.get(SOP_Instance_UID=dicom.SOP_Instance_UID)
+        dicom.save()
+    '''RoyCoya 2022-08-20'''
+
     return HttpResponse(r'导出数据完毕，目录 E:/CQMU/export/bone_data/')
