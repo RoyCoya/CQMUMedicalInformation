@@ -1,36 +1,14 @@
 from django.contrib import admin
-from .models import Patient, DicomFile, BoneAge, BoneDetail, Preference
+from .models import *
 
 # TODO:找时间优化下。编码参考里有资料
-class admin_patient(admin.ModelAdmin):
-    actions_on_top = True
-    date_hierarchy = 'modify_date'
-    list_display = [
-        'id',
-        'Patient_ID',
-		'name',
-        'sex',
-        'birthday',
-        'active',
-        'modify_user',
-    ]
-    fieldsets = (
-        (None, {
-            'fields': ('Patient_ID', 'name', 'sex', 'birthday' )
-        }),
-        ('系统信息', {
-            'classes': ('collapse',),
-            'fields': ('modify_user', 'active'),
-        }),
-    )
 class admin_dicomfile(admin.ModelAdmin):
     list_display = [
         'id',
-        'patient',
-		'SOP_Instance_UID',
-        'Study_Date',
+        'base_dcm',
         'error',
         'modify_user',
+        'modify_date',
     ]
 class admin_boneage(admin.ModelAdmin):
     list_display = [
@@ -49,7 +27,6 @@ class admin_preference(admin.ModelAdmin):
 		'standard',
         'default_bone',
     ]
-admin.site.register(Patient, admin_patient)
 admin.site.register(DicomFile, admin_dicomfile)
 admin.site.register(BoneAge, admin_boneage)
 admin.site.register(BoneDetail)

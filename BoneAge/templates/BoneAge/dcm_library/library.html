@@ -27,11 +27,11 @@
                 <tbody>
                     {% for task in finished_tasks %}
                         <tr id="{{task.id}}">
-                            <td>{{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）</td>
-                            <td>{{task.dcm_file.patient.get_sex_display}}</td>
+                            <td>{{task.dcm_file.base_dcm.patient.name}}（{{task.dcm_file.base_dcm.patient.Patient_ID}}）</td>
+                            <td>{{task.dcm_file.base_dcm.patient.get_sex_display}}</td>
                             <td>{{task.id}}</td>
-                            {% if task.dcm_file.Study_Date %}
-                                <td>{{task.dcm_file.Study_Date}}</td>
+                            {% if task.dcm_file.base_dcm.Study_Date %}
+                                <td>{{task.dcm_file.base_dcm.Study_Date}}</td>
                             {% else %}
                                 <td><span class="text-danger">读取失败</span></td>
                             {% endif %}
@@ -60,11 +60,11 @@
                 <tbody>
                     {% for task in unfinished_tasks %}
                         <tr id="{{task.id}}">
-                            <td>{{task.dcm_file.patient.name}}（{{task.dcm_file.patient.Patient_ID}}）</td>
-                            <td>{{task.dcm_file.patient.get_sex_display}}</td>
+                            <td>{{task.dcm_file.base_dcm.patient.name}}（{{task.dcm_file.base_dcm.patient.Patient_ID}}）</td>
+                            <td>{{task.dcm_file.base_dcm.patient.get_sex_display}}</td>
                             <td>{{task.id}}</td>
-                            {% if task.dcm_file.Study_Date %}
-                                <td>{{task.dcm_file.Study_Date}}</td>
+                            {% if task.dcm_file.base_dcm.Study_Date %}
+                                <td>{{task.dcm_file.base_dcm.Study_Date}}</td>
                             {% else %}
                                 <td><span class="text-danger">读取失败</span></td>
                             {% endif %}

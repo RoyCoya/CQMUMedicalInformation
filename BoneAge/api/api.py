@@ -1,7 +1,7 @@
 import cv2
 import os
 import numpy as np
-from datetime import date, datetime
+from datetime import datetime
 from pydicom.filereader import dcmread
 from shutil import copyfile
 
@@ -68,11 +68,11 @@ def api_preference_switch_default_bone(request):
 # 修改图像亮度、对比度偏移量
 def api_save_image_offset(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    dcm = DicomFile.objects.get(id=request.POST['dcm_id'])
-    dcm.brightness = request.POST['brightness']
-    dcm.contrast = request.POST['contrast']
-    dcm.save()
-    task = BoneAge.objects.get(dcm_file=dcm)
+    BoneAge_dcm = DicomFile.objects.get(id=request.POST['dcm_id'])
+    BoneAge_dcm.brightness = request.POST['brightness']
+    BoneAge_dcm.contrast = request.POST['contrast']
+    BoneAge_dcm.save()
+    task = BoneAge.objects.get(dcm_file=BoneAge_dcm)
     task.modify_user = request.user
     task.save()
     return HttpResponse('已修改图像亮度对比度偏移量')
@@ -82,15 +82,15 @@ def api_modify_bone_detail(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
-    bone_age = bone_detail.bone_age_instance
+    task = bone_detail.bone_age_instance
     
     bone_detail.level = int(request.POST['level'])
     bone_detail.error = int(request.POST['error'])
     bone_detail.remarks = request.POST['remarks']
     bone_detail.modify_user = request.user
     bone_detail.save()
-    bone_age.modify_user = request.user
-    bone_age.save()
+    task.modify_user = request.user
+    task.save()
     return HttpResponse('成功修改骨骼信息')
 
 # 修改骨骼定位
@@ -98,9 +98,9 @@ def api_modify_bone_position(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
-    bone_age = bone_detail.bone_age_instance
+    task = bone_detail.bone_age_instance
     
-    img = bone_detail.bone_age_instance.dcm_file.dcm_to_image
+    img = task.dcm_file.base_dcm.dcm_to_image
     lefttop_x = float(request.POST['x'])
     lefttop_y = float(request.POST['y'])
     box_width = float(request.POST['width'])
@@ -112,33 +112,33 @@ def api_modify_bone_position(request):
     bone_detail.modify_user = request.user
     bone_detail.error = 0
     bone_detail.save()
-    bone_age.modify_user = request.user
-    bone_age.save()
+    task.modify_user = request.user
+    task.save()
     return HttpResponse('成功修改骨骼标注位置')
 
 # 修改骨龄
 def api_modify_bone_age(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    bone_age_id = request.POST['id']
-    bone_age = BoneAge.objects.get(id=bone_age_id)
+    task_id = request.POST['id']
+    task = BoneAge.objects.get(id=task_id)
     
-    bone_age.bone_age = float(request.POST['bone_age'])
-    bone_age.modify_user = request.user
-    bone_age.save()
+    task.bone_age = float(request.POST['bone_age'])
+    task.modify_user = request.user
+    task.save()
     return HttpResponse('成功修改骨龄')
 
 # 完成任务
 def api_finish_task(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    bone_age_id = request.POST['id']
-    bone_age = BoneAge.objects.get(id=bone_age_id)
+    task_id = request.POST['id']
+    task = BoneAge.objects.get(id=task_id)
 
-    if request.POST['closed'] == 'true': bone_age.closed = True
+    if request.POST['closed'] == 'true': task.closed = True
     print(request.POST['bone_age'])
-    bone_age.bone_age = request.POST['bone_age']
-    bone_age.closed_date = datetime.now()
-    bone_age.modify_user = request.user
-    bone_age.save()
+    task.bone_age = request.POST['bone_age']
+    task.closed_date = datetime.now()
+    task.modify_user = request.user
+    task.save()
     return HttpResponse('任务已标记为完成')
 
 # 上传dcm
@@ -146,25 +146,28 @@ def api_upload_dcm(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权上传dcm文件")
+    # 错误列表改成[{name:'', error:''}]形式
     broken_files = []
     sop_uid_miss_files = []
     duplicate_files = []
+    
     for file in request.FILES.getlist('dcm_files'):
         suffix = file.name.split('.')[-1]
         if suffix != 'dcm' and suffix != 'DCM' : continue
         file.name = 'upload_' + file.name.lower()
-        new_file = DicomFile(
+        new_file = base_DicomFile.objects.create(
             dcm=File(file),
             create_user=user,
             modify_user=user,
-            error=202
         )
-        new_file.save()
 
         # 检验dcm能否读取（reader是否可以启动）
+        # TODO: 这里的new_file.dcm为啥没写成new_file.dcm.path？有时间了试试
         try: reader = dcmread(new_file.dcm, force=True)
         except Exception as e:
             print(e)
+            try: os.remove(new_file.dcm.path)
+            except: pass
             new_file.delete()
             broken_files.append(file.name)
             continue
@@ -174,18 +177,22 @@ def api_upload_dcm(request):
         try: sop_instance_uid = reader.SOPInstanceUID
         except Exception as e:
             print(e)
+            try: os.remove(new_file.dcm.path)
+            except: pass
             new_file.delete()
             sop_uid_miss_files.append(file.name)
             continue
         # 以sop instance uid验证dicom是否重复
         if sop_instance_uid:
-            if DicomFile.objects.filter(SOP_Instance_UID=sop_instance_uid):
+            if base_DicomFile.objects.filter(SOP_Instance_UID=sop_instance_uid):
+                try: os.remove(new_file.dcm.path)
+                except: pass
                 new_file.delete()
                 duplicate_files.append(file.name)
                 continue
         new_file.SOP_Instance_UID = sop_instance_uid
         # 挂载患者或创建新患者并挂载dcm
-        patient = Patient.objects.filter(Patient_ID=reader.PatientID)
+        patient = base_Patient.objects.filter(Patient_ID=reader.PatientID)
         if(patient): 
             new_file.patient = patient[0]
         else:
@@ -197,28 +204,36 @@ def api_upload_dcm(request):
             try: name = reader.PatientName
             except Exception as e:
                 print(e)
+                try: os.remove(new_file.dcm.path)
+                except: pass
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
             try: Patient_ID = reader.PatientID
             except Exception as e:
-                print(e) 
+                print(e)
+                try: os.remove(new_file.dcm.path)
+                except: pass
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
             try: sex = 'Male' if reader.PatientSex == 'M' else 'Female'
             except Exception as e:
                 print(e)
+                try: os.remove(new_file.dcm.path)
+                except: pass
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
             try: birthday = datetime.strptime(reader.PatientBirthDate,'%Y%m%d').date()
             except Exception as e:
                 print(e)
+                try: os.remove(new_file.dcm.path)
+                except: pass
                 new_file.delete()
                 broken_files.append(file.name)
                 continue
-            patient = Patient.objects.create(
+            patient = base_Patient.objects.create(
                 name=name,
                 Patient_ID=Patient_ID,
                 sex=sex,
@@ -231,28 +246,34 @@ def api_upload_dcm(request):
         try: study_date = datetime.strptime(reader.StudyDate,'%Y%m%d').date()
         except Exception as e: print(e)
         new_file.Study_Date = study_date
-        # 结束dcm校验，保存
+        # 结束dcm校验，保存。创建BoneAge专用DicomFile实例
         new_file.save()
+        BoneAge_new_file = DicomFile.objects.create(
+            base_dcm = new_file,
+            error = 202,
+            create_user = user,
+            modify_user = user,
+        )
 
-        #创建dcm对应的boneage实例、对应的骨骼
-        bone_age = BoneAge.objects.create(dcm_file=new_file, modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Radius', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Ulna', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='First Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='First Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Middle Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Middle Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='First Distal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Third Distal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=bone_age, name='Fifth Distal Phalange', modify_user=user)
+        #创建dcm对应的task实例、对应的骨骼
+        task = BoneAge.objects.create(dcm_file=BoneAge_new_file, modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Radius', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Ulna', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='First Metacarpal', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Third Metacarpal', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Metacarpal', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='First Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Third Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Third Middle Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Middle Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='First Distal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Third Distal Phalange', modify_user=user)
+        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Distal Phalange', modify_user=user)
 
-    print(broken_files)
-    print(sop_uid_miss_files)
-    print(duplicate_files)
+    print('无法读取的dcm：',broken_files)
+    print('SOP UID 缺失：',sop_uid_miss_files)
+    print('重复的dcm：',duplicate_files)
 
     # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
@@ -268,7 +289,8 @@ def api_analyze_dcm(request):
     object_model = YOLOV5_ONNX(object_path)
     grade_path = str(settings.STATICFILES_DIRS[0]) + '/swinT_weights'
     grade_model =  BoneGrade(grade_path, 224)
-    for dcm in dcms_to_analyze:
+    for BoneAge_dcm in dcms_to_analyze:
+        dcm = BoneAge_dcm.base_dcm
         # 转png
         try:
             reader = dcmread(dcm.dcm, force=True)
@@ -282,22 +304,22 @@ def api_analyze_dcm(request):
             img_array = np.concatenate((img, img, img), axis=-1)
             cv2.imwrite(settings.MEDIA_ROOT+dcm.dcm.name + ".png", img_array, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
             dcm.dcm_to_image = dcm.dcm.name + ".png"
-            # TODO:二分类
-            dcm.error = 0
+            # TODO:检查是否为手骨图
         except Exception as e:
             print(e)
-            dcm.error = 415
+            BoneAge_dcm.error = 415
+            BoneAge_dcm.save()
             continue
         dcm.save()
         
         # 目标检测，录入骨骼位置
-        bones = BoneDetail.objects.filter(bone_age_instance__dcm_file=dcm)
+        bones = BoneDetail.objects.filter(bone_age_instance__dcm_file=BoneAge_dcm)
         # 所有骨骼初始化为404
         for bone in bones:
             bone.error = 404
             bone.save()
         bone_detected = object_model.infer(img_array)
-        
+        # 组装骨骼位置信息
         for name,position in bone_detected.items():
             try: 
                 position = position[1]
@@ -311,7 +333,7 @@ def api_analyze_dcm(request):
             except Exception as e:
                 print(e)
                 pass
-        # 骨龄评级
+        # 组装骨龄评级信息
         for name,position in bone_detected.items():
             try: 
                 position = position[0]
@@ -330,6 +352,8 @@ def api_analyze_dcm(request):
             except Exception as e:
                 print(e)
                 pass
+        BoneAge_dcm.error = 0
+        BoneAge_dcm.save()
         
     return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
 
@@ -376,76 +400,43 @@ def api_export_bone_data(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 
-    # if not os.path.isdir('E:/CQMU/export/bone_data/'):
-    #     os.mkdir('E:/CQMU/export/bone_data/')
-    # tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
-    # if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
-    #     os.mkdir('E:/CQMU/export/bone_data/images/')
-    # if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
-    #     os.mkdir('E:/CQMU/export/bone_data/labels/')
-    # for task in tasks:
-    #     bones = BoneDetail.objects.filter(bone_age_instance=task)
-    #     image_path = task.dcm_file.dcm_to_image.path
-    #     # 导出图片
-    #     out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
-    #     copyfile(image_path, out_path)
-    #     # 导出标签
-    #     out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
-    #     with open(out_path,'w') as f:
-    #         label_content = str(task.dcm_file.dcm) + '\t'
-    #         label_content += str(task.dcm_file.patient.sex)
-    #         label_content += '\t'
-    #         label_content += str((task.dcm_file.Study_Date - task.dcm_file.patient.birthday).days / 365)
-    #         label_content += '\t'
-    #         label_content +=  str(task.bone_age)
-    #         label_content += '\n'
-    #         for bone in bones:
-    #             label_content += str(bone.name)
-    #             label_content += '\t'
-    #             label_content += str(bone.center_x)
-    #             label_content += '\t'
-    #             label_content += str(bone.center_y)
-    #             label_content += '\t'
-    #             label_content += str(bone.width)
-    #             label_content += '\t'
-    #             label_content += str(bone.height)
-    #             label_content += '\t'
-    #             label_content += str(bone.level)
-    #             label_content += '\t'
-    #             label_content += '\n'
-    #         f.write(label_content)
-    
-    '''RoyCoya 2022-08-20'''
-    patients = Patient.objects.all()
-    for patient in patients:
-        base_Patient.objects.create(
-            Patient_ID = patient.Patient_ID,
-            name = patient.name,
-            sex = patient.sex,
-            birthday = patient.birthday,
-            active = patient.active,
-            modify_user = patient.modify_user,
-            modify_date = patient.modify_date,
-        )
-    for patient in patients:
-        patient.base_Patient = base_Patient.objects.get(Patient_ID=patient.Patient_ID)
-        patient.save()
-    dicoms = DicomFile.objects.all()
-    for dicom in dicoms:
-        base_DicomFile.objects.create(
-            dcm = dicom.dcm,
-            patient = dicom.patient.base_Patient,
-            dcm_to_image = dicom.dcm_to_image,
-            SOP_Instance_UID = dicom.SOP_Instance_UID,
-            Study_Date = dicom.Study_Date,
-            modify_user = dicom.modify_user,
-            modify_date = dicom.modify_date,
-            create_user = dicom.create_user,
-            create_date = dicom.create_date,
-        )
-    for dicom in dicoms:
-        dicom.base_dcm = base_DicomFile.objects.get(SOP_Instance_UID=dicom.SOP_Instance_UID)
-        dicom.save()
-    '''RoyCoya 2022-08-20'''
+    if not os.path.isdir('E:/CQMU/export/bone_data/'):
+        os.mkdir('E:/CQMU/export/bone_data/')
+    tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
+    if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
+        os.mkdir('E:/CQMU/export/bone_data/images/')
+    if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
+        os.mkdir('E:/CQMU/export/bone_data/labels/')
+    for task in tasks:
+        bones = BoneDetail.objects.filter(bone_age_instance=task)
+        image_path = task.dcm_file.base_dcm.dcm_to_image.path
+        # 导出图片
+        out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
+        copyfile(image_path, out_path)
+        # 导出标签
+        out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
+        with open(out_path,'w') as f:
+            label_content = str(task.dcm_file.base_dcm.dcm) + '\t'
+            label_content += str(task.dcm_file.base_dcm.patient.sex)
+            label_content += '\t'
+            label_content += str((task.dcm_file.base_dcm.Study_Date - task.dcm_file.base_dcm.patient.birthday).days / 365)
+            label_content += '\t'
+            label_content +=  str(task.bone_age)
+            label_content += '\n'
+            for bone in bones:
+                label_content += str(bone.name)
+                label_content += '\t'
+                label_content += str(bone.center_x)
+                label_content += '\t'
+                label_content += str(bone.center_y)
+                label_content += '\t'
+                label_content += str(bone.width)
+                label_content += '\t'
+                label_content += str(bone.height)
+                label_content += '\t'
+                label_content += str(bone.level)
+                label_content += '\t'
+                label_content += '\n'
+            f.write(label_content)
 
     return HttpResponse(r'导出数据完毕，目录 E:/CQMU/export/bone_data/')

@@ -17,7 +17,7 @@
         <div><strong>最后编辑：</strong>
             {% if task_last_modified %}
                 <a id="task_last_modified" href="{% url 'BoneAge_evaluator' task_last_modified.id %}">
-                    任务{{task_last_modified.id}}（{{task_last_modified.dcm_file.patient.name}}）
+                    任务{{task_last_modified.id}}（{{task_last_modified.dcm_file.base_dcm.patient.name}}）
                 </a>
             {% else %}
                 无
@@ -64,10 +64,10 @@
             {% for task in finished_tasks %}
                 <div id="evaluator_{{task.id}}" class="list-group-item list-group-item-action d-flex justify-content-between">
                     <span>{{task.id}}</span>
-                    <a href="#">{{task.dcm_file.patient.name}}</a>
+                    <a href="#">{{task.dcm_file.base_dcm.patient.name}}</a>
                     <span>
-                        {{task.dcm_file.patient.get_sex_display}}
-                        {% if task.dcm_file.patient.sex == 'Female' %}
+                        {{task.dcm_file.base_dcm.patient.get_sex_display}}
+                        {% if task.dcm_file.base_dcm.patient.sex == 'Female' %}
                             <i class="bi bi-gender-female" style="color:DeepPink"></i>
                         {% else %}
                             <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
@@ -97,10 +97,10 @@
             {% for task in unfinished_tasks %}
                 <div id="evaluator_{{task.id}}" class="list-group-item list-group-item-action d-flex justify-content-between">
                     <span>{{task.id}}</span>
-                    <a href="#">{{task.dcm_file.patient.name}}</a>
+                    <a href="#">{{task.dcm_file.base_dcm.patient.name}}</a>
                     <span>
-                        {{task.dcm_file.patient.get_sex_display}}
-                        {% if task.dcm_file.patient.sex == 'Female' %}
+                        {{task.dcm_file.base_dcm.patient.get_sex_display}}
+                        {% if task.dcm_file.base_dcm.patient.sex == 'Female' %}
                             <i class="bi bi-gender-female" style="color:DeepPink"></i>
                         {% else %}
                             <i class="bi bi-gender-male" style="color:DodgerBlue"></i>

@@ -107,11 +107,11 @@
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
-    var img_width = {{dcm.dcm_to_image.width}}
-    var img_height = {{dcm.dcm_to_image.height}}
+    var img_width = {{dcm.base_dcm.dcm_to_image.width}}
+    var img_height = {{dcm.base_dcm.dcm_to_image.height}}
     var task = {
         "id" : {{task.id}},
-        "bone_age" : {{task.bone_age}},
+        "bone_age" : -1,
         "closed" : {{task.closed|lower}},
     }
     var bones = {
@@ -134,7 +134,7 @@
     var dcm_id = {{dcm.id}}
     var brightness = {{dcm.brightness}}
     var contrast = {{dcm.contrast}}
-    var actual_age = {{patient.birthday|get_dcm_age:dcm.Study_Date}}
+    var actual_age = {{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date}}
     var sex = '{{patient.sex|lower}}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
     var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"
