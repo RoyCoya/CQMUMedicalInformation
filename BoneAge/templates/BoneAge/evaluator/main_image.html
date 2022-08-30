@@ -17,7 +17,7 @@
             {% endif %}
         </span>
         <span class="col-6"><strong>ID：</strong>{{patient.Patient_ID}}</span>
-        <span class="col-6"><strong>年龄：</strong>{{patient.birthday|get_dcm_age:dcm.Study_Date|floatformat}} 岁</span>
+        <span class="col-6"><strong>年龄：</strong>{{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date|floatformat}} 岁</span>
     </div>
 </div>
 <div class="col-6">
@@ -43,5 +43,5 @@
     </div>
 </div>
 <div class="col-12 text-center bg-secondary mt-2" style="padding:0px; height:80vh;">
-    <img id="dcm" src="/userfile/{{dcm.dcm_to_image}}" style="max-width: 100%; height:auto">
+    <img id="dcm" src="/userfile/{{dcm.base_dcm.dcm_to_image}}" style="max-width: 100%; height:auto">
 </div>

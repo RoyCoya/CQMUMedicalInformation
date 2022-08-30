@@ -1,4 +1,3 @@
-from lib2to3.pytree import convert
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
@@ -25,9 +24,10 @@ def index(request, page_number, order, is_descend):
         return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
     order_para = {
         0 : lambda : 'id',
-        1 : lambda : 'dcm_file__patient__Patient_ID',
-        2 : lambda : 'dcm_file__age',
-        3 : lambda : 'dcm_file__Study_Date',
+        1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
+        # TODO:想个办法把age排序做出来
+        # 2 : lambda : 'dcm_file__age',
+        3 : lambda : 'dcm_file__base_dcm__Study_Date',
         4 : lambda : 'allocated_datetime',
     }[order]()
     if is_descend:
@@ -91,9 +91,10 @@ def finished_tasks(request, page_number, order, is_descend):
         return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
     order_para = {
         0 : lambda : 'id',
-        1 : lambda : 'dcm_file__patient__Patient_ID',
-        2 : lambda : 'dcm_file__age',
-        3 : lambda : 'dcm_file__Study_Date',
+        1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
+        # TODO:想个办法把age排序做出来
+        # 2 : lambda : 'dcm_file__age',
+        3 : lambda : 'dcm_file__base_dcm__Study_Date',
         4 : lambda : 'allocated_datetime',
         5 : lambda : 'closed_date'
     }[order]()
@@ -167,9 +168,9 @@ def dicom_library_admin(request):
     return render(request,'BoneAge/dcm_library/admin.html', context)
 
 # 评分器
-def evaluator(request,bone_age_id):
+def evaluator(request,task_id):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    task = BoneAge.objects.get(id=bone_age_id)
+    task = BoneAge.objects.get(id=task_id)
 
     # 加载用户偏好
     preference = load_preference(request)
@@ -198,12 +199,12 @@ def evaluator(request,bone_age_id):
         try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__gt=task.id).first()
         except: pass
 
-    dcm = task.dcm_file
-    patient = dcm.patient
+    BoneAge_dcm = task.dcm_file
+    patient = BoneAge_dcm.base_dcm.patient
     context = {
         'preference' : preference,
         'patient' : patient,
-        'dcm' : dcm,
+        'dcm' : BoneAge_dcm,
         'task' : task,
         'pre_task' : pre_task,
         'next_task' : next_task,

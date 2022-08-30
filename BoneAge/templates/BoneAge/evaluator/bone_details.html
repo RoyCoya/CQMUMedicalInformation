@@ -38,7 +38,7 @@
         <div class="list-group-item d-flex justify-content-between row">
             <span class="col-11">
                 <strong>骨龄判断：</strong>
-                <span id="label_bone_age">{{task.bone_age}}岁</span>
+                <span id="label_bone_age">？岁</span>
                 <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger"
                 data-bs-toggle="tooltip" data-bs-placement="top"
                 title="注意：判断年龄与实际年龄差距大于1年！" hidden></i>
@@ -88,8 +88,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <label>骨龄（实际年龄 {{patient.birthday|get_dcm_age:dcm.Study_Date|floatformat}} 岁）：</label>
-                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 required {% if task.bone_age >= 0 %}value="{{task.bone_age}}"{% endif %}>
+                <label>骨龄（实际年龄 {{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date|floatformat}} 岁）：</label>
+                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 required>
                 <div id="bone_age_great_differ_warning" class="invalid-feedback text-danger">
                     <i class="bi bi-exclamation-triangle-fill text-danger"></i> 注意：判断年龄与实际年龄差距大于1年！
                 </div>
