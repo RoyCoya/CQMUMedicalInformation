@@ -10,7 +10,7 @@ class admin_dicomfile(admin.ModelAdmin):
         'modify_user',
         'modify_date',
     ]
-class admin_boneage(admin.ModelAdmin):
+class admin_task(admin.ModelAdmin):
     list_display = [
         'id',
         'dcm_file',
@@ -28,6 +28,6 @@ class admin_preference(admin.ModelAdmin):
         'default_bone',
     ]
 admin.site.register(DicomFile, admin_dicomfile)
-admin.site.register(BoneAge, admin_boneage)
+admin.site.register(Task, admin_task)
 admin.site.register(BoneDetail)
 admin.site.register(Preference, admin_preference)
