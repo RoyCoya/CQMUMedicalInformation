@@ -72,7 +72,7 @@ def api_save_image_offset(request):
     BoneAge_dcm.brightness = request.POST['brightness']
     BoneAge_dcm.contrast = request.POST['contrast']
     BoneAge_dcm.save()
-    task = BoneAge.objects.get(dcm_file=BoneAge_dcm)
+    task = Task.objects.get(dcm_file=BoneAge_dcm)
     task.modify_user = request.user
     task.save()
     return HttpResponse('已修改图像亮度对比度偏移量')
@@ -82,7 +82,7 @@ def api_modify_bone_detail(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
-    task = bone_detail.bone_age_instance
+    task = bone_detail.task
     
     bone_detail.level = int(request.POST['level'])
     bone_detail.error = int(request.POST['error'])
@@ -98,7 +98,7 @@ def api_modify_bone_position(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
-    task = bone_detail.bone_age_instance
+    task = bone_detail.task
     
     img = task.dcm_file.base_dcm.dcm_to_image
     lefttop_x = float(request.POST['x'])
@@ -120,7 +120,7 @@ def api_modify_bone_position(request):
 def api_modify_bone_age(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     task_id = request.POST['id']
-    task = BoneAge.objects.get(id=task_id)
+    task = Task.objects.get(id=task_id)
     
     task.bone_age = float(request.POST['bone_age'])
     task.modify_user = request.user
@@ -131,7 +131,7 @@ def api_modify_bone_age(request):
 def api_finish_task(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     task_id = request.POST['id']
-    task = BoneAge.objects.get(id=task_id)
+    task = Task.objects.get(id=task_id)
 
     if request.POST['closed'] == 'true': task.closed = True
     print(request.POST['bone_age'])
@@ -256,20 +256,20 @@ def api_upload_dcm(request):
         )
 
         #创建dcm对应的task实例、对应的骨骼
-        task = BoneAge.objects.create(dcm_file=BoneAge_new_file, modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Radius', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Ulna', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='First Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Third Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Metacarpal', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='First Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Third Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Third Middle Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Middle Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='First Distal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Third Distal Phalange', modify_user=user)
-        BoneDetail.objects.create(bone_age_instance=task, name='Fifth Distal Phalange', modify_user=user)
+        task = Task.objects.create(dcm_file=BoneAge_new_file, modify_user=user)
+        BoneDetail.objects.create(task=task, name='Radius', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Ulna', modify_user=user)
+        BoneDetail.objects.create(task=task, name='First Metacarpal', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Third Metacarpal', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Fifth Metacarpal', modify_user=user)
+        BoneDetail.objects.create(task=task, name='First Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Third Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Fifth Proximal Phalange', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Third Middle Phalange', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Fifth Middle Phalange', modify_user=user)
+        BoneDetail.objects.create(task=task, name='First Distal Phalange', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Third Distal Phalange', modify_user=user)
+        BoneDetail.objects.create(task=task, name='Fifth Distal Phalange', modify_user=user)
 
     print('无法读取的dcm：',broken_files)
     print('SOP UID 缺失：',sop_uid_miss_files)
@@ -313,7 +313,7 @@ def api_analyze_dcm(request):
         dcm.save()
         
         # 目标检测，录入骨骼位置
-        bones = BoneDetail.objects.filter(bone_age_instance__dcm_file=BoneAge_dcm)
+        bones = BoneDetail.objects.filter(task__dcm_file=BoneAge_dcm)
         # 所有骨骼初始化为404
         for bone in bones:
             bone.error = 404
@@ -365,7 +365,7 @@ def api_allocate_tasks(request):
 
     user_model = get_user_model()
     user = user_model.objects.get(id=request.POST['allocate_to'])
-    tasks = BoneAge.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
+    tasks = Task.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
     tasks_to_allocate_count = request.POST['tasks_to_allocate_count']
     for task in tasks[0:int(tasks_to_allocate_count)]:
         task.allocated_to = user
@@ -382,7 +382,7 @@ def api_allocate_tasks_random(request):
     user_model = get_user_model()
     users = user_model.objects.filter(is_active=True).exclude(is_staff=True)
     users_amount = users.count()
-    tasks = BoneAge.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
+    tasks = Task.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
     tasks_amount = tasks.count()
     step = int(tasks_amount / users_amount)
     i = 0
@@ -402,13 +402,13 @@ def api_export_bone_data(request):
 
     if not os.path.isdir('E:/CQMU/export/bone_data/'):
         os.mkdir('E:/CQMU/export/bone_data/')
-    tasks = BoneAge.objects.filter(closed=True)|BoneAge.objects.filter(allocated_to=4)
+    tasks = Task.objects.filter(closed=True)|Task.objects.filter(allocated_to=4)
     if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
         os.mkdir('E:/CQMU/export/bone_data/images/')
     if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
         os.mkdir('E:/CQMU/export/bone_data/labels/')
     for task in tasks:
-        bones = BoneDetail.objects.filter(bone_age_instance=task)
+        bones = BoneDetail.objects.filter(task=task)
         image_path = task.dcm_file.base_dcm.dcm_to_image.path
         # 导出图片
         out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'

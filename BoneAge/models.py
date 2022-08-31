@@ -35,8 +35,8 @@ class DicomFile(models.Model):
     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_DicomFile_creater', verbose_name='创建者', on_delete=models.PROTECT)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
-# 骨龄标注任务（在前端名为‘task’），与唯一的Dicom文件1:1对应
-class BoneAge(models.Model):
+# 骨龄标注任务，与唯一的Dicom文件对应
+class Task(models.Model):
     class Meta:
         verbose_name = '骨龄判断结果'
         verbose_name_plural = '骨龄判断结果'
@@ -62,13 +62,13 @@ class BoneDetail(models.Model):
     class Meta:
         verbose_name = '骨骼具体数据'
         verbose_name_plural = '骨骼具体数据'
-        unique_together = (('bone_age_instance','name'),)
+        unique_together = (('task','name'),)
     def __str__(self):
         return str(
-            self.bone_age_instance.dcm_file.base_dcm.patient.name + 
-            ' ' +self.bone_age_instance.dcm_file.base_dcm.patient.Patient_ID + 
+            self.task.dcm_file.base_dcm.patient.name + 
+            ' ' +self.task.dcm_file.base_dcm.patient.Patient_ID + 
             ' | dcm id:' + ' ' + 
-            str(self.bone_age_instance.dcm_file.id) +
+            str(self.task.dcm_file.id) +
             ' | ' + self.name
         )
 
@@ -111,7 +111,7 @@ class BoneDetail(models.Model):
         (202,'未初始化解析'),
         (404,'无法定位'),
     )
-    bone_age_instance = models.ForeignKey(BoneAge, related_name='BoneAge_BoneDetail_bone_age_instance', on_delete=models.CASCADE, verbose_name='所属骨龄记录')
+    task = models.ForeignKey(Task, related_name='BoneAge_BoneDetail_task', on_delete=models.CASCADE, verbose_name='所属骨龄记录')
     name = models.CharField(choices=bone_name_choice, max_length=23,verbose_name='骨名')
     level = models.IntegerField(default=-1, choices=bone_level_choice, verbose_name='RUS-CHN 14阶评级')
     error = models.IntegerField(default=202, choices=error_choice, verbose_name='定位状态')

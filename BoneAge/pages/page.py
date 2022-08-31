@@ -18,7 +18,7 @@ def index(request, page_number, order, is_descend):
     preference = load_preference(request)
 
     # 未完成任务
-    unfinished_tasks = BoneAge.objects.filter(closed=False).filter(allocated_to=request.user)
+    unfinished_tasks = Task.objects.filter(closed=False).filter(allocated_to=request.user)
     # 排序参数
     if order > 4:
         return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
@@ -35,7 +35,7 @@ def index(request, page_number, order, is_descend):
     unfinished_tasks = unfinished_tasks.order_by(order_para)
     unfinished_tasks_count = len(unfinished_tasks)
     # 已完结任务
-    finished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
+    finished_tasks = Task.objects.filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
     finished_tasks_count = len(finished_tasks)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
     
@@ -56,7 +56,7 @@ def index(request, page_number, order, is_descend):
         finished_tasks = finished_tasks[0:6]
     
     # 最后编辑的任务
-    task_last_modified = BoneAge.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
+    task_last_modified = Task.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
     
     context = {
         'preference' : preference,
@@ -84,7 +84,7 @@ def finished_tasks(request, page_number, order, is_descend):
     # 加载用户偏好
     preference = load_preference(request)
 
-    finished_tasks = BoneAge.objects.filter(closed=True).filter(allocated_to=request.user)
+    finished_tasks = Task.objects.filter(closed=True).filter(allocated_to=request.user)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
     # 按所需排序条件对完结任务列表进行排序
     if order > 5:
@@ -102,7 +102,7 @@ def finished_tasks(request, page_number, order, is_descend):
         order_para = '-' + order_para
     finished_tasks = finished_tasks.order_by(order_para)
     finished_tasks_count = len(finished_tasks)
-    unfinished_tasks = BoneAge.objects.filter(allocated_to=request.user).filter(closed=False).order_by('id')
+    unfinished_tasks = Task.objects.filter(allocated_to=request.user).filter(closed=False).order_by('id')
     unfinished_tasks_count = len(unfinished_tasks)
     
     # 完结任务列表分页
@@ -122,7 +122,7 @@ def finished_tasks(request, page_number, order, is_descend):
         unfinished_tasks = unfinished_tasks[0:6]
     
     # 最后编辑的任务
-    task_last_modified = BoneAge.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
+    task_last_modified = Task.objects.filter(allocated_to=request.user).order_by('-modify_date').first()
 
     context = {
         'preference' : preference,
@@ -145,8 +145,8 @@ def finished_tasks(request, page_number, order, is_descend):
 # dicom库
 def dicom_library(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    finished_tasks = BoneAge.objects.filter(closed=True)
-    allocated_unfinished_tasks = BoneAge.objects.filter(dcm_file__error=0).filter(closed=False).exclude(allocated_to=None)
+    finished_tasks = Task.objects.filter(closed=True)
+    allocated_unfinished_tasks = Task.objects.filter(dcm_file__error=0).filter(closed=False).exclude(allocated_to=None)
     context = {
         'finished_tasks' : finished_tasks,
         'unfinished_tasks' : allocated_unfinished_tasks,
@@ -156,7 +156,7 @@ def dicom_library(request):
 # dicom库后台
 def dicom_library_admin(request):
     unanalyzed_dcm_count = DicomFile.objects.filter(error=202).count()
-    unallocated_tasks = BoneAge.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
+    unallocated_tasks = Task.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
     user_model = get_user_model()
     # 可用于任务分配的账号
     users = user_model.objects.filter(is_active=True).exclude(is_staff=True)
@@ -170,7 +170,7 @@ def dicom_library_admin(request):
 # 评分器
 def evaluator(request,task_id):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    task = BoneAge.objects.get(id=task_id)
+    task = Task.objects.get(id=task_id)
 
     # 加载用户偏好
     preference = load_preference(request)
@@ -181,7 +181,7 @@ def evaluator(request,task_id):
     }[preference.standard]()
     preference.bone_order = bone_order
     for bone_name in bone_order:
-        try: bone_detail = BoneDetail.objects.get(name=bone_name,bone_age_instance=task)
+        try: bone_detail = BoneDetail.objects.get(name=bone_name,task=task)
         except Exception as e:return HttpResponseBadRequest(e)
         bone_details.append(bone_detail)
 
@@ -189,14 +189,14 @@ def evaluator(request,task_id):
     pre_task = None
     next_task = None
     if task.closed:
-        try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__gt=task.closed_date).order_by('closed_date').first()
+        try: pre_task = Task.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__gt=task.closed_date).order_by('closed_date').first()
         except: pass
-        try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__lt=task.closed_date).order_by('closed_date').last()
+        try: next_task = Task.objects.filter(allocated_to=request.user, closed=True).filter(closed_date__lt=task.closed_date).order_by('closed_date').last()
         except: pass
     else:
-        try: pre_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__lt=task.id).last()
+        try: pre_task = Task.objects.filter(allocated_to=request.user, closed=False).filter(id__lt=task.id).last()
         except: pass
-        try: next_task = BoneAge.objects.filter(allocated_to=request.user, closed=False).filter(id__gt=task.id).first()
+        try: next_task = Task.objects.filter(allocated_to=request.user, closed=False).filter(id__gt=task.id).first()
         except: pass
 
     BoneAge_dcm = task.dcm_file
