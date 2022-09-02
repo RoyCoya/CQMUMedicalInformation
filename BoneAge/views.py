@@ -35,6 +35,8 @@ def api_modify_bone_position(request): return api.api_modify_bone_position(reque
 def api_modify_bone_age(request): return api.api_modify_bone_age(request)
 # 完成任务
 def api_finish_task(request): return api.api_finish_task(request)
+# 收藏任务
+def api_mark_task(request): return api.api_mark_task(request)
 # 上传dcm
 def api_upload_dcm(request): return api.api_upload_dcm(request)
 # 解析数据库中未初始化（转png、骨骼定位）的dcm

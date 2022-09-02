@@ -16,6 +16,7 @@ urlpatterns = [
 	path('evaluator/bone_postion/save/', views.api_modify_bone_position, name='api_BoneAge_modify_bone_position'),
 	path('evaluator/bone_age/save/', views.api_modify_bone_age, name='api_BoneAge_modify_bone_age'),
 	path('evaluator/task/finish/', views.api_finish_task, name='api_BoneAge_finish_task'),
+	path('evaluator/task/mark/', views.api_mark_task, name='api_BoneAge_mark_task'),
 	path('dicom/library/admin/dicom/upload/', views.api_upload_dcm, name='api_BoneAge_upload_dcm'),
 	path('dicom/library/admin/dicom/analyze/', views.api_analyze_dcm, name='api_BoneAge_analyze_dcm'),
 	path('dicom/library/admin/tasks/allocate/', views.api_allocate_tasks, name="api_BoneAge_allocate_tasks"),

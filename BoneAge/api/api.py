@@ -141,6 +141,18 @@ def api_finish_task(request):
     task.save()
     return HttpResponse('任务已标记为完成')
 
+# 收藏任务
+def api_mark_task(request):
+    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    task = Task.objects.get(id=request.POST['task'])
+    user = request.user
+    if user != task.allocated_to: return HttpResponseBadRequest("该任务未分配于您")
+    
+    task.marked = True if request.POST['marked'] == 'true' else False
+    task.save()
+
+    return HttpResponse('任务收藏状态已切换')
+
 # 上传dcm
 def api_upload_dcm(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))

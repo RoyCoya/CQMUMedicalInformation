@@ -2,7 +2,7 @@
 <tbody>
     {% for task in task_list %}
         <tr id="evaluator_{{task.id}}">
-            <td>{{task.id}}</td>
+            <td>{{task.id}} {% if task.marked %}<i class='bi bi-star-fill text-warning'></i>{% endif %}</td>
             <td><a href="#">
                 {{task.dcm_file.base_dcm.patient.name}}
             </a></td>

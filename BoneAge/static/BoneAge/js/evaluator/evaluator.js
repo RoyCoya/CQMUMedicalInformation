@@ -402,7 +402,7 @@ $("#task_closed").click(function (e) {
     if(is_valid){
         if(!is_shortcut_enable) finish_task_modal.show();
         this.checked = true
-        $('#label_task_status').text('任务已完成')
+        $('#label_task_status').text('已完成')
         $('#label_task_status').removeClass('text-success')
         $('#label_task_status').addClass('text-primary')
         task['closed'] = true
@@ -424,4 +424,36 @@ $("#task_closed").click(function (e) {
 /* 完成任务，跳转至个人主页 */
 $("#finish_task").click(function (e) { 
     window.location.replace(url_personal_index);
+});
+
+/* 收藏任务 */
+$("#task_marked").click(function (e) {
+    if($(this).hasClass('bi-star')){
+        $(this).removeClass('bi-star');
+        $(this).addClass('bi-star-fill');
+        $.ajax({
+            type: "post",
+            url: url_api_mark_task,
+            data: {
+                'marked' : true,
+                'task' : task['id'],
+            },
+            dataType: "json",
+            headers:{'X-CSRFToken': csrftoken}
+        });
+    }
+    else{
+        $.ajax({
+            type: "post",
+            url: url_api_mark_task,
+            data: {
+                'marked' : false,
+                'task' : task['id'],
+            },
+            dataType: "json",
+            headers:{'X-CSRFToken': csrftoken}
+        });
+        $(this).removeClass('bi-star-fill');
+        $(this).addClass('bi-star');
+    }
 });

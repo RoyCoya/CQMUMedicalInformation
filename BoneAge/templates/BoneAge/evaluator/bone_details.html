@@ -45,14 +45,21 @@
             </span>
             <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a>
         </div>
-        <div id="list-sum" class="list-group-item d-flex justify-content-end">
-            <div class="form-check form-switch">
+        <div id="list-sum" class="list-group-item d-flex justify-content-between row pe-0">
+            <span class='col'>
+                <strong>任务ID：</strong>
+                {{task.id}}
+                <a href="#" id="task_marked" class="bi bi-star{% if task.marked %}-fill{% endif %} text-warning ps-1"></a>
+            </span>
+            <div class='col pe-0 d-flex justify-content-end'>
                 {% if task.closed %}
-                    <strong class="form-check-label text-primary">任务已完成</strong>
+                    <strong class="form-check-label text-primary pe-2">已完成</strong>
                 {% else %}
-                    <strong id="label_task_status" class="form-check-label text-success">任务进行中...</strong>
+                    <strong id="label_task_status" class="form-check-label text-success pe-2">进行中</strong>
                 {% endif %}
-                <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if task.closed %}checked{% endif %}>
+                <div class="form-check form-switch">
+                    <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if task.closed %}checked{% endif %}>
+                </div>
             </div>
         </div>
     </ul>
