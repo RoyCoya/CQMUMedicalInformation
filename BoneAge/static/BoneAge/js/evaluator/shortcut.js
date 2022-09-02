@@ -5,6 +5,7 @@ var task_no_next_modal = new bootstrap.Modal($('#modal_task_no_next'), {keyboard
 
 $(document).keypress(function (e) { 
     keycode = e.keyCode
+    console.log(keycode);
     if($('.modal').hasClass('show')) return;
     switch(keycode){
         /* 回车保存骨骼信息，并自动向下切换 */
@@ -54,6 +55,18 @@ $(document).keypress(function (e) {
             if(is_task_has_next) window.location.href = url_task_next;
             else task_no_next_modal.show()
             break;
+        }
+        /* 按F完成任务 */
+        case(70) :
+        case(102) : {
+            $("#task_closed").click();
+            break;
+        }
+        /* 按Q退出评分器 */
+        case(81) : 
+        case(113) : {
+            if(task['closed']) window.location.href = url_personal_index_task_finished;
+            else window.location.href = url_personal_index;
         }
         default:;
     }
