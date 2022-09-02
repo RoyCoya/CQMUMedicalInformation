@@ -14,7 +14,6 @@ class admin_task(admin.ModelAdmin):
     list_display = [
         'id',
         'dcm_file',
-		'bone_age',
         'allocated_to',
         'closed',
         'closed_date',

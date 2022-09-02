@@ -1,46 +1,12 @@
-{% extends 'BoneAge/base.html' %}
-{% load static %}
-{% load BoneAge_global_tags %}
+{% extends 'BoneAge/index/index.html' %}
 
-{% block title_BoneAge %}完结任务{% endblock title_BoneAge %}
+{% block title_BoneAge_index %}完结任务{% endblock title_BoneAge_index %}
 
-{% block nav_BoneAge_index %}active{% endblock nav_BoneAge_index %}
+{% block task %}
+    {% include 'BoneAge/index/tasks/tasks.html' with tasks_finished=True %}
+{% endblock task %}
+{% block pannel %}
+    {% include 'BoneAge/index/pannel.html' %}
+{% endblock pannel %}
 
-{% block css_BoneAge %}
-<link rel="stylesheet" href="{% static '/BoneAge/css/finished_tasks.css' %}">
-{% endblock css_BoneAge %}
-
-{% block content_BoneAge %}
-<!-- 欢迎栏、个人设置按钮 -->
-<div class="alert alert-primary d-flex justify-content-between" role="alert">
-    <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
-    <a data-bs-toggle="offcanvas" href="#toolbar_right">个人设置 <i class="bi bi-gear"></i></a>
-</div>
-
-<div class="row">
-    <!-- 未完成评测任务表 -->
-    <div class="col-9 border-end ps-5 pe-5">
-        {% include 'BoneAge/index/tasks/tasks.html' with tasks_finished=True %}
-    </div>
-    <!-- 面板 -->
-    <div class="col-3">
-        {% include 'BoneAge/index/pannel.html' %}
-    </div>
-</div>
-{% include 'BoneAge/index/settings.html' %}
-{% endblock content_BoneAge %}
-
-{% block js_BoneAge %}
-<script>
-    var order = {{order}}
-    var is_descend = {{is_descend}}
-    var page_number = {{page_number}}
-    var tasks_finished = true
-    var preference_shortcut = {% if preference.shortcut %}true{% else %}false{% endif %}
-    var preference_standard = '{{preference.standard}}'
-    var preference_default_bone = '{{preference.default_bone}}'
-    var url_api_preference_switch_shortcut = "{% url 'api_BoneAge_preference_switch_shortcut' %}"
-    var url_api_preference_switch_default_bone = "{% url 'api_BoneAge_preference_switch_default_bone' %}"
-</script>
-<script src="{% static '/BoneAge/js/index/index.js' %}"></script>
-{% endblock js_BoneAge %}
+{% block is_task_finished %}true{% endblock is_task_finished %}true
