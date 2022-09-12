@@ -7,7 +7,6 @@ urlpatterns = [
 	path('finished/page/<int:page_number>/order/<int:order>/descend/<int:is_descend>/', views.finished_tasks, name='BoneAge_finished_tasks'),
 	path('evaluator/<int:bone_age_id>/', views.evaluator, name='BoneAge_evaluator'),
 	path('dicom/library/', views.dicom_library, name='BoneAge_dicom_library'),
-	path('dicom/library/admin/', views.dicom_library_admin, name='BoneAge_dicom_library_admin'),
 	#接口
 	path('preference/shortcut/', views.api_preference_switch_shortcut, name='api_BoneAge_preference_switch_shortcut'),
 	path('preference/defaultbone/', views.api_preference_switch_default_bone, name="api_BoneAge_preference_switch_default_bone"),

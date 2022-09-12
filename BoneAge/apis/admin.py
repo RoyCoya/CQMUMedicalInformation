@@ -1,38 +1,23 @@
-import cv2
 import os
+import cv2
 import numpy as np
 from datetime import datetime
 from pydicom.filereader import dcmread
-from shutil import copyfile
 
-from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from django.http import *
-from django.urls import reverse
+from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.core.files import File
+from django.urls import reverse
 
+from BoneAge.apis.public_func import login_check
 from BoneAge.yolo.yolo_onnx import YOLOV5_ONNX
-from BoneAge.models import *
 from BoneAge.object_swinT.BoneGrade import BoneGrade
 
 from DICOMManagement.models import DicomFile as base_DicomFile
 from PatientManagement.models import Patient as base_Patient
-
-'''通用方法'''
-# 登录检查
-def login_check(request):
-    user = request.user
-    if not user.is_authenticated : return True
-    else : return False
-
-# 加载用户偏好设置
-def load_preference(request):
-    user = request.user
-    preference = None
-    try: preference = Preference.objects.get(user=user)
-    except: preference = Preference.objects.create(user=user)
-    return preference
+from BoneAge.models import BoneDetail, DicomFile, Task
 
 # dcm图像像素压缩到255
 def normalize(img_normalize, number):
@@ -41,117 +26,6 @@ def normalize(img_normalize, number):
     img_normalize = (img_normalize - low) / (high - low)
     img_normalize = (img_normalize * number).astype('uint8')
     return img_normalize
-
-'''特定接口'''
-# 切换快捷键开启状态
-def api_preference_switch_shortcut(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    user = request.user
-    preference = Preference.objects.get(user=user)
-    
-    preference.shortcut = request.POST['shortcut'].title()
-    preference.save()
-
-    return HttpResponse("切换快捷键开启状态成功")
-
-# 切换进入评分器时的默认骨骼
-def api_preference_switch_default_bone(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    user = request.user
-    preference = Preference.objects.get(user=user)
-    
-    preference.default_bone = request.POST['default_bone']
-    preference.save()
-
-    return HttpResponse("切换默认骨骼成功")
-
-# 修改图像亮度、对比度偏移量
-def api_save_image_offset(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    BoneAge_dcm = DicomFile.objects.get(id=request.POST['dcm_id'])
-    BoneAge_dcm.brightness = request.POST['brightness']
-    BoneAge_dcm.contrast = request.POST['contrast']
-    BoneAge_dcm.save()
-    task = Task.objects.get(dcm_file=BoneAge_dcm)
-    task.modify_user = request.user
-    task.save()
-    return HttpResponse('已修改图像亮度对比度偏移量')
-
-# 修改骨骼评分评级备注等详细信息
-def api_modify_bone_detail(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    bone_detail_id = request.POST['id']
-    bone_detail = BoneDetail.objects.get(id=bone_detail_id)
-    task = bone_detail.task
-    
-    bone_detail.level = int(request.POST['level'])
-    bone_detail.error = int(request.POST['error'])
-    bone_detail.remarks = request.POST['remarks']
-    bone_detail.modify_user = request.user
-    bone_detail.save()
-    task.modify_user = request.user
-    task.save()
-    return HttpResponse('成功修改骨骼信息')
-
-# 修改骨骼定位
-def api_modify_bone_position(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    bone_detail_id = request.POST['id']
-    bone_detail = BoneDetail.objects.get(id=bone_detail_id)
-    task = bone_detail.task
-    
-    img = task.dcm_file.base_dcm.dcm_to_image
-    lefttop_x = float(request.POST['x'])
-    lefttop_y = float(request.POST['y'])
-    box_width = float(request.POST['width'])
-    box_height = float(request.POST['height'])
-    bone_detail.center_x = (lefttop_x + box_width / 2) / img.width
-    bone_detail.center_y = (lefttop_y + box_height / 2) / img.height
-    bone_detail.width = box_width / img.width
-    bone_detail.height = box_height / img.height
-    bone_detail.modify_user = request.user
-    bone_detail.error = 0
-    bone_detail.save()
-    task.modify_user = request.user
-    task.save()
-    return HttpResponse('成功修改骨骼标注位置')
-
-# 修改骨龄
-def api_modify_bone_age(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    task_id = request.POST['id']
-    task = Task.objects.get(id=task_id)
-    
-    task.bone_age = float(request.POST['bone_age'])
-    task.modify_user = request.user
-    task.save()
-    return HttpResponse('成功修改骨龄')
-
-# 完成任务
-def api_finish_task(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    task_id = request.POST['id']
-    task = Task.objects.get(id=task_id)
-
-    if request.POST['closed'] == 'true': task.closed = True
-    print(request.POST['bone_age'])
-    task.bone_age = request.POST['bone_age']
-    task.closed_date = datetime.now()
-    task.modify_user = request.user
-    task.save()
-    return HttpResponse('任务已标记为完成')
-
-# 收藏任务
-def api_mark_task(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    task = Task.objects.get(id=request.POST['task'])
-    user = request.user
-    if user != task.allocated_to: return HttpResponseBadRequest("该任务未分配于您")
-    
-    task.marked = True if request.POST['marked'] == 'true' else False
-    task.save()
-
-    return HttpResponse('任务收藏状态已切换')
 
 # 上传dcm
 def api_upload_dcm(request):
@@ -288,7 +162,7 @@ def api_upload_dcm(request):
     print('重复的dcm：',duplicate_files)
 
     # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件
-    return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
 
 # 解析数据库中未初始化（转png、骨骼定位）的dcm
 def api_analyze_dcm(request):
@@ -367,7 +241,7 @@ def api_analyze_dcm(request):
         BoneAge_dcm.error = 0
         BoneAge_dcm.save()
         
-    return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
 
 # 分配指定数量的任务给指定用户
 def api_allocate_tasks(request):
@@ -383,7 +257,7 @@ def api_allocate_tasks(request):
         task.allocated_to = user
         task.allocated_datetime = datetime.now()
         task.save()
-    return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
 
 # 平均分配任务给所有用户
 def api_allocate_tasks_random(request):
@@ -404,51 +278,5 @@ def api_allocate_tasks_random(request):
             task.allocated_to = user
             task.allocated_datetime = datetime.now()
             task.save()
-    return HttpResponseRedirect(reverse('BoneAge_dicom_library_admin',args=()))
-
-# 导出数据
-def api_export_bone_data(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    user = request.user
-    if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
-
-    if not os.path.isdir('E:/CQMU/export/bone_data/'):
-        os.mkdir('E:/CQMU/export/bone_data/')
-    tasks = Task.objects.filter(closed=True)|Task.objects.filter(allocated_to=4)
-    if not os.path.isdir('E:/CQMU/export/bone_data/images/'):
-        os.mkdir('E:/CQMU/export/bone_data/images/')
-    if not os.path.isdir('E:/CQMU/export/bone_data/labels/'):
-        os.mkdir('E:/CQMU/export/bone_data/labels/')
-    for task in tasks:
-        bones = BoneDetail.objects.filter(task=task)
-        image_path = task.dcm_file.base_dcm.dcm_to_image.path
-        # 导出图片
-        out_path = 'E:/CQMU/export/bone_data/images/' + str(task.id) + '.png'
-        copyfile(image_path, out_path)
-        # 导出标签
-        out_path = 'E:/CQMU/export/bone_data/labels/' + str(task.id) + '.txt'
-        with open(out_path,'w') as f:
-            label_content = str(task.dcm_file.base_dcm.dcm) + '\t'
-            label_content += str(task.dcm_file.base_dcm.patient.sex)
-            label_content += '\t'
-            label_content += str((task.dcm_file.base_dcm.Study_Date - task.dcm_file.base_dcm.patient.birthday).days / 365)
-            label_content += '\t'
-            label_content +=  str(task.bone_age)
-            label_content += '\n'
-            for bone in bones:
-                label_content += str(bone.name)
-                label_content += '\t'
-                label_content += str(bone.center_x)
-                label_content += '\t'
-                label_content += str(bone.center_y)
-                label_content += '\t'
-                label_content += str(bone.width)
-                label_content += '\t'
-                label_content += str(bone.height)
-                label_content += '\t'
-                label_content += str(bone.level)
-                label_content += '\t'
-                label_content += '\n'
-            f.write(label_content)
-
-    return HttpResponse(r'导出数据完毕，目录 E:/CQMU/export/bone_data/')
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    
