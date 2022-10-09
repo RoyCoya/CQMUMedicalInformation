@@ -1,4 +1,5 @@
 from BoneAge.pages import index as page_index, dicom_library as page_dicom_library, evaluator as page_evaluator
+from BoneAge.pages import patient_details as page_patient_details
 from BoneAge.apis import settings as api_settings, evaluation as api_evaluation, task as api_task, admin as api_admin, superuser as api_superuser
 
 '''
@@ -12,6 +13,8 @@ def dicom_library_admin(request): return page_index.dicom_library_admin(request)
 def dicom_library(request): return page_dicom_library.dicom_library(request)
 # 评分器
 def evaluator(request, bone_age_id): return page_evaluator.evaluator(request,bone_age_id)
+# 患者个人资料
+def patient_profile(request, patient_id): return page_patient_details.profile(request, patient_id)
 
 '''
 接口

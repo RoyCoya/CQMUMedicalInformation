@@ -31,7 +31,7 @@
                     <li class="nav-item">
                         <a class="nav-link {% block nav_index %}{% endblock %}" href="{% url 'MainFrame_index' %}">首页</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown ms-2">
                         <a class="nav-link dropdown-toggle {% block nav_BoneAge %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
                             骨龄评分系统
                         </a>
@@ -39,6 +39,14 @@
                             <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 0 0 %}">个人主页</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item {% block nav_BoneAge_library %}{% endblock %}" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">患者管理</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% block nav_PatientManagement_1 %}{% endblock %}" href="#">test1</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item {% block nav_PatientManagement_2 %}{% endblock %}" href="#">test2</a></li>
                         </ul>
                     </li>
                 </ul>
