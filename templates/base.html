@@ -36,13 +36,13 @@
                             骨龄评分系统
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 0 0 %}">个人主页</a></li>
+                            <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 %}">个人主页</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item {% block nav_BoneAge_library %}{% endblock %}" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown ms-2">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">患者管理</a>
+                        <a class="nav-link dropdown-toggle {% block nav_PatientManagement %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">患者管理</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {% block nav_PatientManagement_1 %}{% endblock %}" href="#">test1</a></li>
                             <li><hr class="dropdown-divider"></li>

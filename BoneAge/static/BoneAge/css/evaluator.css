@@ -9,6 +9,7 @@
 .list-group-item span{ color: black; }
 .list-group-item.active span{ color:white }
 .list-group-item:hover{cursor: default!important;}
+#patient_profile:hover{text-decoration: underline !important;}
 /* popover 修改为警告色背景，文字白色 */
 .tooltip-inner{background-color: rgb(203,68,74);color: white;font-size: large;}
 .bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before, .bs-tooltip-start .tooltip-arrow::before{border-left-color: rgb(203,68,74);}

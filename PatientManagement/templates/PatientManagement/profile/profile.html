@@ -1,0 +1,38 @@
+{% extends 'PatientManagement/base.html' %}
+{% load static %}
+
+{% block title_PatientManagement %}
+    {% block title_PatientManagement_profile %}患者资料{% endblock title_PatientManagement_profile %}｜{{ patient.name }}
+{% endblock title_PatientManagement %}
+
+{% block content_PatientManagement %}
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            {% if back_page %}
+                <a class="bi bi-book" href="{{back_page}}">返回</a>
+            {% endif %}
+        </div>
+        <div class="col-9">
+            2
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            3
+        </div>
+        <div class="col-9">
+            4
+        </div>
+    </div>
+</div>
+{{patient.Patient_ID}}
+{{patient.name}}
+{{patient.sex}}
+{{patient.birthday}}
+
+    {% block content_BoneAge_details %}
+    {% endblock content_BoneAge_details %}
+{% endblock content_PatientManagement %}

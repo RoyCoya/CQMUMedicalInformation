@@ -3,11 +3,11 @@ from . import views
 
 pages = [
 	# 医生主页（未完成任务）、管理员主页
-	path('page/<int:page_number>/order/<int:order>/descend/<int:is_descend>/', views.index, name='BoneAge_index'),
+	path('page/<int:page_number>/', views.index, name='BoneAge_index'),
 	# 医生主页（已完成任务）
-	path('finished/page/<int:page_number>/order/<int:order>/descend/<int:is_descend>/', views.finished_tasks, name='BoneAge_finished_tasks'),
+	path('finished/page/<int:page_number>/', views.finished_tasks, name='BoneAge_finished_tasks'),
 	# 评分器
-	path('evaluator/<int:bone_age_id>/', views.evaluator, name='BoneAge_evaluator'),
+	path('evaluator/<int:task_id>/', views.evaluator, name='BoneAge_evaluator'),
 	# 骨龄记录库
 	path('library/', views.dicom_library, name='BoneAge_dicom_library'),
 	# 患者个人资料

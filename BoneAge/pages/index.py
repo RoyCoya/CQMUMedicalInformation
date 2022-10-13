@@ -10,9 +10,15 @@ from BoneAge.apis.public_func import login_check, load_preference
 from BoneAge.models import Task, DicomFile
 
 # 个人主页（未完结任务）
-def index(request, page_number, order, is_descend):
+def index(request, page_number):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
+    order = 0
+    is_descend = 0
+    try:
+        order = int(request.GET['order'])
+        is_descend = int(request.GET['is_descend'])
+    except: pass
     
     # 加载用户偏好
     preference = load_preference(request)
@@ -21,7 +27,7 @@ def index(request, page_number, order, is_descend):
     unfinished_tasks = Task.objects.filter(closed=False).filter(allocated_to=request.user)
     # 排序参数
     if order > 4:
-        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+        return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
@@ -77,10 +83,14 @@ def index(request, page_number, order, is_descend):
     return render(request,'BoneAge/index/index.html',context)
 
 # 完结任务
-def finished_tasks(request, page_number, order, is_descend):
+def finished_tasks(request, page_number, ):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return dicom_library_admin(request)
-
+    order, is_descend = 4, 1
+    try:
+        order = int(request.GET['order'])
+        is_descend = int(request.GET['is_descend'])
+    except: pass
     # 加载用户偏好
     preference = load_preference(request)
 
@@ -88,7 +98,7 @@ def finished_tasks(request, page_number, order, is_descend):
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
     # 按所需排序条件对完结任务列表进行排序
     if order > 5:
-        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+        return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',

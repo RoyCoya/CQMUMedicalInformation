@@ -24,10 +24,10 @@ $("th[id^=order_]").click(function () {
         is_descend = is_descend == 1 ? 0 : 1
     url = "page/" +
         page_number +
-        "/order/" +
+        "/?"+ "order=" +
         order_next
-        + '/descend/' +
-        is_descend + '/'
+        + '&is_descend=' +
+        is_descend
     if(tasks_finished) url = "/boneage/finished/" + url
     else url = "/boneage/" + url
     window.location.href = url

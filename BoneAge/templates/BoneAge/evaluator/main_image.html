@@ -6,7 +6,12 @@
         <a href="#"><i class="bi bi-three-dots" style="font-size: 1.5em;"></i></a>
     </div>
     <div class="row">   
-        <span class="col-6"><strong>姓名：</strong>{{patient.name}}</span>
+        <span class="col-6">
+            <strong>姓名：</strong>
+            <a id="patient_profile" href="{% url 'BoneAge_patient_profile' task.dcm_file.base_dcm.patient.id %}?back_page=BoneAge_evaluator&task_id={{task.id}}">
+                {{patient.name}}
+            </a>
+        </span>
         <span class="col-6">
             <strong>性别：</strong>
             {{patient.get_sex_display}}

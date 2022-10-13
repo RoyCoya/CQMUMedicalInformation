@@ -6,7 +6,7 @@ from django.http import *
 from BoneAge.models import Task, BoneDetail
 
 # 评分器
-def evaluator(request,task_id):
+def evaluator(request, task_id):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     task = Task.objects.get(id=task_id)
 

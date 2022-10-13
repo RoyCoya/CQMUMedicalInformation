@@ -162,7 +162,7 @@ def api_upload_dcm(request):
     print('重复的dcm：',duplicate_files)
 
     # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
 
 # 解析数据库中未初始化（转png、骨骼定位）的dcm
 def api_analyze_dcm(request):
@@ -241,7 +241,7 @@ def api_analyze_dcm(request):
         BoneAge_dcm.error = 0
         BoneAge_dcm.save()
         
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
 
 # 分配指定数量的任务给指定用户
 def api_allocate_tasks(request):
@@ -257,7 +257,7 @@ def api_allocate_tasks(request):
         task.allocated_to = user
         task.allocated_datetime = datetime.now()
         task.save()
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
 
 # 平均分配任务给所有用户
 def api_allocate_tasks_random(request):
@@ -278,5 +278,5 @@ def api_allocate_tasks_random(request):
             task.allocated_to = user
             task.allocated_datetime = datetime.now()
             task.save()
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
     
