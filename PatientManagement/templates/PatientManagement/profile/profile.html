@@ -5,33 +5,52 @@
     {% block title_PatientManagement_profile %}患者资料{% endblock title_PatientManagement_profile %}｜{{ patient.name }}
 {% endblock title_PatientManagement %}
 
+{% block css_PatientManagement %}
+
+{% endblock css_PatientManagement %}
+
 {% block nav_sticky_top %}{% endblock nav_sticky_top %}
 
 {% block content_PatientManagement %}
 <div class="container sticky-top bg-light border-bottom">
     <div class="row">
-        <div class="col-3">
+        <div class="col-3 align-self-center">
             {% if back_page %}
                 <a class="bi bi-arrow-left-circle" href="{{back_page}}">返回</a>
             {% endif %}
         </div>
         <div class="col-9">
-            2
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#overview" type="button">概览</button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#BoneAge" type="button">骨龄记录</button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Else" type="button">开发中...</button>
+              </li>
+            </ul>
         </div>
     </div>
 </div>
 <div class="container">
     <div class="row">
         <div class="col-3">
-
         </div>
         <div class="col-9">
-            
+            <div class="tab-content">
+                <div class="tab-pane" id="overview">
+                    {% include 'PatientManagement/profile/overview.html' %}
+                </div>
+                <div class="tab-pane" id="BoneAge">
+                    {% include 'BoneAge/PatientManagement_profile/profile.html' %}
+                </div>
+                <div class="tab-pane" id="Else">
+                    开发中...
+                </div>
+            </div>
         </div>
     </div>
 </div>
-{{patient.Patient_ID}}
-{{patient.name}}
-{{patient.sex}}
-{{patient.birthday}}
 {% endblock content_PatientManagement %}

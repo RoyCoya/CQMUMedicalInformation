@@ -27,7 +27,7 @@ def profile(request, patient_id):
     except: pass
 
     # 默认显示栏目
-    info_tab = 'overview'
+    info_tab = None
     try: info_tab = request.GET['info_tab']
     except: pass
 
