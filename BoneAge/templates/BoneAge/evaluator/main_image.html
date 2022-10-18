@@ -8,7 +8,7 @@
     <div class="row">   
         <span class="col-6">
             <strong>姓名：</strong>
-            <a id="patient_profile" href="{% url 'BoneAge_patient_profile' task.dcm_file.base_dcm.patient.id %}?back_page=BoneAge_evaluator&task_id={{task.id}}">
+            <a id="patient_profile" href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?back_page=BoneAge_evaluator&args={{task.id}}">
                 {{patient.name}}
             </a>
         </span>

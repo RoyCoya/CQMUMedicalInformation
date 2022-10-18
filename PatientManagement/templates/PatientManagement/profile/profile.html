@@ -5,12 +5,14 @@
     {% block title_PatientManagement_profile %}患者资料{% endblock title_PatientManagement_profile %}｜{{ patient.name }}
 {% endblock title_PatientManagement %}
 
+{% block nav_sticky_top %}{% endblock nav_sticky_top %}
+
 {% block content_PatientManagement %}
-<div class="container">
+<div class="container sticky-top bg-light border-bottom">
     <div class="row">
         <div class="col-3">
             {% if back_page %}
-                <a class="bi bi-book" href="{{back_page}}">返回</a>
+                <a class="bi bi-arrow-left-circle" href="{{back_page}}">返回</a>
             {% endif %}
         </div>
         <div class="col-9">
@@ -21,10 +23,10 @@
 <div class="container">
     <div class="row">
         <div class="col-3">
-            3
+
         </div>
         <div class="col-9">
-            4
+            
         </div>
     </div>
 </div>
@@ -32,7 +34,4 @@
 {{patient.name}}
 {{patient.sex}}
 {{patient.birthday}}
-
-    {% block content_BoneAge_details %}
-    {% endblock content_BoneAge_details %}
 {% endblock content_PatientManagement %}

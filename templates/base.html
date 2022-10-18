@@ -20,7 +20,7 @@
     <!--正文区-->
 
     <!-- 导航栏 -->
-    <nav class="sticky-top navbar navbar-expand-lg navbar-dark text-light d-flex justify-content-between">
+    <nav class="{% block nav_sticky_top %}sticky-top{% endblock nav_sticky_top %} navbar navbar-expand-lg navbar-dark text-light d-flex justify-content-between" style="z-index:1021;">
         <div class="container-fluid col">
             <a class="navbar-brand ms-2" href="{% url 'MainFrame_index' %}">
                 <img src="{% static '/img/CQMU_logos/logo-reverse.png' %}" width="40" height="40" alt="">

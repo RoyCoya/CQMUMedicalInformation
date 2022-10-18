@@ -10,8 +10,6 @@ pages = [
 	path('evaluator/<int:task_id>/', views.evaluator, name='BoneAge_evaluator'),
 	# 骨龄记录库
 	path('library/', views.dicom_library, name='BoneAge_dicom_library'),
-	# 患者个人资料
-	path('patient/<int:patient_id>/profile/', views.patient_profile, name='BoneAge_patient_profile'),
 ]
 
 apis = [

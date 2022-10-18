@@ -23,7 +23,8 @@ urlpatterns = [
     path('', include('MainFrame.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('boneage/', include('BoneAge.urls'))
+    path('boneage/', include('BoneAge.urls')),
+    path('patientmanagement/', include('PatientManagement.urls')),
 ]
 
 if settings.DEBUG:
