@@ -35,10 +35,10 @@ $("th[id^=order_]").click(function () {
 
 /* 任务列表跳转 */
 $("tr[id^=evaluator]").click(function () { 
-    window.location.href = "/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/"
+    window.location.replace("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/" + back_page_params)
 });
 $("div[id^=evaluator]").click(function () { 
-    window.location.href = "/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/"
+    window.location.replace("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/" + back_page_params)
 });
 
 /* 偏好设置 */

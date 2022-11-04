@@ -1,4 +1,5 @@
 from django.shortcuts import redirect,render
+from django.urls import reverse
 from django.conf import settings
 from BoneAge.apis.public_func import login_check, load_preference
 from django.http import *
@@ -37,6 +38,23 @@ def evaluator(request, task_id):
         try: next_task = Task.objects.filter(allocated_to=request.user, closed=False).filter(id__gt=task.id).first()
         except: pass
 
+    # 历史记录
+    historys = Task.objects.filter(dcm_file__base_dcm__patient__id=task.dcm_file.base_dcm.patient.id).filter(closed=True).count()
+
+    # 前一页面
+    back_page = back_page_get = back_page_args_get = back_page_else_get = None
+    try: back_page_get = request.GET['back_page']
+    except Exception as e: print(e)
+    try: back_page_args_get = tuple(request.GET.getlist('args'))
+    except Exception as e: print(e)
+    try: back_page_else_get = request.GET['else_get']
+    except Exception as e: print(e)
+    try:
+        back_page = reverse(back_page_get,args=back_page_args_get) + '?'
+        if back_page_else_get:
+            back_page += back_page_else_get
+    except Exception as e: print(e)
+
     BoneAge_dcm = task.dcm_file
     patient = BoneAge_dcm.base_dcm.patient
     context = {
@@ -47,5 +65,10 @@ def evaluator(request, task_id):
         'pre_task' : pre_task,
         'next_task' : next_task,
         'bone_details' : bone_details,
+        'historys' : historys,
+        'back_page' : back_page,
+        'back_page_get' : back_page_get,
+        'back_page_args_get' : back_page_args_get,
+        'back_page_else_get' : back_page_else_get,
     }
     return render(request,'BoneAge/evaluator/evaluator.html',context)

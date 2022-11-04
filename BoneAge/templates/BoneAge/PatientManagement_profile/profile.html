@@ -1,8 +1,19 @@
+{% load BoneAge_global_tags %}
 {% for task in tasks %}
 <div>
+    {% comment %} TODO：这里的链接要附上其他本页面的get内容 {% endcomment %}
+    <a href="{% url 'BoneAge_evaluator' task.id %}?back_page=PatientManagement_profile&args={{patient.id}}&else_get=info_tab%3DBoneAge%26back_page%3D{{back_page_get}}{% for arg in back_page_args_get %}%26args%3D{{arg}}{% endfor %}{% if back_page_else_get %}%26else_get%3D{{back_page_else_get|transfercharacter_get_url}}{% endif %}">
+        检查ID：{{task.id}}
+    </a>
+    <br>
     检查时间：{{task.dcm_file.base_dcm.Study_Date}}
     <br>
     骨龄：{{task.bone_age}}
     <hr>
 </div>
 {% endfor %}
+{{back_page_get}}
+<br>
+{{back_page_args_get}}
+<br>
+{{back_page_else_get}}

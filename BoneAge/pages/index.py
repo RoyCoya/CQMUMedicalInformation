@@ -55,7 +55,7 @@ def index(request, page_number):
 
     # 查询每个患者的历史评测记录数量
     for task in unfinished_tasks_current_page:
-        task.history = 1
+        task.history = Task.objects.filter(dcm_file__base_dcm__patient__id=task.dcm_file.base_dcm.patient.id).filter(closed=True).count()
 
     # 完结任务大于6个折叠，跳转给完结任务界面
     if finished_tasks_count > 6:
@@ -123,9 +123,8 @@ def finished_tasks(request, page_number, ):
     has_previous_page = finished_tasks_current_page.has_previous()
     has_next_page = finished_tasks_current_page.has_next()
 
-    #TODO: 查询每个患者的历史评测记录数量
     for task in finished_tasks_current_page:
-        task.history = 1
+        task.history = Task.objects.filter(dcm_file__base_dcm__patient__id=task.dcm_file.base_dcm.patient.id).filter(closed=True).count()
 
     # 未完结任务大于6个折叠，跳转给个人主页
     if unfinished_tasks_count > 6:
