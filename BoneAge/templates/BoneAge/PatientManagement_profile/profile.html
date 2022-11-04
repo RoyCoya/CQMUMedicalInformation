@@ -1,5 +1,8 @@
-BoneAge details
 {% for task in tasks %}
-
+<div>
+    检查时间：{{task.dcm_file.base_dcm.Study_Date}}
+    <br>
+    骨龄：{{task.bone_age}}
+    <hr>
+</div>
 {% endfor %}
-{% lorem 9 p random %}

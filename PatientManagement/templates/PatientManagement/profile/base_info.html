@@ -1,0 +1,29 @@
+{% load static %}
+<div class="position-relative">
+    <img src="{% static 'PatientManagement/img/default_avator.jpeg' %}" class="img-fluid rounded-circle shadow-lg" alt="患者照片">
+</div>
+<div class="mt-3 ps-3">
+    <p>
+        <strong class="fs-3">{{patient.name}}</strong>
+        <span class="ms-3">
+            <i {% if patient.sex == 'Female' %}
+                    class="bi bi-gender-female text-pink" style="color:DeepPink"
+                {% else %}
+                    class="bi bi-gender-male" style="color:DodgerBlue"
+                {% endif %}>
+            </i> 
+            {{patient.get_sex_display}}
+        </span>
+        {% comment %} #TODO:这里之后换成age，生日另起一行 {% endcomment %}
+        <span class="ms-3">{{patient.birthday}}</span>
+    </p>
+    <p><select class="form-select">
+        <option value="ID_card" selected>身份证</option>
+        <option value="passport">护照</option>
+        <option value="dirver_licence">驾照</option>
+    </select></p>
+    <p><strong>证件号：</strong>111111111111111111</p>
+    <p><strong>联系方式：</strong>11111111111</p>
+    <p><strong>通讯地址：</strong>重庆市渝中区重庆医科大学附属儿童医院三楼放射科办公室</p>
+    <p><strong>医保卡号：</strong>11111111111</p>
+</div>

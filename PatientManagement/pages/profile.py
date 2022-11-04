@@ -33,10 +33,10 @@ def profile(request, patient_id):
 
     # 骨龄资料
     tasks = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id)
-    
+
     context = {
         'patient' : patient,
-        'task' : tasks,
+        'tasks' : tasks,
         'back_page' : back_page,
         'info_tab' : info_tab,
     }
