@@ -27,7 +27,7 @@ def index(request, page_number):
     unfinished_tasks = Task.objects.filter(closed=False).filter(allocated_to=request.user)
     # 排序参数
     if order > 4:
-        return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
+        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
@@ -98,7 +98,7 @@ def finished_tasks(request, page_number, ):
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
     # 按所需排序条件对完结任务列表进行排序
     if order > 5:
-        return HttpResponseRedirect(reverse('BoneAge_index',args=(1)))
+        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
@@ -164,4 +164,4 @@ def dicom_library_admin(request):
         'unanalyzed_dcm_count' : unanalyzed_dcm_count,
         'users' : users
     }
-    return render(request,'BoneAge/index/admin.html', context)
+    return render(request,'BoneAge/index/admin/admin.html', context)

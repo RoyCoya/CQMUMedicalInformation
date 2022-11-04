@@ -1,0 +1,54 @@
+{% extends 'BoneAge/base.html' %}
+
+{% block title_BoneAge %}上传完成{% endblock title_BoneAge %}
+
+{% block nav_BoneAge_index %}active{% endblock nav_BoneAge_index %}
+
+{% block css_BoneAge %}
+{% endblock css_BoneAge %}
+
+{% block content_BoneAge %}
+{% load static %}
+
+{% if unanalyzed_dcm_count > 0 %}
+<div class="alert alert-warning d-flex justify-content-start" role="alert">
+    <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-arrow-left-circle text-primary"> 返回</a>
+    <span class="ms-3">数据库中存在 {{unanalyzed_dcm_count}} 个未解析的dcm文件，</span>
+    <a id="analyze" href="{% url 'api_BoneAge_analyze_dcm' %}">点击此处解析</a>
+    <span id="spinner_analyze" hidden>
+        <span class="spinner-border spinner-border-sm text-primary ms-2 align-self-center" role="status"></span>
+        <span>解析将自动进行，可离开本页面</span>
+    </span>
+</div>
+{% else %}
+<div class="alert alert-success d-flex justify-content-start" role="alert">
+    <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-arrow-left-circle text-primary"> 返回</a>
+    <span class="ms-3">数据库运转正常。</span>
+</div>
+{% endif %}
+<div class="container">
+    <span class="fs-3"><strong class="text-success">成功上传：</strong> {{success_files|length}} 个</span><br>
+    <ul class="list-group list-group-numbered">
+        {% for file_name in success_files %}
+            <li class="list-group-item">{{file_name}}</li>
+        {% endfor %}
+    </ul><br>
+    <span class="fs-3"><strong class="text-warning">重复文件：</strong> {{duplicate_files|length}} 个</span><br>
+    <ul class="list-group list-group-numbered">
+        {% for file_name in duplicate_files %}
+            <li class="list-group-item">{{file_name}}</li>
+        {% endfor %}
+    </ul><br>
+    <span class="fs-3"><strong class="text-danger">损坏文件：</strong> {{broken_files|length}} 个</span><br>
+    <ul class="list-group list-group-numbered">
+        {% for file_name in broken_files %}
+            <li class="list-group-item">{{file_name}}</li>
+        {% endfor %}
+    </ul><br>
+</div>
+
+{% endblock content_BoneAge %}
+
+{% block js_BoneAge %}
+<script src="{% static 'BoneAge/js/admin/admin.js' %}"></script>
+{% endblock js_BoneAge %}
