@@ -107,9 +107,5 @@
 {% endblock content_BoneAge %}
 
 {% block js_BoneAge %}
-<script>
-    var task_count = {{unallocated_tasks|length}}
-    var url_api_upload_dcm = "{% url 'api_BoneAge_upload_dcm' %}"
-</script>
-<script src="{% static 'BoneAge/js/dcm_library/admin.js' %}"></script>
+<script src="{% static 'BoneAge/js/admin/admin.js' %}"></script>
 {% endblock js_BoneAge %}

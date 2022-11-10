@@ -3,7 +3,7 @@
     {% for task in task_list %}
         <tr id="evaluator_{{task.id}}">
             <td>{{task.id}} {% if task.marked %}<i class='bi bi-star-fill text-warning'></i>{% endif %}</td>
-            <td><a href="#">
+            <td><a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?back_page={% if is_finished %}BoneAge_finished_tasks{% else %}BoneAge_index{% endif %}&args={{page_number}}&else_get=order%3D{{order}}%26is_descend%3D{{is_descend}}">
                 {{task.dcm_file.base_dcm.patient.name}}
             </a></td>
             <td>{{task.dcm_file.base_dcm.patient.Patient_ID}}</td>
@@ -28,7 +28,7 @@
             <td>{{task.allocated_datetime|date:"Y-n-j H:i"}}</td>
             <td>
                 {% if task.history > 0 %}
-                    <a href="#" class="bi bi-clock-history" style="font-size:1.2rem">：{{task.history}}</a>
+                    <a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge&back_page={% if is_finished %}BoneAge_finished_tasks{% else %}BoneAge_index{% endif %}&args={{page_number}}&&else_get=order%3D{{order}}%26is_descend%3D{{is_descend}}" class="bi bi-clock-history" style="font-size:1.2rem"> {{task.history}}份</a>
                 {% endif %}
             </td>
         </tr>

@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime
 from pydicom.filereader import dcmread
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.http import *
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -32,10 +32,10 @@ def api_upload_dcm(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权上传dcm文件")
-    # 错误列表改成[{name:'', error:''}]形式
+    # TODO:错误列表改成[{name:'', error:''}]形式
     broken_files = []
-    sop_uid_miss_files = []
     duplicate_files = []
+    success_files = []
     
     for file in request.FILES.getlist('dcm_files'):
         suffix = file.name.split('.')[-1]
@@ -66,7 +66,7 @@ def api_upload_dcm(request):
             try: os.remove(new_file.dcm.path)
             except: pass
             new_file.delete()
-            sop_uid_miss_files.append(file.name)
+            broken_files.append(file.name)
             continue
         # 以sop instance uid验证dicom是否重复
         if sop_instance_uid:
@@ -157,12 +157,16 @@ def api_upload_dcm(request):
         BoneDetail.objects.create(task=task, name='Third Distal Phalange', modify_user=user)
         BoneDetail.objects.create(task=task, name='Fifth Distal Phalange', modify_user=user)
 
-    print('无法读取的dcm：',broken_files)
-    print('SOP UID 缺失：',sop_uid_miss_files)
-    print('重复的dcm：',duplicate_files)
+        success_files.append(file.name)
 
-    # TODO:操作成功后单独弹出页面提示上传失败的、成功的、重复的各个文件
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    unanalyzed_dcm_count = Task.objects.filter(dcm_file__error=202).count()
+    context = {
+        'unanalyzed_dcm_count' : unanalyzed_dcm_count,
+        'success_files' : success_files,
+        'broken_files' : broken_files,
+        'duplicate_files' : duplicate_files,
+    }
+    return render(request, 'BoneAge/index/admin/upload_results.html', context)
 
 # 解析数据库中未初始化（转png、骨骼定位）的dcm
 def api_analyze_dcm(request):
@@ -241,7 +245,7 @@ def api_analyze_dcm(request):
         BoneAge_dcm.error = 0
         BoneAge_dcm.save()
         
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
 
 # 分配指定数量的任务给指定用户
 def api_allocate_tasks(request):
@@ -257,7 +261,7 @@ def api_allocate_tasks(request):
         task.allocated_to = user
         task.allocated_datetime = datetime.now()
         task.save()
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
 
 # 平均分配任务给所有用户
 def api_allocate_tasks_random(request):
@@ -278,5 +282,5 @@ def api_allocate_tasks_random(request):
             task.allocated_to = user
             task.allocated_datetime = datetime.now()
             task.save()
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,0,0)))
+    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
     

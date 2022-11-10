@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1,,user-scalable=no">
     <title>{% block title %}{% endblock %}｜重医信息学院智慧医疗平台</title>
     {% load static %}
-    <link rel="shortcut icon" href="{% static '/img/CQMU_logos/favicon-grayscale.ico' %}" type="image/x-icon">
-    <link rel="icon" href="{% static '/img/CQMU_logos/favicon-grayscale.ico' %}" type="image/x-icon">
-    <link rel="apple-touch-icon" href="{% static '/img/CQMU_logos/favicon-grayscale.ico' %}"/>
-    <link rel="stylesheet" href="{% static '/bootstrap/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static '/bootstrap-icons/bootstrap-icons.css' %}">
-    <link rel="stylesheet" href="{% static '/css/main_theme.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/CQMU_logos/favicon-grayscale.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'img/CQMU_logos/favicon-grayscale.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static 'img/CQMU_logos/favicon-grayscale.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-icons/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main_theme.css' %}">
     <!--额外css导入区-->
     {% block css %}
     {% endblock %}
@@ -20,10 +20,10 @@
     <!--正文区-->
 
     <!-- 导航栏 -->
-    <nav class="sticky-top navbar navbar-expand-lg navbar-dark text-light d-flex justify-content-between">
+    <nav class="{% block nav_sticky_top %}sticky-top{% endblock nav_sticky_top %} navbar navbar-expand-lg navbar-dark text-light d-flex justify-content-between" style="z-index:1021;">
         <div class="container-fluid col">
             <a class="navbar-brand ms-2" href="{% url 'MainFrame_index' %}">
-                <img src="{% static '/img/CQMU_logos/logo-reverse.png' %}" width="40" height="40" alt="">
+                <img src="{% static 'img/CQMU_logos/logo-reverse.png' %}" width="40" height="40" alt="">
                 <span class="ms-2 align-middle">重庆医科大学·智慧医疗平台</span>
             </a>
             <div class="collapse navbar-collapse" id="nav-collapse">
@@ -31,12 +31,20 @@
                     <li class="nav-item">
                         <a class="nav-link {% block nav_index %}{% endblock %}" href="{% url 'MainFrame_index' %}">首页</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle {% block nav_PatientManagement %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">患者管理</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% block nav_PatientManagement_1 %}{% endblock %}" href="#">test1</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item {% block nav_PatientManagement_2 %}{% endblock %}" href="#">test2</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown ms-2">
                         <a class="nav-link dropdown-toggle {% block nav_BoneAge %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
                             骨龄评分系统
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 0 0 %}">个人主页</a></li>
+                            <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 %}">个人主页</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item {% block nav_BoneAge_library %}{% endblock %}" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
                         </ul>
@@ -55,9 +63,9 @@
     {% endblock %}
     <!--/正文区-->
 
-    <script src="{% static '/js/jquery.min.js' %}"></script>
-    <script src="{% static '/bootstrap/popover.js' %}"></script>
-    <script src="{% static '/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/popover.js' %}"></script>
+    <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
     <script>
         var popoverTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {

@@ -26,9 +26,9 @@
         </tr>
     </thead>
     {% if tasks_finished %}
-        {% include 'BoneAge/index/tasks/table.html' with task_list=finished_tasks %}
+        {% include 'BoneAge/index/tasks/task.html' with task_list=finished_tasks is_finished=True %}
     {% else %}
-        {% include 'BoneAge/index/tasks/table.html' with task_list=unfinished_tasks %}
+        {% include 'BoneAge/index/tasks/task.html' with task_list=unfinished_tasks is_finished=False %}
     {% endif %}
 </table>
 {% if tasks_finished %}

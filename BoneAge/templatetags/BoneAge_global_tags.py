@@ -21,3 +21,16 @@ def convert_time_to_period(value):
 @register.filter(name='get_dcm_age')
 def get_dcm_age(birthday, study_date):
     return (study_date - birthday).days / 365
+
+# get转义符
+@register.filter(name='transfercharacter_get_url')
+def transfercharacter_get_url(get_params):
+    get_params = get_params.replace('+', r'%2B')
+    get_params = get_params.replace('=', r'%3D')
+    get_params = get_params.replace('&', r'%26')
+    get_params = get_params.replace('#', r'%23')
+    get_params = get_params.replace('%', r'%25')
+    get_params = get_params.replace('?', r'%3F')
+    get_params = get_params.replace('/', r'%2F')
+    get_params = get_params.replace(' ', r'%20')
+    return get_params

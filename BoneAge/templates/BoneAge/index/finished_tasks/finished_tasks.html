@@ -6,7 +6,12 @@
     {% include 'BoneAge/index/tasks/tasks.html' with tasks_finished=True %}
 {% endblock task %}
 {% block pannel %}
-    {% include 'BoneAge/index/pannel.html' %}
+    {% include 'BoneAge/index/pannel.html' with is_finished=False %}
 {% endblock pannel %}
 
-{% block is_task_finished %}true{% endblock is_task_finished %}true
+{% block is_task_finished %}true{% endblock is_task_finished %}
+{% block js_BoneAge_back_params %}
+<script>
+    var back_page_params = "?back_page=BoneAge_finished_tasks&args={{page_number}}&&else_get=order%3D{{order}}%26is_descend%3D{{is_descend}}"
+</script>
+{% endblock js_BoneAge_back_params %}

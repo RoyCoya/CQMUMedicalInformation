@@ -1,14 +1,10 @@
-:root {
-    /* 主题色 */
-    --theme_color: rgb(17,64,141);
-}
 /* 表头链接 */
 th a{color: black}
 th i{color: black}
 th[id^=order_]:hover{background-color: rgb(229, 231, 231);}
 
 /* 当前排序 */
-.order{background-color: rgb(17,64,141)!important;}
+.order{background-color: var(--theme_color)!important;}
 .order a{color: white}
 .order i{color: white}
 
