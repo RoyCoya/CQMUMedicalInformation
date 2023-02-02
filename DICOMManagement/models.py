@@ -1,8 +1,8 @@
-from django.db import models
 from django.contrib.auth import settings
+from django.db import models
 
 from PatientManagement.models import Patient
-    
+
 # Dicom文件，与唯一的患者n:1对应。当Dicom的patient id在数据库中无法找到对应患者时，新建患者并挂载外键
 class DicomFile(models.Model):
     class Meta:

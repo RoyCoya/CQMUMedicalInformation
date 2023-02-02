@@ -1,8 +1,8 @@
-from django.db import models
 from django.contrib.auth import settings
+from django.db import models
 
 from DICOMManagement.models import DicomFile as dicomfile_base_class
-    
+
 # 骨龄专用Dicom文件扩展信息
 class DicomFile(models.Model):
     class Meta:

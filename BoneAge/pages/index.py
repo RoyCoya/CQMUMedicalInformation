@@ -1,13 +1,14 @@
 import datetime
-from django.shortcuts import redirect, render
-from django.conf import settings
-from django.http import *
-from django.urls import reverse
-from django.core.paginator import Paginator
-from django.contrib.auth import get_user_model
 
-from BoneAge.apis.public_func import login_check, load_preference
-from BoneAge.models import Task, DicomFile
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
+from django.http import *
+from django.shortcuts import redirect, render
+from django.urls import reverse
+
+from BoneAge.apis.public_func import load_preference, login_check
+from BoneAge.models import DicomFile, Task
 
 # 个人主页（未完结任务）
 def index(request, page_number):

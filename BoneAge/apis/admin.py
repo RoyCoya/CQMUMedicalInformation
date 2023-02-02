@@ -1,23 +1,22 @@
 import os
+from datetime import datetime
+
 import cv2
 import numpy as np
-from datetime import datetime
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.files import File
+from django.http import *
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from pydicom.filereader import dcmread
 
-from django.shortcuts import redirect, render
-from django.http import *
-from django.contrib.auth import get_user_model
-from django.conf import settings
-from django.core.files import File
-from django.urls import reverse
-
 from BoneAge.apis.public_func import login_check
-from BoneAge.yolo.yolo_onnx import YOLOV5_ONNX
+from BoneAge.models import BoneDetail, DicomFile, Task
 from BoneAge.object_swinT.BoneGrade import BoneGrade
-
+from BoneAge.yolo.yolo_onnx import YOLOV5_ONNX
 from DICOMManagement.models import DicomFile as base_DicomFile
 from PatientManagement.models import Patient as base_Patient
-from BoneAge.models import BoneDetail, DicomFile, Task
 
 # dcm图像像素压缩到255
 def normalize(img_normalize, number):
@@ -48,8 +47,7 @@ def api_upload_dcm(request):
         )
 
         # 检验dcm能否读取（reader是否可以启动）
-        # TODO: 这里的new_file.dcm为啥没写成new_file.dcm.path？有时间了试试
-        try: reader = dcmread(new_file.dcm, force=True)
+        try: reader = dcmread(new_file.dcm.path, force=True)
         except Exception as e:
             print(e)
             try: os.remove(new_file.dcm.path)
@@ -175,15 +173,15 @@ def api_analyze_dcm(request):
     if not user.is_staff: return HttpResponseBadRequest("您无权解析dcm文件")
 
     dcms_to_analyze = DicomFile.objects.filter(error=202)
-    object_path = str(settings.STATICFILES_DIRS[0]) + '/yolo_model/yolo_roi.onnx'
+    object_path = str(settings.STATICFILES_DIRS[0]) + 'yolo_model/yolo_roi.onnx'
     object_model = YOLOV5_ONNX(object_path)
-    grade_path = str(settings.STATICFILES_DIRS[0]) + '/swinT_weights'
+    grade_path = str(settings.STATICFILES_DIRS[0]) + 'swinT_weights'
     grade_model =  BoneGrade(grade_path, 224)
     for BoneAge_dcm in dcms_to_analyze:
         dcm = BoneAge_dcm.base_dcm
         # 转png
         try:
-            reader = dcmread(dcm.dcm, force=True)
+            reader = dcmread(dcm.dcm.path, force=True)
             img_array = reader.pixel_array
             img_array = cv2.GaussianBlur(img_array, (5, 5), sigmaX=0, sigmaY=0)
             clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))

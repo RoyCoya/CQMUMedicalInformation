@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from django.shortcuts import redirect
-from django.http import *
 from django.conf import settings
+from django.http import *
+from django.shortcuts import redirect
 
 from BoneAge.apis.public_func import login_check
-
 from BoneAge.models import Task
 
 # 完成任务

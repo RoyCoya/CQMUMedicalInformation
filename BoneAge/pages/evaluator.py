@@ -1,10 +1,10 @@
-from django.shortcuts import redirect,render
-from django.urls import reverse
 from django.conf import settings
-from BoneAge.apis.public_func import login_check, load_preference
 from django.http import *
+from django.shortcuts import redirect, render
+from django.urls import reverse
 
-from BoneAge.models import Task, BoneDetail
+from BoneAge.apis.public_func import load_preference, login_check
+from BoneAge.models import BoneDetail, Task
 
 # 评分器
 def evaluator(request, task_id):

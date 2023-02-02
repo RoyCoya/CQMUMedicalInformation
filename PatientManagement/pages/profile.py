@@ -1,11 +1,10 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.conf import settings
-
-from PatientManagement.models import Patient
+from django.shortcuts import redirect, render
+from django.urls import reverse
 
 from BoneAge.apis.public_func import login_check
 from BoneAge.models import Task
+from PatientManagement.models import Patient
 
 # 患者个人资料
 def profile(request, patient_id):

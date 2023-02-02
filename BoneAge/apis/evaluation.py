@@ -1,10 +1,10 @@
-from django.shortcuts import redirect
-from django.http import *
 from django.conf import settings
+from django.http import *
+from django.shortcuts import redirect
 
 from BoneAge.apis.public_func import login_check
+from BoneAge.models import BoneDetail, DicomFile, Task
 
-from BoneAge.models import DicomFile, Task, BoneDetail
 
 # 修改图像亮度、对比度偏移量
 def api_save_image_offset(request):

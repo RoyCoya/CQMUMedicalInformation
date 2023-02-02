@@ -1,5 +1,5 @@
-from django.shortcuts import redirect, render
 from django.conf import settings
+from django.shortcuts import redirect, render
 
 from BoneAge.apis.public_func import login_check
 from BoneAge.models import Task

@@ -1,5 +1,3 @@
-import numpy as np
-
 from BoneAge.models import Preference
 
 # 登录检查

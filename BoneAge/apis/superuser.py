@@ -1,12 +1,12 @@
 import os
 from shutil import copyfile
 
-from django.shortcuts import redirect
-from django.http import *
 from django.conf import settings
+from django.http import *
+from django.shortcuts import redirect
 
-from BoneAge.models import Task, BoneDetail
 from BoneAge.apis.public_func import login_check
+from BoneAge.models import BoneDetail, Task
 
 # 导出数据
 def api_export_bone_data(request):

@@ -1,11 +1,9 @@
-from django.shortcuts import redirect
-from django.http import *
 from django.conf import settings
+from django.http import *
+from django.shortcuts import redirect
 
 from BoneAge.apis.public_func import login_check
-
 from BoneAge.models import Preference
-
 
 # 切换快捷键开启状态
 def api_preference_switch_shortcut(request):
