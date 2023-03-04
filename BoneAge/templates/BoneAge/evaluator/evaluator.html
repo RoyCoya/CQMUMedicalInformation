@@ -101,7 +101,6 @@
 {% block js_BoneAge %}
 <script src="{% static '/BoneAge/image_cropper/cropper.min.js' %}" ></script>
 <script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}" ></script>
-<script src="{% static '/BoneAge/js/evaluator/RUS_CHN.js' %}" ></script>
 <script>
     var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -119,14 +118,14 @@
             "{{bone.name|slugify}}" : {
                 "id" : {{bone.id}},
                 "name" : "{{bone.get_name_display}}",
-                "x" : {{bone.center_x}} * img_width - {{bone.width}} * img_width / 2,
-                "y" : {{bone.center_y}} * img_height - {{bone.height}} * img_height / 2,
-                "width" : {{bone.width}} * img_width,
-                "height" : {{bone.height}} * img_height,
+                {% if bone.center_x < 0 %}"x" : 0,{% else %}"x" : {{bone.center_x}} * img_width - {{bone.width}} * img_width / 2,{% endif %}
+                {% if bone.center_y < 0 %}"y" : 0,{% else %}"y" : {{bone.center_y}} * img_height - {{bone.height}} * img_height / 2,{% endif %}
+                {% if bone.width < 0 %}"width" : 1,{% else %}"width" : {{bone.width}} * img_width,{% endif %}
+                {% if bone.height < 0 %}"height" : 1,{% else %}"height" : {{bone.height}} * img_height,{% endif %}
                 "error" : {{bone.error}},
                 "error_message" : "{{bone.get_error_display}}",
-                "level" : {{bone.level}},
-                "level_message" : "{{bone.get_level_display}}",
+                "level" : {{bone.assessment}},
+                "level_message" : "{{bone.get_assessment_display}}",
                 "remarks" : `{{bone.remarks|default_if_none:""}}`,
             },
         {% endfor %}
@@ -136,6 +135,7 @@
     var contrast = {{dcm.contrast}}
     var actual_age = {{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date}}
     var sex = '{{patient.sex|lower}}'
+    var url_static = '{% get_static_prefix %}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
     var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"
     var url_api_modify_bone_age = "{% url 'api_BoneAge_modify_bone_age' %}"
@@ -146,7 +146,12 @@
     var default_bone = ("{{preference.default_bone}}").replace('RUS_', "").replace('CHN', "")
     var is_shortcut_enable = false
     var url_api_mark_task = "{% url 'api_BoneAge_mark_task' %}"
+    var bone_fixed = undefined
+    {% if bone_fixed %}
+    bone_fixed = "{{ bone_fixed }}"
+    {% endif %}
 </script>
+<script src="{% static '/BoneAge/js/evaluator/'|add:preference.standard|add:'.js' %}" ></script>
 <script src="{% static '/BoneAge/js/evaluator/evaluator.js' %}"></script>
 {% if preference.shortcut %}
 <script>

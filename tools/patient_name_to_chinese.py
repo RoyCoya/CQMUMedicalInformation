@@ -13,7 +13,7 @@ with open(sys.path[0] + '/../doc/tools/patients.txt',encoding="utf-8") as patien
         patient_id = details[0]
         name = details[1]
         patients_chinese_name_dic[patient_id] = name
-sql = 'select Patient_Id,name from BoneAge_patient'
+sql = 'select Patient_Id,name from PatientManagement_patient'
 cursor.execute(sql)
 patients_exited = cursor.fetchall()
 for patient in patients_exited:
@@ -21,7 +21,7 @@ for patient in patients_exited:
     try: 
         name = patients_chinese_name_dic[id].replace('\n','')
         data = (name, id)
-        sql = 'update BoneAge_patient set name=? where Patient_ID=?'
+        sql = 'update PatientManagement_patient set name=? where Patient_ID=?'
         cursor.execute(sql, data)
     except: continue
 

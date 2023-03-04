@@ -52,7 +52,19 @@ $("#preference_shortcut").click(function (e) {
         headers:{'X-CSRFToken': csrftoken}
     });
 });
+
 // 切换评测标准
+$('#preference_standard').change(function (e) { 
+    $.ajax({
+        type: "post",
+        url: url_api_preference_switch_standard,
+        data: {"standard" : $(this).val()},
+        dataType: "json",
+        headers:{'X-CSRFToken': csrftoken}
+    });
+    window.location.replace(location)
+});
+
 // 切换默认骨骼
 $('#preference_default_bone').change(function (e) { 
     $.ajax({

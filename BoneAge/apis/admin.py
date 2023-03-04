@@ -8,17 +8,17 @@ from django.contrib.auth import get_user_model
 from django.core.files import File
 from django.http import *
 from django.shortcuts import redirect, render
-from django.urls import reverse
 from pydicom.filereader import dcmread
 
+import BoneAge.apis.standard as bone_standars
+
 from BoneAge.apis.public_func import login_check
+from BoneAge.apis.bone_analysis import bone_detect
 from BoneAge.models import BoneDetail, DicomFile, Task
-from BoneAge.object_swinT.BoneGrade import BoneGrade
-from BoneAge.yolo.yolo_onnx import YOLOV5_ONNX
 from DICOMManagement.models import DicomFile as base_DicomFile
 from PatientManagement.models import Patient as base_Patient
 
-# dcm图像像素压缩到255
+''' dcm图像像素压缩到255 '''
 def normalize(img_normalize, number):
     high = np.max(img_normalize)
     low = np.min(img_normalize)
@@ -26,16 +26,19 @@ def normalize(img_normalize, number):
     img_normalize = (img_normalize * number).astype('uint8')
     return img_normalize
 
-# 上传dcm
+# 上传dcm，转png入库
 def api_upload_dcm(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权上传dcm文件")
     # TODO:错误列表改成[{name:'', error:''}]形式
+    success_files = []
     broken_files = []
     duplicate_files = []
-    success_files = []
+    not_hand_files = []
+    img_convert_failed_files = []
     
+    # 上传
     for file in request.FILES.getlist('dcm_files'):
         suffix = file.name.split('.')[-1]
         if suffix != 'dcm' and suffix != 'DCM' : continue
@@ -138,47 +141,16 @@ def api_upload_dcm(request):
             create_user = user,
             modify_user = user,
         )
+        dcm = BoneAge_new_file.base_dcm
 
-        #创建dcm对应的task实例、对应的骨骼
-        task = Task.objects.create(dcm_file=BoneAge_new_file, modify_user=user)
-        BoneDetail.objects.create(task=task, name='Radius', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Ulna', modify_user=user)
-        BoneDetail.objects.create(task=task, name='First Metacarpal', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Third Metacarpal', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Fifth Metacarpal', modify_user=user)
-        BoneDetail.objects.create(task=task, name='First Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Third Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Fifth Proximal Phalange', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Third Middle Phalange', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Fifth Middle Phalange', modify_user=user)
-        BoneDetail.objects.create(task=task, name='First Distal Phalange', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Third Distal Phalange', modify_user=user)
-        BoneDetail.objects.create(task=task, name='Fifth Distal Phalange', modify_user=user)
+        # TODO: 检查是否为手骨
+        # try:
+        # except Exception as e:
+        #     print(e)
+        #     BoneAge_new_file.error = 403
+        #     BoneAge_new_file.save()
+        #     not_hand_files.append(file.name)
 
-        success_files.append(file.name)
-
-    unanalyzed_dcm_count = Task.objects.filter(dcm_file__error=202).count()
-    context = {
-        'unanalyzed_dcm_count' : unanalyzed_dcm_count,
-        'success_files' : success_files,
-        'broken_files' : broken_files,
-        'duplicate_files' : duplicate_files,
-    }
-    return render(request, 'BoneAge/index/admin/upload_results.html', context)
-
-# 解析数据库中未初始化（转png、骨骼定位）的dcm
-def api_analyze_dcm(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    user = request.user
-    if not user.is_staff: return HttpResponseBadRequest("您无权解析dcm文件")
-
-    dcms_to_analyze = DicomFile.objects.filter(error=202)
-    object_path = str(settings.STATICFILES_DIRS[0]) + 'yolo_model/yolo_roi.onnx'
-    object_model = YOLOV5_ONNX(object_path)
-    grade_path = str(settings.STATICFILES_DIRS[0]) + 'swinT_weights'
-    grade_model =  BoneGrade(grade_path, 224)
-    for BoneAge_dcm in dcms_to_analyze:
-        dcm = BoneAge_dcm.base_dcm
         # 转png
         try:
             reader = dcmread(dcm.dcm.path, force=True)
@@ -192,93 +164,84 @@ def api_analyze_dcm(request):
             img_array = np.concatenate((img, img, img), axis=-1)
             cv2.imwrite(settings.MEDIA_ROOT+dcm.dcm.name + ".png", img_array, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
             dcm.dcm_to_image = dcm.dcm.name + ".png"
-            # TODO:检查是否为手骨图
+            dcm.save()
         except Exception as e:
             print(e)
-            BoneAge_dcm.error = 415
-            BoneAge_dcm.save()
+            BoneAge_new_file.error = 415
+            BoneAge_new_file.save()
+            img_convert_failed_files.append(file.name)
             continue
-        dcm.save()
-        
-        # 目标检测，录入骨骼位置
-        bones = BoneDetail.objects.filter(task__dcm_file=BoneAge_dcm)
-        # 所有骨骼初始化为404
-        for bone in bones:
-            bone.error = 404
-            bone.save()
-        bone_detected = object_model.infer(img_array)
-        # 组装骨骼位置信息
-        for name,position in bone_detected.items():
-            try: 
-                position = position[1]
-                bone = bones.get(name=name)
-                bone.center_x = position[0]
-                bone.center_y = position[1]
-                bone.width = position[2]
-                bone.height = position[3]
-                bone.error = 0
-                bone.save()
-            except Exception as e:
-                print(e)
-                pass
-        # 组装骨龄评级信息
-        for name,position in bone_detected.items():
-            try: 
-                position = position[0]
-                img_crop = img_array[int(position[1]):int(position[3]), int(position[0]):int(position[2])]
-                clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-                r, g, b = cv2.split(img_crop)
-                r1 = clahe.apply(r)
-                g1 = clahe.apply(g)
-                b1 = clahe.apply(b)
-                img_crop = cv2.merge([r1, g1, b1])
-                img_crop = normalize(img_crop, 255)
-                level = grade_model.pre_gray(img_crop, name)
-                bone = bones.get(name=name)
-                bone.level = level
-                bone.save()
-            except Exception as e:
-                print(e)
-                pass
-        BoneAge_dcm.error = 0
-        BoneAge_dcm.save()
-        
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
+        BoneAge_new_file.error = 0
+        BoneAge_new_file.save()
 
-# 分配指定数量的任务给指定用户
+        success_files.append(file.name)
+    
+    context = {
+        'success_files' : success_files,
+        'broken_files' : broken_files,
+        'duplicate_files' : duplicate_files,
+        'not_hand_files' : not_hand_files,
+        'img_convert_failed_files' : img_convert_failed_files,
+    }
+    return render(request, 'BoneAge/index/admin/upload_results.html', context)
+
+# 任务分配
+# 选择error为0的骨龄DicomFile、创建Task并确认所使用的标准，用对应模型识别骨骼位置、骨龄，添加BoneDetails
 def api_allocate_tasks(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权分配任务")
 
-    user_model = get_user_model()
-    user = user_model.objects.get(id=request.POST['allocate_to'])
-    tasks = Task.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
-    tasks_to_allocate_count = request.POST['tasks_to_allocate_count']
-    for task in tasks[0:int(tasks_to_allocate_count)]:
-        task.allocated_to = user
-        task.allocated_datetime = datetime.now()
-        task.save()
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
+    dcms_to_allocate_ids = str(request.POST['dcms_id']).split(' ')[0:-1]
+    for i in range(len(dcms_to_allocate_ids)):  dcms_to_allocate_ids[i] = int(dcms_to_allocate_ids[i])
+    dcms_to_allocate = DicomFile.objects.filter(id__in=dcms_to_allocate_ids)
+    allocate_standard = request.POST['allocate_standard']
+    allocated_to = get_user_model().objects.get(id=request.POST['allocated_to'])
+    
+    # 当前提交的dcm状态改为“分配中”，使这些dcm在分配界面隐藏
+    for dcm in dcms_to_allocate:
+        dcm.error = 102
+        dcm.save()
 
-# 平均分配任务给所有用户
-def api_allocate_tasks_random(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    user = request.user
-    if not user.is_staff: return HttpResponseBadRequest("您无权分配任务")
-    
-    user_model = get_user_model()
-    users = user_model.objects.filter(is_active=True).exclude(is_staff=True)
-    users_amount = users.count()
-    tasks = Task.objects.filter(dcm_file__error=0).filter(closed=False).filter(allocated_to=None)
-    tasks_amount = tasks.count()
-    step = int(tasks_amount / users_amount)
-    i = 0
-    for user in users:
-        tasks_for_user = tasks[i:(i+step)]
-        for task in tasks_for_user:
-            task.allocated_to = user
-            task.allocated_datetime = datetime.now()
-            task.save()
-    return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
-    
+    # 分配dcm。该步骤会持续一段时间
+    for dcm in dcms_to_allocate:
+        # 如果当前需要创建的任务已存在（异步时可能有冲突），则跳过
+        if Task.objects.filter(dcm_file=dcm).filter(standard=allocate_standard): continue
+
+        # 创建任务
+        new_task = Task.objects.create(
+            dcm_file = dcm,
+            standard = allocate_standard,
+            allocated_to = allocated_to,
+            allocated_datetime = datetime.now(),
+            modify_user = user
+        )
+        
+        # 创建骨骼信息
+        bones_name = {
+            'RUS' : lambda : bone_standars.RUS_CHN,
+            'CHN' : lambda : bone_standars.CHN,
+        }[new_task.standard]()
+        for bone_name in bones_name: BoneDetail.objects.create(
+            task=new_task, name=bone_name, modify_user=user, error=404
+        )
+        
+        bone_detected = bone_detect(dcm.base_dcm.dcm_to_image.path, allocate_standard)
+        bones = BoneDetail.objects.filter(task=new_task)
+
+        for name, details in bone_detected.items():
+            try: 
+                bone = bones.get(name=name)
+                bone.center_x = details['box'][0]
+                bone.center_y = details['box'][1]
+                bone.width = details['box'][2]
+                bone.height = details['box'][3]
+                bone.assessment = int(details['level'])
+                bone.error = 0
+                bone.save()
+            except: pass
+
+        dcm.error = 0
+        dcm.save()
+
+    return HttpResponse('任务分配成功')

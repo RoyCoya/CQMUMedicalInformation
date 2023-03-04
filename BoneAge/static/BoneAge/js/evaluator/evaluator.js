@@ -1,115 +1,25 @@
-/* 自定对象与函数 */
-
-//切换骨骼时对骨骼详情部分（评分评级、备注、骨龄）的页面变化
-$.fn.switch_bone = function(bone_name_key){
-    $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
-    $.fn.update_bone_age()
-    var bone = bones[bone_name_key]
-    if(bone['error'] == 0){
-        $("#bone_discription").attr('hidden','hidden')
-        $("#form_bone_details").removeAttr('hidden')
-        $("#modify_bone_position").attr('hidden','hidden')
-        $("#modify_bone_detail").attr('hidden','hidden')
-        $('small[id^=bone_discription_text]').attr('hidden','hidden')
-        $("#bone_details_name").text(bone['name'])
-        $("#bone_details_remarks").val(bone['remarks'])
-        if(bone['level'] > 0){
-            $("#bone_discription").removeAttr("hidden", "hidden");
-            $("#bone_discription_img").attr("src", "/static/BoneAge/img/" + bone_name_key + "-" + bone['level'] + ".png")
-            $("#bone_discription_text_" + bone_name_key + "_" + bone['level']).removeAttr('hidden', 'hidden')
-        }
-        switch (bone_name_key) {
-            case 'radius' : $("#bone_details_level").attr('max','14'); break;
-            case 'ulna' : $("#bone_details_level").attr('max','12'); break;
-            case 'first-metacarpal' : $("#bone_details_level").attr('max','11'); break;
-            case 'third-metacarpal' : $("#bone_details_level").attr('max','10'); break;
-            case 'fifth-metacarpal' : $("#bone_details_level").attr('max','10'); break;
-            case 'first-proximal-phalange' : $("#bone_details_level").attr('max','12'); break;
-            case 'third-proximal-phalange' : $("#bone_details_level").attr('max','12'); break;
-            case 'fifth-proximal-phalange' : $("#bone_details_level").attr('max','12'); break;
-            case 'third-middle-phalange' : $("#bone_details_level").attr('max','12'); break;
-            case 'fifth-middle-phalange' : $("#bone_details_level").attr('max','12'); break;
-            case 'first-distal-phalange' : $("#bone_details_level").attr('max','11'); break;
-            case 'third-distal-phalange' : $("#bone_details_level").attr('max','11'); break;
-            case 'fifth-distal-phalange' : $("#bone_details_level").attr('max','11'); break;
-            default:
-                alert('致命错误：json中未找到该骨骼');
-        }
-        if(bone['level'] >= 0){
-            $("#bone_details_level_label").text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']])
-            $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
-            $("#bone_details_level").val(bone['level'])
-        }
-        else{
-            $("#bone_details_level_label").text("？")
-            $("#bone_details_level").val(0)
-        }
-    }
-    else{
-        $("#bone_details_name").text(bone['name'] + "（" + bone['error_message'] + "）")
-        $("#form_bone_details").attr('hidden','hidden')
-    }
-    $("#bone_details_level").focus()
-};
-/* 如果所有骨骼等级数据与定位正常，则计算分数并显示参考年龄 */
-$.fn.update_bone_age = function(){
-    $('#warning_age_misregistration').attr('hidden', 'hidden');
-    $('#bone_age_great_differ_warning').hide();
-    $("#bone_age").removeAttr('disabled');
-    $("#bone_age").attr('placeholder','')
-    $('#label_bone_age').removeClass('text-danger');
-    $("#label_bone_age").text('');
-    var is_valid = true
-    $.each(bones, function(bone_name_key, bone_details){
-        if(bone_details['level'] < 0) is_valid = false
-        if(bone_details['error'] != 0) is_valid = false
-    })
-    if(is_valid){
-        grade = 0
-        bone_age = -1
-        $.each(bones, function(bone_name_key,bone_details){
-            grade += level_to_grade[sex][bone_name_key][bone_details['level']]
-        })
-        $.each(grade_to_age[sex], function(age,range){
-            if(grade >= range['min'] && grade <= range['max']){
-                bone_age = age
-            }
-        })
-        if(bone_age >= 0){
-            $("#bone_age").val(bone_age);
-            $("#label_bone_age").text(bone_age + "岁");
-            // 差距过大提示
-            if(Math.abs(actual_age - bone_age) >= 1){
-                $("#warning_age_misregistration").removeAttr('hidden');
-                $("#bone_age_great_differ_warning").show()
-            }
-        }
-    }
-    else{
-        $("#bone_age").attr('disabled', 'disabled');
-        $("#bone_age").attr('placeholder', '*无法计算，骨骼数据存在错误*');
-        $("#label_bone_age").addClass('text-danger');
-        $("#label_bone_age").text('*无法计算*');
-    }
-};
-
 /* 全局对象 */
 //csrf token
 const getCookie = (name) => document.cookie.match(`[;\s+]?${name}=([^;]*)`)?.pop();
 const csrftoken = getCookie('csrftoken');
-//骨龄填写的modal
+// 骨龄填写的modal
 var bone_age_modal = new bootstrap.Modal($('#modal_edit_bone_age'), {keyboard: false})
-//任务存在未完成内容的提示modal
+// 任务存在未完成内容的提示modal
 var task_notcompleted_modal = new bootstrap.Modal($('#modal_task_notcompleted'), {keyboard: false})
-//完成任务的确认modal
+// 完成任务的确认modal
 var finish_task_modal = new bootstrap.Modal($('#modal_finish_task'), {keyboard: false})
+// 进入页面时的默认骨骼调整
+if(bone_fixed != undefined){    
+    default_bone = bone_fixed;
+    $("#view-" + default_bone).parent().addClass('active');
+}
+else{ $("#view-" + default_bone).parent().addClass('active'); }
 
 /* image cropper初始化 */
 var image = $('#dcm');
 image.cropper({
     preview : '.img-preview',
     viewMode : 2,
-    modal: false,
     guides : false,
     data : bones[default_bone],
     cropmove(e){
@@ -121,44 +31,6 @@ image.on('ready', function () {
     $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
     $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
     $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
-});
-
-/* 其他初始化 */
-$(document).ready(function () {
-    /*popover提示框全局覆盖*/
-    var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-
-    //骨骼等级14转8
-    $.fn.switch_bone('fifth-distal-phalange')
-    $.fn.switch_bone('fifth-middle-phalange')
-    $.fn.switch_bone('fifth-proximal-phalange')
-    $.fn.switch_bone('fifth-metacarpal')
-    $.fn.switch_bone('third-distal-phalange')
-    $.fn.switch_bone('third-middle-phalange')
-    $.fn.switch_bone('third-proximal-phalange')
-    $.fn.switch_bone('third-metacarpal')
-    $.fn.switch_bone('first-distal-phalange')
-    $.fn.switch_bone('first-proximal-phalange')
-    $.fn.switch_bone('first-metacarpal')
-    $.fn.switch_bone('ulna')
-    $.fn.switch_bone('radius')
-    $.fn.update_bone_age()
-
-    /* 选中默认骨骼 */
-    $("#view-" + default_bone).parent().addClass('active');
-    $.fn.switch_bone(default_bone)
-
-    /* 焦点至评级条 */
-    $("#bone_details_level").focus()
-
-    /* 如果数据库中存在骨龄数据，则用数据库中的值 */
-    if(task['bone_age'] >= 0){
-        $("#bone_age").val(task['bone_age']);
-        $("#label_bone_age").text(task['bone_age'] + "岁");
-    }
 });
 
 /* image cropper 工具栏 */
@@ -225,6 +97,7 @@ $("#save_offset").click(function (e) {
 
 /* 骨骼切换列表 */
 $("span[id^=view-]").click(function (e) {
+    console.log(1)
     $("span[id^=view-]").parent().removeClass('active')
     $("span[id^=error-]").parent().removeClass('active')
     $("a[id^=fix-").attr('hidden','hidden')
@@ -241,33 +114,10 @@ $("span[id^=error-]").click(function (e) {
     var bone_name_key = $(this).attr('id').substring(6);
     $("#fix-" + bone_name_key).removeAttr('hidden')
     $.fn.switch_bone(bone_name_key)
-    cropper.reset()
+    cropper.setData(bones[bone_name_key])
     cropper.setDragMode('crop')
 });
 
-/* 评分评级修改后弹出保存按钮 */
-$("#bone_details_level").on('input', function (e) { 
-    var bone_name_key = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
-    var bone = bones[bone_name_key]
-    level = bone['level']
-    $("#level-fifth-metacarpal").removeClass('text-danger')
-    $("#bone_details_level_label").text($(this).val() + " | " + level14_to_level8[bone_name_key][$(this).val()])
-    $("#level-" + bone_name_key).text(bone['level'] + " | " + level14_to_level8[bone_name_key][bone['level']] + "级")
-    $("#modify_bone_detail").removeAttr('hidden')
-    if($(this).val() > 0){
-        $("#bone_discription").removeAttr("hidden", "hidden");
-        $("small[id^=bone_discription_text_]").attr('hidden', 'hidden')
-        $("#bone_discription_text_" + bone_name_key + "_" + $(this).val()).removeAttr('hidden', 'hidden')
-        $("#bone_discription_img").attr("src", "/static/BoneAge/img/" + bone_name_key + "-" + $(this).val() + ".png")
-    }
-    else{
-        $("#bone_discription").attr('hidden','hidden')
-    }
-    
-    bone['level'] = $("#bone_details_level").val()
-    $.fn.update_bone_age()
-    bone['level'] = level
-});
 /* 备注修改后弹出保存按钮 */
 $("#bone_details_remarks").on('input', function () {
     $("#modify_bone_detail").removeAttr('hidden')
@@ -277,8 +127,8 @@ $("#bone_details_remarks").on('input', function () {
 $("a[id^=fix-]").click(function (e) { 
     var bone_name_key = $(this).attr('id').substring(4);
     var bone = bones[bone_name_key]
-    bone['error'] = 0
-    bone['error_message'] = "正常"
+    bone['error'] = 202
+    bone['error_message'] = "未评估"
     bone['x'] = cropper.getData()['x']
     bone['y'] = cropper.getData()['y']
     bone['width'] = cropper.getData()['width']
@@ -287,18 +137,10 @@ $("a[id^=fix-]").click(function (e) {
     var new_bone_group_item = '<span id="view-' + bone_name_key + '" class="col-12">'
     new_bone_group_item += '<span>' + bone['name'] + '</span>：'
     if(bone['level'] >= 0) new_bone_group_item += '<span id="level-'+ bone_name_key + '">' + bone['level'] + '级</span>'
-    else new_bone_group_item += '<span id="level-' + bone_name_key + '" class="text-danger">*' + bone['level_message'] + '*</span>'
+    else new_bone_group_item += '<span id="level-' + bone_name_key + '"><i class="bi bi-exclamation-triangle-fill text-danger">未评估</i></span>'
     new_bone_group_item += "</span>"
     $(this).parent().html(new_bone_group_item)
-    $("#view-" + bone_name_key).on('click',function (e) { 
-        $("span[id^=view-]").parent().removeClass('active')
-        $("span[id^=error-]").parent().removeClass('active')
-        $("a[id^=fix-").attr('hidden','hidden')
-        $(this).parent().addClass('active')
-        bone = $(this).attr('id').substring(5);
-        $.fn.switch_bone(bone)
-        cropper.setData(bones[bone])
-    });
+    $.fn.switch_bone(bone_name_key)
     $.ajax({
         type: "post",
         url: url_api_modify_bone_position,
@@ -306,18 +148,22 @@ $("a[id^=fix-]").click(function (e) {
         dataType: "json",
         headers:{'X-CSRFToken': csrftoken}
     });
-    $.fn.switch_bone(bone_name_key)
+    if(String(location).includes('?')) window.location.replace(location + "&bone_fixed=" + bone_name_key);
+    else window.location.replace(location + "?bone_fixed=" + bone_name_key);
 });
 
 /* 骨骼修改评分评级保存 */
 $("#modify_bone_detail").click(function (e) { 
     var bone_name_key = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
     var bone = bones[bone_name_key]
+    bone['error'] = 0
+    bone['error_message'] = "正常"
     bone['level'] = $("#bone_details_level").val()
     bone['level_message'] = $("#bone_details_level").val() + " 级"
     $("span[id=level-" + bone_name_key + "]").text(bone['level_message'])
     $("span[id=level-" + bone_name_key + "]").removeClass('text-danger')
     bone['remarks'] = $("#bone_details_remarks").val()
+    $.fn.switch_bone(bone_name_key)
     $.ajax({
         type: "post",
         url: url_api_modify_bone_detail,
@@ -325,15 +171,12 @@ $("#modify_bone_detail").click(function (e) {
         dataType: "json",
         headers:{'X-CSRFToken': csrftoken}
     });
-    $.fn.switch_bone(bone_name_key)
 });
 
 /* 骨骼修改定位保存 */
 $('#modify_bone_position').click(function (e) { 
     var bone_name_key = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
     var bone = bones[bone_name_key]
-    bone['error'] = 0
-    bone['error_message'] = "正常"
     bone['x'] = cropper.getData()['x']
     bone['y'] = cropper.getData()['y']
     bone['width'] = cropper.getData()['width']
@@ -346,6 +189,7 @@ $('#modify_bone_position').click(function (e) {
         headers:{'X-CSRFToken': csrftoken}
     });
     $.fn.switch_bone(bone_name_key)
+    $("#bone_details_level").focus()
 });
 
 /* 手动修改骨龄 */
@@ -457,3 +301,8 @@ $("#task_marked").click(function (e) {
         $(this).addClass('bi-star');
     }
 });
+
+/* 测试用，输出骨骼信息 */
+// $("#show_bone_details").click(function (e) { 
+//     console.log(bones)
+// });

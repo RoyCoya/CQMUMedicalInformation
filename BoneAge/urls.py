@@ -2,10 +2,12 @@ from django.urls import path
 from . import views
 
 pages = [
-	# 医生主页（未完成任务）、管理员主页
+	# 医生主页（未完成任务）
 	path('page/<int:page_number>/', views.index, name='BoneAge_index'),
 	# 医生主页（已完成任务）
 	path('finished/page/<int:page_number>/', views.finished_tasks, name='BoneAge_finished_tasks'),
+	# 管理员主页
+	path('admin/', views.admin, name='BoneAge_admin'),
 	# 评分器
 	path('evaluator/<int:task_id>/', views.evaluator, name='BoneAge_evaluator'),
 	# 骨龄记录库
@@ -15,6 +17,7 @@ pages = [
 apis = [
 	# 个人偏好
 	path('preference/shortcut/', views.api_preference_switch_shortcut, name='api_BoneAge_preference_switch_shortcut'),
+	path('preference/standard/', views.api_preference_switch_standard, name="api_BoneAge_preference_switch_standard"),
 	path('preference/defaultbone/', views.api_preference_switch_default_bone, name="api_BoneAge_preference_switch_default_bone"),
 	# 评分器
 	path('evaluator/offset/save/', views.api_save_image_offset, name='api_BoneAge_save_image_offset'),
@@ -25,9 +28,10 @@ apis = [
 	path('evaluator/task/mark/', views.api_mark_task, name='api_BoneAge_mark_task'),
 	# 骨龄记录库
 	path('library/admin/dicom/upload/', views.api_upload_dcm, name='api_BoneAge_upload_dcm'),
-	path('library/admin/dicom/analyze/', views.api_analyze_dcm, name='api_BoneAge_analyze_dcm'),
+	# path('library/admin/dicom/analyze/', views.api_analyze_dcm, name='api_BoneAge_analyze_dcm'),
+	# 管理员后台
 	path('library/admin/tasks/allocate/', views.api_allocate_tasks, name="api_BoneAge_allocate_tasks"),
-	path('library/admin/tasks/allocate/random/', views.api_allocate_tasks_random, name="api_BoneAge_allocate_tasks_random"),
+	# path('library/admin/tasks/allocate/random/', views.api_allocate_tasks_random, name="api_BoneAge_allocate_tasks_random"),
 	path('library/admin/export_bone_data/', views.api_export_bone_data, name="api_BoneAge_export_bone_data"),
 ]
 

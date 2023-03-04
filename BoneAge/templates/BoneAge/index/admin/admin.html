@@ -5,23 +5,22 @@
 {% block nav_BoneAge_index %}active{% endblock nav_BoneAge_index %}
 
 {% block css_BoneAge %}
+<style>
+    #unallocated_dcms input:disabled{ opacity: 1 !important;}
+</style>
 {% endblock css_BoneAge %}
 
 {% block content_BoneAge %}
 {% load static %}
 
-{% if unanalyzed_dcm_count > 0 %}
+{% if error_dcm_count > 0 %}
 <div class="alert alert-warning d-flex justify-content-start" role="alert">
-    <span>数据库中存在 {{unanalyzed_dcm_count}} 个未解析的dcm文件，</span>
-    <a id="analyze" href="{% url 'api_BoneAge_analyze_dcm' %}">点击此处解析</a>
-    <span id="spinner_analyze" hidden>
-        <span class="spinner-border spinner-border-sm text-primary ms-2 align-self-center" role="status"></span>
-        <span>解析将自动进行，可离开本页面</span>
-    </span>
+    <span>骨龄子数据库中存在 {{error_dcm_count}} 个错误文件，</span>
+    <a id="analyze" href="#">点击此处选择修复策略</a>
 </div>
 {% else %}
 <div class="alert alert-success d-flex justify-content-start" role="alert">
-    <span>数据库运转正常。</span>
+    <span>数据库正常运转中。</span>
 </div>
 {% endif %}
 
@@ -50,46 +49,61 @@
         {% if user.id == 1 %}<a href="{% url 'api_BoneAge_export_bone_data'%}" class="btn btn-outline-primary mt-3">导出骨骼数据</a>{% endif %}
         <a href="{% url 'logout' %}" class="btn btn-outline-danger mt-3">退出登陆</a>
     </div>
+
+    <!-- 任务分配区 -->
     <div class="col-8">
-        <h2 class="text-center">未分配任务（共{{unallocated_tasks|length}}个）</h2>
-        {% if unallocated_tasks %}
-            <div class="row">
-                <form action="{% url 'api_BoneAge_allocate_tasks' %}" method="post" class="d-flex justify-content-start col-6">
-                    <div class="input-group mb-3">
+        <h2 class="text-center">新任务分配</h2>
+        {% if unallocated_dcm %}
+            <div class="row d-flex">
+                <div class="col-8">
+                    <div class="input-group">
                         {% csrf_token %}
-                        <span class="input-group-text">指定</span>
-                        <input name="tasks_to_allocate_count" type="number" class="form-control" value=0 min=0 max={{unallocated_tasks|length}} onkeyup="value=value.replace(/[^\d\.]/g,'');if(value<0) value=0;if(value>{{unallocated_tasks|length}})value={{unallocated_tasks|length}};" >
-                        <span class="input-group-text">/<span class="text-primary mx-1">{{unallocated_tasks|length}}</span>个任务给</span>
-                        <select name="allocate_to" id="allocate_to" class="form-select">
-                            {% for user in users %}
-                                <option value="{{user.id}}">{{user.last_name}}{{user.first_name}}</option>
+                        <span class="input-group-text">选中
+                            <span class="text-primary mx-1" id="selected_dcm_count">0</span>
+                            / {{unallocated_dcm|length}} 个dcm以
+                        </span>
+                        <select name="standard" id="allocate_standard" class="form-select">
+                            <option value="CHN" selected>CHN标准</option>
+                            <option value="RUS">RUS-CHN标准</option>
+                        </select>
+                        <span class="input-group-text">任务分配给</span>
+                        <select name="allocated_to" id="allocated_to" class="form-select">
+                            {% for evaluator in evaluators %}
+                                <option value="{{evaluator.id}}">{{evaluator.last_name}}{{evaluator.first_name}}</option>
                             {% endfor %}
                         </select>
-                        <button class="btn btn-outline-primary" id="allocate_tasks" type="submit">分配</button>
-                        <span class="input-group-text ms-2">或</span>
-                        <a href="{% url 'api_BoneAge_allocate_tasks_random' %}" class="btn btn-outline-primary ms-2" id="allocate_tasks_random">随机分配所有</a>
+                        <button class="btn btn-outline-primary" id="allocate_tasks">提交</button>
                     </div>
-                </form>
+                </div>
             </div>
-            <table class="table table-hover">
+            <div class="row">
+                <div class="col">
+                    <small class="text-secondary">注：目前仅显示所有标准下均未分配任务的新dcm文件。为已有某一标准任务的dcm再分配其他标准的页面还没做。</small>
+                </div>
+            </div>
+            <table class="table table-hover" id="unallocated_dcms">
                 <thead>
                     <tr>
-                        <th>患者（ID）</th>
-                        <th>SOP Instance ID</th>
-                        <th>Study Date</th>
+                        <th><div class="form-check" id="select_all">
+                            <input class="form-check-input" type="checkbox" id="select_all_checkbox" value="select_all_checkbox" disabled>
+                            <span>dcm_id</span>
+                        </div></th>
+                        <th>患者姓名（ID）</th>
+                        <th>检查日期</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for task in unallocated_tasks %}
-                        <tr id="{{task.id}}">
-                            <td>{{task.dcm_file.base_dcm.patient.name}}（{{task.dcm_file.base_dcm.patient.Patient_ID}}）</td>
-                            {% if task.dcm_file.base_dcm.SOP_Instance_UID %}
-                                <td>{{task.dcm_file.base_dcm.SOP_Instance_UID}}</td>
-                            {% else %}
-                                <td><span class="text-danger">读取失败</span></td>
-                            {% endif %}
-                            {% if task.dcm_file.base_dcm.Study_Date %}
-                                <td>{{task.dcm_file.base_dcm.Study_Date}}</td>
+                    {% for dcm in unallocated_dcm %}
+                        <tr id="info_{{dcm.id}}">
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allocate_{{dcm.id}}" value="{{dcm.id}}" disabled>
+                                    <span>{{dcm.id}}</span>
+                                </div>
+                            </td>
+                            <td>{{dcm.base_dcm.patient.name}}（{{dcm.base_dcm.patient.Patient_ID}}）</td>
+                            {% if dcm.base_dcm.Study_Date %}
+                                <td>{{dcm.base_dcm.Study_Date}}</td>
                             {% else %}
                                 <td><span class="text-danger">读取失败</span></td>
                             {% endif %}
@@ -103,9 +117,28 @@
     </div>
 </div>
 
+<!-- 分配提交成功弹窗 -->
+<div class="modal fade" id="modal_allocation_submited" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success">提交成功！</h5>
+            </div>
+            <div class="modal-body">
+                任务到达对应用户需要一定时间，您现在可以离开本页面。
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" href="#" data-bs-dismiss="modal" id="submit_confirm">确认</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock content_BoneAge %}
 
 {% block js_BoneAge %}
 <script src="{% static 'BoneAge/js/admin/admin.js' %}"></script>
+<script>
+    var url_api_allocate_tasks = "{% url 'api_BoneAge_allocate_tasks' %}"
+</script>
 {% endblock js_BoneAge %}

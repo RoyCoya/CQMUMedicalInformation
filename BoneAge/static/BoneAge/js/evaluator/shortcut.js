@@ -5,7 +5,7 @@ var task_no_next_modal = new bootstrap.Modal($('#modal_task_no_next'), {keyboard
 
 $(document).keypress(function (e) { 
     keycode = e.keyCode
-    console.log(keycode);
+    // console.log(keycode);
     if($('.modal').hasClass('show')) return;
     switch(keycode){
         /* 回车保存骨骼信息，并自动向下切换 */
@@ -18,6 +18,11 @@ $(document).keypress(function (e) {
             index += 1;
             if(index == bone_order.length) index=0;
             bone_name_key = bone_order[index]
+            while(bones[bone_name_key]['error'] != 0){
+                index += 1;
+                if(index == bone_order.length) index=0;
+                bone_name_key = bone_order[index]
+            }
             $("span[id^=view-]").parent().removeClass('active')
             $("span[id^=error-]").parent().removeClass('active')
             $("a[id^=fix-").attr('hidden','hidden')
@@ -32,8 +37,13 @@ $(document).keypress(function (e) {
             bone_name_key = $(".list-group-item-action.active>span[id^=view-]").attr('id').substring(5)
             index = bone_order.indexOf(bone_name_key);
             index -= 1;
-            if(index == -1) index=bone_order.length-1;
+            if(index == -1) index = bone_order.length-1;
             bone_name_key = bone_order[index]
+            while(bones[bone_name_key]['error'] != 0){
+                index -= 1;
+                if(index == -1) index = bone_order.length-1;
+                bone_name_key = bone_order[index]
+            }
             $("span[id^=view-]").parent().removeClass('active')
             $("span[id^=error-]").parent().removeClass('active')
             $("a[id^=fix-").attr('hidden','hidden')

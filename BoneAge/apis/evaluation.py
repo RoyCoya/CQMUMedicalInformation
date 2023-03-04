@@ -25,7 +25,7 @@ def api_modify_bone_detail(request):
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
     task = bone_detail.task
     
-    bone_detail.level = int(request.POST['level'])
+    bone_detail.assessment = int(request.POST['level'])
     bone_detail.error = int(request.POST['error'])
     bone_detail.remarks = request.POST['remarks']
     bone_detail.modify_user = request.user
