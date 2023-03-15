@@ -1,4 +1,9 @@
 {% extends 'BoneAge/index/index.html' %}
+{% load static %}
+
+{% block css_BoneAge %}
+<link rel="stylesheet" href="{% static '/BoneAge/css/finished_tasks.css' %}">
+{% endblock css_BoneAge %}
 
 {% block title_BoneAge_index %}完结任务{% endblock title_BoneAge_index %}
 

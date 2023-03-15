@@ -7,6 +7,7 @@ $(document).keypress(function (e) {
     keycode = e.keyCode
     // console.log(keycode);
     if($('.modal').hasClass('show')) return;
+    if($("#bone_details_remarks").is(":focus")) return;
     switch(keycode){
         /* 回车保存骨骼信息，并自动向下切换 */
         case(13) : $("#modify_bone_detail").trigger('click');

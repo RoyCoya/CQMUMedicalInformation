@@ -1,15 +1,23 @@
 /* 表头链接 */
 th a{color: black}
+th a:hover{color: var(--success_color)!important;}
 th i{color: black}
 th[id^=order_]:hover{background-color: rgb(229, 231, 231);}
 
+/* 表内链接 */
+td a{color: var(--success_color)!important;}
+td a:hover{text-decoration: underline !important;}
+
 /* 当前排序 */
-.order{background-color: var(--theme_color)!important;}
+.order{background-color: var(--success_color)!important;}
 .order a{color: white}
 .order i{color: white}
 
-/* 链接 */
-tbody td a:hover{text-decoration: underline !important;}
+/* 面板 */
 #task_last_modified:hover{text-decoration: underline !important;}
 .list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: var(--theme_color);}
 .list-group-item a:hover{text-decoration: underline !important;}
+
+/* 分页器 */
+.page-link{color: var(--success_color)!important;}
+.page-item.active .page-link{background-color: var(--success_color)!important;color: white!important; border-color: rgba(80, 253, 0, 0.757);}

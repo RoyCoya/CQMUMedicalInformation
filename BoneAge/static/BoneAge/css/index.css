@@ -8,8 +8,9 @@ th[id^=order_]:hover{background-color: rgb(229, 231, 231);}
 .order a{color: white}
 .order i{color: white}
 
-/* 链接 */
+/* 面板 */
 tbody td a:hover{text-decoration: underline !important;}
 #task_last_modified:hover{text-decoration: underline !important;}
-.list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: #198754;}
+.list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: var(--success_color);}
+.list-group-item a{color:var(--success_color)}
 .list-group-item a:hover{text-decoration: underline !important;}

@@ -60,9 +60,14 @@ $('#preference_standard').change(function (e) {
         url: url_api_preference_switch_standard,
         data: {"standard" : $(this).val()},
         dataType: "json",
-        headers:{'X-CSRFToken': csrftoken}
+        headers:{'X-CSRFToken': csrftoken},
+        success : function(){
+            window.location.replace(location)
+        },
+        error : function(){
+            window.location.replace(location)
+        },
     });
-    window.location.replace(location)
 });
 
 // 切换默认骨骼
