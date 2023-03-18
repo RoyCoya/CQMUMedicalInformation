@@ -729,6 +729,7 @@ $.fn.update_bone_age = function(){
         if(bone_age >= 0){
             $("#bone_age").val(bone_age);
             $("#label_bone_age").text(bone_age + "岁");
+            $("#label_bone_grade").text(grade + "分");
             // 差距过大提示
             if(Math.abs(actual_age - bone_age) >= 1){
                 $("#warning_age_misregistration").removeAttr('hidden');

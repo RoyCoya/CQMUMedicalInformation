@@ -2,7 +2,7 @@
 {% load BoneAge_global_tags %}
 <div class="col-6 border-end">
     <div class="d-flex justify-content-between col">
-        <h3><i class="bi bi-person-bounding-box"></i> 患者信息</h3>
+        <h3><i class="bi bi-person-bounding-box"></i> 任务信息</h3>
         <a href="#"><i class="bi bi-three-dots" style="font-size: 1.5em;"></i></a>
     </div>
     <div class="row">   
@@ -13,16 +13,11 @@
             </a>
         </span>
         <span class="col-6">
-            <strong>性别：</strong>
-            {{patient.get_sex_display}}
-            {% if patient.sex == 'Female' %}
-                <i class="bi bi-gender-female" style="color:DeepPink"></i>
-            {% else %}
-                <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
-            {% endif %}
+            <strong>患者ID：</strong>
+            <span>{{patient.Patient_ID}}</span>
         </span>
         <span class="col-6">
-            <strong>历史记录：</strong>
+            <strong>历史：</strong>
             {% if historys > 0 %}
                 {% if back_page %}
                     {% if back_page_get == 'PatientManagement_profile' %}
@@ -44,7 +39,10 @@
                 无            
             {% endif %}
         </span>
-        <span class="col-6"><strong>年龄：</strong>{{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date|floatformat}} 岁</span>
+        <span class="col-6">
+            <strong>检查日期：</strong>
+            <span>{{task.dcm_file.base_dcm.Study_Date|date:"Y-n-j"}}</span>
+        </span>
     </div>
 </div>
 <div class="col-6">
