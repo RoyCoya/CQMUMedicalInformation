@@ -174,6 +174,8 @@ def api_upload_dcm(request):
         BoneAge_new_file.error = 0
         BoneAge_new_file.save()
 
+        # TODO：明暗、对比度调整
+
         success_files.append(file.name)
     
     context = {

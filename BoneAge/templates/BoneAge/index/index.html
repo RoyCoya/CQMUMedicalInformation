@@ -45,6 +45,7 @@
     var order = {{order}}
     var is_descend = {{is_descend}}
     var page_number = {{page_number}}
+    var page_count = {{page_count}}
     var tasks_finished = {% block is_task_finished %}false{% endblock is_task_finished %}
     var preference_shortcut = {% if preference.shortcut %}true{% else %}false{% endif %}
     var preference_standard = '{{preference.standard}}'

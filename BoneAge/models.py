@@ -37,7 +37,6 @@ class DicomFile(models.Model):
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
 # 骨龄标注任务，与Dicom文件n:1对应（同一dcm可有多个不同标准的任务）
-# TODO: 一个dcm同标准多次任务？问下需求
 class Task(models.Model):
     class Meta:
         verbose_name = '任务'

@@ -1,0 +1,27 @@
+{% extends 'BoneAge/base.html' %}
+
+{% block title_BoneAge %}Dicom数据库{% endblock title_BoneAge %}
+
+{% block nav_BoneAge_library %}active{% endblock %}
+
+{% block css_BoneAge %}
+{% endblock css_BoneAge %}
+
+{% block content_BoneAge %}
+{% load static %}
+
+<div class="row mt-5">
+    <div class="col-9 border-end">
+        <h1>任务搜索</h1>
+        <!-- 过滤器 -->
+        {% include 'BoneAge/dcm_library/filter.html' %}
+    </div>
+    <div class="col-3">
+
+    </div>
+</div>
+
+{% endblock content_BoneAge %}
+{% block js_BoneAge %}
+<script src="{% static 'BoneAge/js/dcm_library/library.js' %}"></script>
+{% endblock js_BoneAge %}

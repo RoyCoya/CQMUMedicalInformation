@@ -41,6 +41,15 @@ $("div[id^=evaluator]").click(function () {
     window.location.replace("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/" + back_page_params)
 });
 
+/* 页面跳转 */
+$("#page_jump").click(function (e) { 
+    page_jump_number = $("#page_jump_number").val();
+    if(page_jump_number < 1) page_jump_number = 1;
+    else if(page_jump_number > page_count) page_jump_number = page_count;
+    page_jump_url = $("#page_jump_url").text().replace('/0/', '/' + page_jump_number + '/');
+    window.location.replace(page_jump_url)
+});
+
 /* 偏好设置 */
 // 开关快捷键
 $("#preference_shortcut").click(function (e) { 
