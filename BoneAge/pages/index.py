@@ -154,7 +154,7 @@ def finished_tasks(request, page_number, ):
     }
     return render(request,'BoneAge/index/finished_tasks/finished_tasks.html',context)
 
-# dicom库后台
+# 管理员
 def admin(request):
     # 数据库状态检查
     error_dcm_count = DicomFile.objects.exclude(error=0).exclude(error=102).count()

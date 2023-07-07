@@ -14,125 +14,28 @@
 {% load static %}
 
 {% if error_dcm_count > 0 %}
-<div class="alert alert-warning d-flex justify-content-start" role="alert">
-    <span>骨龄子数据库中存在 {{error_dcm_count}} 个错误文件，</span>
-    <a id="analyze" href="#">点击此处选择修复策略</a>
+<div class="alert alert-warning d-flex justify-content-between" role="alert">
+    <span>存在 {{error_dcm_count}} 个待处理错误报告，<a id="analyze" href="#">点击此处处理</a></span>
+    <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
 </div>
 {% else %}
-<div class="alert alert-success d-flex justify-content-start" role="alert">
-    <span>数据库正常运转中。</span>
+<div class="alert alert-success d-flex justify-content-between" role="alert">
+    <span>所有任务正常运行中。</span>
+    <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
 </div>
 {% endif %}
 
 <div class="row mt-3">
-    <div class="col-4 border-end">
-        <div class="mb-3">
-            <form id="dcm_form" enctype="multipart/form-data" method="post" action="{% url 'api_BoneAge_upload_dcm' %}">
-                {% csrf_token %}
-                <div class="input-group">
-                    <input id="dcm_files" class="form-control" type="file" name="dcm_files" multiple accept="application/dicom"/>
-                    <button class="btn btn-outline-primary" type="submit" id="upload_dcms">上传</button>
-                </div>
-            </form>
-            <div class="text-end mb-2">
-                <div id="spinner_upload" hidden>
-                    <span class="spinner-border text-primary mt-2" role="status"></span>
-                    <span class="align-self-center">请勿离开此页面！</span>
-                </div>
-            </div>
-        </div>
-        <div class="input-group">
-            <input class="form-control" type="text" id="search_text" placeholder="患者名 / 患者ID / dcm ID" disabled />
-            <button class="btn btn-outline-primary" type="button" id="search" disabled>搜索</button>
-        </div>
-        <a href="/admin/auth/user/add/" class="btn btn-outline-primary mt-3">添加账户</a>
-        {% if user.id == 1 %}<a href="{% url 'api_BoneAge_export_bone_data'%}" class="btn btn-outline-primary mt-3">导出骨骼数据</a>{% endif %}
-        <a href="{% url 'logout' %}" class="btn btn-outline-danger mt-3">退出登陆</a>
-    </div>
-
+    <!-- 系统配置区 -->
+    <div class="col-4 border-end">{% include 'BoneAge/index/admin/system_configuration.html' %}</div>
     <!-- 任务分配区 -->
-    <div class="col-8">
-        <h2 class="text-center">新任务分配</h2>
-        {% if unallocated_dcm %}
-            <div class="row d-flex">
-                <div class="col-8">
-                    <div class="input-group">
-                        {% csrf_token %}
-                        <span class="input-group-text">选中
-                            <span class="text-primary mx-1" id="selected_dcm_count">0</span>
-                            / {{unallocated_dcm|length}} 个dcm以
-                        </span>
-                        <select name="standard" id="allocate_standard" class="form-select">
-                            <option value="CHN" selected>CHN标准</option>
-                            <option value="RUS">RUS-CHN标准</option>
-                        </select>
-                        <span class="input-group-text">任务分配给</span>
-                        <select name="allocated_to" id="allocated_to" class="form-select">
-                            {% for evaluator in evaluators %}
-                                <option value="{{evaluator.id}}">{{evaluator.last_name}}{{evaluator.first_name}}</option>
-                            {% endfor %}
-                        </select>
-                        <button class="btn btn-outline-primary" id="allocate_tasks">提交</button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <small class="text-secondary">注：目前仅显示所有标准下均未分配任务的新dcm文件。为已有某一标准任务的dcm再分配其他标准的页面还没做。</small>
-                </div>
-            </div>
-            <table class="table table-hover" id="unallocated_dcms">
-                <thead>
-                    <tr>
-                        <th><div class="form-check" id="select_all">
-                            <input class="form-check-input" type="checkbox" id="select_all_checkbox" value="select_all_checkbox" disabled>
-                            <span>dcm_id</span>
-                        </div></th>
-                        <th>患者姓名（ID）</th>
-                        <th>检查日期</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for dcm in unallocated_dcm %}
-                        <tr id="info_{{dcm.id}}">
-                            <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="allocate_{{dcm.id}}" value="{{dcm.id}}" disabled>
-                                    <span>{{dcm.id}}</span>
-                                </div>
-                            </td>
-                            <td>{{dcm.base_dcm.patient.name}}（{{dcm.base_dcm.patient.Patient_ID}}）</td>
-                            {% if dcm.base_dcm.Study_Date %}
-                                <td>{{dcm.base_dcm.Study_Date}}</td>
-                            {% else %}
-                                <td><span class="text-danger">读取失败</span></td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            暂无待分配任务。
-        {% endif %}
-    </div>
+    <div class="col-8">{% include 'BoneAge/index/admin/task_allocation.html' %}</div>
 </div>
 
+<!-- 个人设置侧边栏 -->
+{% include 'BoneAge/index/admin/account_settings.html' %}
 <!-- 分配提交成功弹窗 -->
-<div class="modal fade" id="modal_allocation_submited" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-success">提交成功！</h5>
-            </div>
-            <div class="modal-body">
-                任务到达对应用户需要一定时间，您现在可以离开本页面。
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-success" href="#" data-bs-dismiss="modal" id="submit_confirm">确认</a>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'BoneAge/index/admin/task_allocated.html' %}
 
 {% endblock content_BoneAge %}
 

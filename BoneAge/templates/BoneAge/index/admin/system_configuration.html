@@ -1,0 +1,13 @@
+<form class="mb-3" id="dcm_form" enctype="multipart/form-data" method="post" action="{% url 'api_BoneAge_upload_dcm' %}">
+    {% csrf_token %}
+    <div class="input-group">
+        <input id="dcm_files" class="form-control" type="file" name="dcm_files" multiple accept="application/dicom"/>
+        <button class="btn btn-outline-primary" type="submit" id="upload_dcms">上传</button>
+    </div>
+</form>
+<div class="input-group">
+    <input class="form-control" type="text" id="search_text" placeholder="患者名 / 患者ID / dcm ID" disabled />
+    <button class="btn btn-outline-primary" type="button" id="search" disabled>搜索</button>
+</div>
+<a href="/admin/auth/user/add/" class="btn btn-outline-primary mt-3">添加账户</a>
+{% if user.id == 1 %}<a href="{% url 'api_BoneAge_export_bone_data'%}" class="btn btn-outline-primary mt-3">导出骨骼数据</a>{% endif %}

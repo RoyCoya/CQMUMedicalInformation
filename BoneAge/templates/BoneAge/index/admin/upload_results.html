@@ -1,4 +1,5 @@
 {% extends 'BoneAge/base.html' %}
+{% load static %}
 
 {% block title_BoneAge %}上传完成{% endblock title_BoneAge %}
 
@@ -8,24 +9,6 @@
 {% endblock css_BoneAge %}
 
 {% block content_BoneAge %}
-{% load static %}
-
-{% comment %} {% if unanalyzed_dcm_count > 0 %}
-<div class="alert alert-warning d-flex justify-content-start" role="alert">
-    <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-arrow-left-circle text-primary"> 返回</a>
-    <span class="ms-3">数据库中存在 {{unanalyzed_dcm_count}} 个未解析的dcm文件，</span>
-    <a id="analyze" href="{% url 'api_BoneAge_analyze_dcm' %}">点击此处解析</a>
-    <span id="spinner_analyze" hidden>
-        <span class="spinner-border spinner-border-sm text-primary ms-2 align-self-center" role="status"></span>
-        <span>解析将自动进行，可离开本页面</span>
-    </span>
-</div>
-{% else %}
-<div class="alert alert-success d-flex justify-content-start" role="alert">
-    <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-arrow-left-circle text-primary"> 返回</a>
-    <span class="ms-3">数据库运转正常。</span>
-</div>
-{% endif %} {% endcomment %}
 <div class="alert alert-success d-flex justify-content-start" role="alert">
     <a href="{% url 'BoneAge_index' 1 %}" class="bi bi-arrow-left-circle text-primary"> 返回</a>
 </div>

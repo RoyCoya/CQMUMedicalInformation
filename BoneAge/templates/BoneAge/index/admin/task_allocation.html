@@ -1,0 +1,62 @@
+<h2 class="text-center">任务处理</h2>
+{% if unallocated_dcm %}
+    <div class="row d-flex">
+        <div class="col-8">
+            <div class="input-group">
+                {% csrf_token %}
+                <span class="input-group-text">选中
+                    <span class="text-primary mx-1" id="selected_dcm_count">0</span>
+                    / {{unallocated_dcm|length}} 个dcm以
+                </span>
+                <select name="standard" id="allocate_standard" class="form-select">
+                    <option value="CHN" selected>CHN标准</option>
+                    <option value="RUS">RUS-CHN标准</option>
+                </select>
+                <span class="input-group-text">任务分配给</span>
+                <select name="allocated_to" id="allocated_to" class="form-select">
+                    {% for evaluator in evaluators %}
+                        <option value="{{evaluator.id}}">{{evaluator.last_name}}{{evaluator.first_name}}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-outline-primary" id="allocate_tasks">提交</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <small class="text-secondary">注：目前仅显示所有标准下均未分配任务的新dcm文件。为已有某一标准任务的dcm再分配其他标准的页面还没做。</small>
+        </div>
+    </div>
+    <table class="table table-hover" id="unallocated_dcms">
+        <thead>
+            <tr>
+                <th><div class="form-check" id="select_all">
+                    <input class="form-check-input" type="checkbox" id="select_all_checkbox" value="select_all_checkbox" disabled>
+                    <span>dcm_id</span>
+                </div></th>
+                <th>患者姓名（ID）</th>
+                <th>检查日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dcm in unallocated_dcm %}
+                <tr id="info_{{dcm.id}}">
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="allocate_{{dcm.id}}" value="{{dcm.id}}" disabled>
+                            <span>{{dcm.id}}</span>
+                        </div>
+                    </td>
+                    <td>{{dcm.base_dcm.patient.name}}（{{dcm.base_dcm.patient.Patient_ID}}）</td>
+                    {% if dcm.base_dcm.Study_Date %}
+                        <td>{{dcm.base_dcm.Study_Date}}</td>
+                    {% else %}
+                        <td><span class="text-danger">读取失败</span></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    暂无待分配任务。
+{% endif %}

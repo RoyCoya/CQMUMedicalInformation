@@ -2,7 +2,6 @@
 //csrf token
 const getCookie = (name) => document.cookie.match(`[;\s+]?${name}=([^;]*)`)?.pop();
 const csrftoken = getCookie('csrftoken');
-
 // 提交成功modal
 var modal_allocation_submited = new bootstrap.Modal($('#modal_allocation_submited'), {keyboard: false})
 
