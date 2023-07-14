@@ -3,7 +3,7 @@ from django.db import models
 
 from DICOMManagement.models import DicomFile as dicomfile_base_class
 
-# 骨龄专用Dicom文件扩展信息
+# 骨龄专用Dicom文件扩展信息（包含已分配和未分配的Task）
 class DicomFile(models.Model):
     class Meta:
         verbose_name = '骨龄用dcm扩展信息'

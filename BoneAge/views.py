@@ -30,8 +30,8 @@ def api_finish_task(request): return api_task.api_finish_task(request)
 def api_mark_task(request): return api_task.api_mark_task(request)
 # 管理员操作
 def api_upload_dcm(request): return api_admin.api_upload_dcm(request)
-# def api_analyze_dcm(request): return api_admin.api_analyze_dcm(request)
 def api_allocate_tasks(request): return api_admin.api_allocate_tasks(request)
+def api_delete_tasks(request): return api_admin.api_delete_tasks(request)
 # def api_allocate_tasks_random(request): return api_admin.api_allocate_tasks_random(request)
 # 超级管理员操作
 def api_export_bone_data(request): return api_superuser.api_export_bone_data(request)

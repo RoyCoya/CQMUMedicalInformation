@@ -26,7 +26,7 @@ def normalize(img_normalize, number):
     img_normalize = (img_normalize * number).astype('uint8')
     return img_normalize
 
-# 上传dcm，转png入库
+# 手动上传dcm，转png入库
 def api_upload_dcm(request):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
@@ -247,3 +247,28 @@ def api_allocate_tasks(request):
         dcm.save()
 
     return HttpResponse('任务分配成功')
+
+# 删除任务
+# 删除方式：only_task（保留影像在DICOMManagement中）、with_source（连带删除影像）
+def api_delete_tasks(request):
+    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    user = request.user
+    if not user.is_staff: return HttpResponseBadRequest("您无权删除任务")
+
+    dcms_to_delete_ids = str(request.POST['dcms_id']).split(' ')[0:-1]
+    {
+            'only_task' : lambda : delete_only_task(dcms_to_delete_ids),
+            'with_dcm' : lambda : delete_with_dcm(dcms_to_delete_ids),
+    }[request.POST['type']]()
+
+    return HttpResponse('任务删除成功')
+
+def delete_only_task(dcms_ids):
+    for id in dcms_ids:
+        DicomFile.objects.get(id=id).delete()
+    return 0
+
+def delete_with_dcm(dcms_ids):
+    for id in dcms_ids:
+        DicomFile.objects.get(id=id).base_dcm.delete()
+    return 0

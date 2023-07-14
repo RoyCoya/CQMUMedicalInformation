@@ -1,18 +1,15 @@
 {% extends 'BoneAge/base.html' %}
+{% load static %}
 
 {% block title_BoneAge %}管理后台{% endblock title_BoneAge %}
 
 {% block nav_BoneAge_index %}active{% endblock nav_BoneAge_index %}
 
 {% block css_BoneAge %}
-<style>
-    #unallocated_dcms input:disabled{ opacity: 1 !important;}
-</style>
+<link rel="stylesheet" href="{% static '/BoneAge/css/admin.css' %}">
 {% endblock css_BoneAge %}
 
 {% block content_BoneAge %}
-{% load static %}
-
 {% if error_dcm_count > 0 %}
 <div class="alert alert-warning d-flex justify-content-between" role="alert">
     <span>存在 {{error_dcm_count}} 个待处理错误报告，<a id="analyze" href="#">点击此处处理</a></span>
@@ -34,8 +31,10 @@
 
 <!-- 个人设置侧边栏 -->
 {% include 'BoneAge/index/admin/account_settings.html' %}
-<!-- 分配提交成功弹窗 -->
-{% include 'BoneAge/index/admin/task_allocated.html' %}
+<!-- 分配任务弹窗 -->
+{% include 'BoneAge/index/admin/modal_task_allocation.html' %}
+<!-- 删除任务弹窗 -->
+{% include 'BoneAge/index/admin/modal_task_delete.html' %}
 
 {% endblock content_BoneAge %}
 
@@ -43,5 +42,6 @@
 <script src="{% static 'BoneAge/js/admin/admin.js' %}"></script>
 <script>
     var url_api_allocate_tasks = "{% url 'api_BoneAge_allocate_tasks' %}"
+    var url_api_delete_tasks = "{% url 'api_BoneAge_delete_tasks' %}"
 </script>
 {% endblock js_BoneAge %}
