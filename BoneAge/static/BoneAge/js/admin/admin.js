@@ -57,6 +57,8 @@ $("#back_to_top").click(function (e) {
 $("#operation").change(function (e) { 
     switch ($(this).val()) {
         case "allocate": 
+            $(".operation").removeClass("col-3");
+            $(".operation").addClass("col-7");
             $("#selected_dcm_count").removeClass("text-danger");
             $("#submit").removeClass("btn-outline-danger");
             $("#selected_dcm_count").addClass("text-primary");
@@ -64,6 +66,8 @@ $("#operation").change(function (e) {
             $(".allocate_choice").show();
             break;
         case "delete": 
+            $(".operation").removeClass("col-7");
+            $(".operation").addClass("col-3");
             $("#selected_dcm_count").removeClass("text-primary");
             $("#submit").removeClass("btn-outline-primary");
             $("#selected_dcm_count").addClass("text-danger");
@@ -89,18 +93,19 @@ $("#submit").click(function (e) {
 });
 // 分配任务
 $("#allocation_confirm").click(function (e) { 
-    dcms_id = ''
+    dcm_id_list = ''
     $.each($('#unallocated_dcms tbody input[checked^="checked"]'), function () { 
-        dcms_id += ($(this).attr('id').substring(9)) + ' '
+        dcm_id_list += ($(this).attr('id').substring(9)) + ' '
     });
-    if(dcms_id.length > 0){
+    standard_list = $('input.standard_select:checked').map(function() {return this.value;}).get();
+    if(dcm_id_list.length > 0 && standard_list.length > 0){
         $.ajax({
             type: "post",
             url: url_api_allocate_tasks,
             data: 
             {
-                'dcms_id' : dcms_id,
-                'allocate_standard' : $("#allocate_standard option:selected").val(),
+                'dcm_id_list' : dcm_id_list,
+                'standard_list' : JSON.stringify(standard_list),
                 'allocated_to' : $("#allocated_to option:selected").val(),
             },
             dataType: "json",
@@ -116,17 +121,17 @@ $("#allocation_confirm").click(function (e) {
 });
 // 删除任务
 $("#delete_confirm").click(function (e) { 
-    dcms_id = ''
+    dcm_id_list = ''
     $.each($('#unallocated_dcms tbody input[checked^="checked"]'), function () { 
-        dcms_id += ($(this).attr('id').substring(9)) + ' '
+        dcm_id_list += ($(this).attr('id').substring(9)) + ' '
     });
-    if(dcms_id.length > 0){
+    if(dcm_id_list.length > 0){
         $.ajax({
             type: "post",
             url: url_api_delete_tasks,
             data: 
             {
-                'dcms_id' : dcms_id,
+                'dcm_id_list' : dcm_id_list,
                 'type' : $('input[name="delete_type"]:checked').val(),
             },
             dataType: "json",

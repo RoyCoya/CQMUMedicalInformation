@@ -1,7 +1,7 @@
 <h2 class="text-center">任务处理</h2>
 {% if unallocated_dcm %}
     <div class="row d-flex">
-        <div class="col-6">
+        <div class="col-7 operation">
             <div class="input-group">
                 <select name="operation" id="operation" class="form-select">
                     <option value="allocate" selected>分配</option>
@@ -11,11 +11,18 @@
                     <span class="text-primary mx-1" id="selected_dcm_count">0</span>
                     / {{unallocated_dcm|length}} 个任务
                 </span>
-                <select name="standard" id="allocate_standard" class="form-select allocate_choice">
-                    <option value="CHN" selected>以CHN标准</option>
-                    <option value="RUS">以RUS-CHN标准</option>
-                </select>
-                <span class="input-group-text allocate_choice">给</span>
+                <div class="input-group-text allocate_choice">
+                    以
+                    <input class="form-check-input mt-0 ms-3 standard_select" type="checkbox" value="CHN" id="check_CHN_standard" checked>
+                    <label class="form-check-label ms-1" for="check_CHN_standard">
+                        CHN标准
+                    </label>
+                    <input class="form-check-input mt-0 ms-3 standard_select" type="checkbox" value="RUS" id="check_RUS_standard">
+                    <label class="form-check-label ms-1" for="check_RUS_standard">
+                        RUS-CHN标准
+                    </label>
+                    <span class="ms-3">给</span>
+                </div>
                 <select name="allocated_to" id="allocated_to" class="form-select allocate_choice">
                     {% for evaluator in evaluators %}
                         <option value="{{evaluator.id}}">{{evaluator.last_name}}{{evaluator.first_name}}</option>

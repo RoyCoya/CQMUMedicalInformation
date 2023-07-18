@@ -1,4 +1,5 @@
 import os
+import json
 from datetime import datetime
 
 import cv2
@@ -187,10 +188,10 @@ def api_allocate_tasks(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权分配任务")
 
-    dcms_to_allocate_ids = str(request.POST['dcms_id']).split(' ')[0:-1]
+    dcms_to_allocate_ids = str(request.POST['dcm_id_list']).split(' ')[0:-1]
     for i in range(len(dcms_to_allocate_ids)):  dcms_to_allocate_ids[i] = int(dcms_to_allocate_ids[i])
     dcms_to_allocate = DicomFile.objects.filter(id__in=dcms_to_allocate_ids)
-    allocate_standard = request.POST['allocate_standard']
+    allocate_standard = json.loads(request.POST['standard_list'])
     allocated_to = get_user_model().objects.get(id=request.POST['allocated_to'])
     
     # 当前提交的dcm状态改为“分配中”，使这些dcm在分配界面隐藏
@@ -199,7 +200,9 @@ def api_allocate_tasks(request):
         dcm.save()
 
     # TODO: 分配dcm。用Celery丢给后台操作。Orthanc同理，先试试
-    for dcm in dcms_to_allocate: allocate_task(dcm, user, allocate_standard, allocated_to)
+    for dcm in dcms_to_allocate: 
+        for standard in allocate_standard:
+            allocate_task(dcm, user, standard, allocated_to)
 
     return HttpResponse('任务分配成功')
 
@@ -256,7 +259,7 @@ def api_delete_tasks(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权删除任务")
 
-    dcms_to_delete_ids = str(request.POST['dcms_id']).split(' ')[0:-1]
+    dcms_to_delete_ids = str(request.POST['dcm_id_list']).split(' ')[0:-1]
     {
             'only_task' : lambda : delete_only_task(dcms_to_delete_ids),
             'with_dcm' : lambda : delete_with_dcm(dcms_to_delete_ids),
@@ -264,12 +267,12 @@ def api_delete_tasks(request):
 
     return HttpResponse('任务删除成功')
 
-def delete_only_task(dcms_ids):
-    for id in dcms_ids:
+def delete_only_task(dcm_id_list):
+    for id in dcm_id_list:
         DicomFile.objects.get(id=id).delete()
     return 0
 
-def delete_with_dcm(dcms_ids):
-    for id in dcms_ids:
+def delete_with_dcm(dcm_id_list):
+    for id in dcm_id_list:
         DicomFile.objects.get(id=id).base_dcm.delete()
     return 0
