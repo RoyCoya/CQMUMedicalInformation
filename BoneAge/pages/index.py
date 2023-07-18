@@ -158,7 +158,7 @@ def finished_tasks(request, page_number, ):
 def admin(request):
     # 数据库状态检查
     error_dcm_count = DicomFile.objects.exclude(error=0).exclude(error=102).count()
-    # 根据单一或数个标准查询未分配任务的dcm
+    # TODO: 根据单一或数个标准查询未分配任务的dcm
     unallocated_dcm = DicomFile.objects.annotate(dcm_tasks=Count('BoneAge_Task_affiliated_dcm')).exclude(dcm_tasks__gt=0).exclude(error=102)
     # 可用于任务分配的账号
     user_model = get_user_model()

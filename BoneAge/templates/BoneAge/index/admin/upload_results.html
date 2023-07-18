@@ -19,14 +19,6 @@
             <li class="list-group-item">{{file_name}}</li>
         {% endfor %}
     </ul><br>
-    {% if not_hand_files %}
-        <span class="fs-3"><strong class="text-warning">成功上传但识别为非手骨影像：</strong> {{not_hand_files|length}} 个</span><br>
-        <ul class="list-group list-group-numbered">
-            {% for file_name in not_hand_files %}
-                <li class="list-group-item">{{file_name}}</li>
-            {% endfor %}
-        </ul><br>
-    {% endif %}
     {% if img_convert_failed_files %}
         <span class="fs-3"><strong class="text-warning">成功上传但像素数据出错：</strong> {{img_convert_failed_files|length}} 个</span><br>
         <ul class="list-group list-group-numbered">

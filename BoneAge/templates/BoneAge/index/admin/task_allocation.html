@@ -1,7 +1,7 @@
 <h2 class="text-center">任务处理</h2>
 {% if unallocated_dcm %}
     <div class="row d-flex">
-        <div class="col-8">
+        <div class="col-6">
             <div class="input-group">
                 <select name="operation" id="operation" class="form-select">
                     <option value="allocate" selected>分配</option>
@@ -52,7 +52,7 @@
                     {% else %}
                         <td class="align-middle"><span class="text-danger">读取失败</span></td>
                     {% endif %}
-                    <td class="align-middle" style="width:20%">
+                    <td class="align-middle" style="width:15%">
                         <img src="{{MEDIA_URL}}{{dcm.base_dcm.dcm_to_image}}" class="img-fluid" loading="lazy">
                     </td>
                 </tr>
