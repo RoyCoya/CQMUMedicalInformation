@@ -123,7 +123,7 @@ class BoneDetail(models.Model):
     task = models.ForeignKey(Task, related_name='BoneAge_BoneDetail_task', on_delete=models.CASCADE, verbose_name='所属任务')
     name = models.CharField(choices=bone_name_choice, max_length=23,verbose_name='骨名')
     # 评估结果。如对应任务为RUS标准则
-    assessment = models.IntegerField(default=-1, verbose_name='骨骼评测（RUS等级/CHN分值）')
+    assessment = models.IntegerField(default=-1, verbose_name='骨骼评测（等级）')
     error = models.IntegerField(default=202, choices=error_choice, verbose_name='错误类型')
     center_x = models.FloatField(default=-1, verbose_name='中心点x')
     center_y = models.FloatField(default=-1, verbose_name='中心点y')

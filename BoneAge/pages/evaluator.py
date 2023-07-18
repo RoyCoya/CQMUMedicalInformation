@@ -3,8 +3,6 @@ from django.http import *
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-import BoneAge.apis.standard as bone_standars
-
 from BoneAge.apis.public_func import load_preference, login_check
 from BoneAge.models import BoneDetail, Task
 

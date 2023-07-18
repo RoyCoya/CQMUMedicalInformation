@@ -14,7 +14,6 @@ def api_finish_task(request):
     task = Task.objects.get(id=task_id)
 
     if request.POST['closed'] == 'true': task.closed = True
-    print(request.POST['bone_age'])
     task.bone_age = request.POST['bone_age']
     task.closed_date = datetime.now()
     task.modify_user = request.user

@@ -18,6 +18,7 @@ class admin_task(admin.ModelAdmin):
         'id',
         'dcm_file',
         'standard',
+        'bone_age',
         'allocated_to',
         'closed',
         'closed_date',

@@ -93,6 +93,8 @@ $("#submit").click(function (e) {
 });
 // 分配任务
 $("#allocation_confirm").click(function (e) { 
+    modal_allocation_confirm.hide()
+    modal_allocation_submited.show()
     dcm_id_list = ''
     $.each($('#unallocated_dcms tbody input[checked^="checked"]'), function () { 
         dcm_id_list += ($(this).attr('id').substring(9)) + ' '
@@ -111,16 +113,17 @@ $("#allocation_confirm").click(function (e) {
             dataType: "json",
             headers:{'X-CSRFToken': csrftoken},
             success : function(){
-                modal_allocation_submited.show()
+                
             },
             error : function(){
-                modal_allocation_submited.show()
+                
             },
         });
     }
 });
 // 删除任务
 $("#delete_confirm").click(function (e) { 
+    modal_delete_submited.show()
     dcm_id_list = ''
     $.each($('#unallocated_dcms tbody input[checked^="checked"]'), function () { 
         dcm_id_list += ($(this).attr('id').substring(9)) + ' '
@@ -137,10 +140,10 @@ $("#delete_confirm").click(function (e) {
             dataType: "json",
             headers:{'X-CSRFToken': csrftoken},
             success : function(){
-                modal_delete_submited.show()
+                
             },
             error : function(){
-                modal_delete_submited.show()
+                
             },
         });
     }

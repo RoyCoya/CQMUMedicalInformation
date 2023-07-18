@@ -11,8 +11,8 @@ from django.http import *
 from django.shortcuts import redirect, render
 from pydicom.filereader import dcmread
 
-import BoneAge.apis.standard as bone_standars
-
+from BoneAge.apis.Standard.BoneName import CHN, RUS_CHN
+from BoneAge.apis.Standard.Converter import GetBoneAge
 from BoneAge.apis.public_func import login_check
 from BoneAge.apis.bone_analysis import bone_detect
 from BoneAge.models import BoneDetail, DicomFile, Task
@@ -207,6 +207,11 @@ def api_allocate_tasks(request):
     return HttpResponse('任务分配成功')
 
 def allocate_task(dcm, pacs):  # PACS推流
+    # error_rate = sum(1 for bone in bones if bone.error != 0) / len(bones)
+    
+    # # error rate给每个pacs设置
+
+    # dcm.error = 3 if error_rate >= 0.7 else 0
     return 0
 
 def allocate_task(dcm, user, allocate_standard, allocated_to):  # 手动分配
@@ -224,11 +229,11 @@ def allocate_task(dcm, user, allocate_standard, allocated_to):  # 手动分配
     )
     
     # 创建骨骼信息
-    bones_name = {
-        'RUS' : lambda : bone_standars.RUS_CHN,
-        'CHN' : lambda : bone_standars.CHN,
+    bone_name_list = {
+        'RUS' : lambda : RUS_CHN,
+        'CHN' : lambda : CHN,
     }[new_task.standard]()
-    for bone_name in bones_name: BoneDetail.objects.create(
+    for bone_name in bone_name_list: BoneDetail.objects.create(
         task=new_task, name=bone_name, modify_user=user, error=404
     )
     
@@ -246,6 +251,15 @@ def allocate_task(dcm, user, allocate_standard, allocated_to):  # 手动分配
             bone.error = 0
             bone.save()
         except: pass
+    
+    is_any_bone_error = sum(1 for bone in bones if bone.error != 0)
+    if not is_any_bone_error:
+        new_task.bone_age = GetBoneAge(
+            standard=new_task.standard,
+            sex = new_task.dcm_file.base_dcm.patient.sex,
+            bones = bones
+        )
+        new_task.save()
 
     dcm.error = 0
     dcm.save()
