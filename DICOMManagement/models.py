@@ -30,3 +30,22 @@ class DicomFile(models.Model):
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dicomfile_creater', verbose_name='创建者', on_delete=models.PROTECT)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
+# # PACS服务器
+# class PACS(models.Model):
+#     class Meta:
+#         verbose_name = 'PACS服务器'
+#         verbose_name_plural = 'PACS服务器'
+#     def __str__(self):
+#         return str(self.name)
+    
+#     '''基础信息'''
+#     base_account = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='pacs_base_account', verbose_name='系统账户', on_delete=models.CASCADE)
+#     name = models.CharField(max_length=50, verbose_name='名称')
+
+#     '''系统信息'''
+#     id = models.AutoField(primary_key=True, verbose_name='ID')
+#     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='pacs_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
+#     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
+#     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='pacs_creater', verbose_name='创建者', on_delete=models.PROTECT)
+#     create_date = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')

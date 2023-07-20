@@ -31,7 +31,7 @@ apis = [
 	# 管理员后台
 	path('admin/tasks/allocate/', views.api_allocate_tasks, name='api_BoneAge_allocate_tasks'),
     path('admin/tasks/delete/',views.api_delete_tasks,name='api_BoneAge_delete_tasks'),
-	# TODO: path('admin/tasks/allocate/random/', views.api_allocate_tasks_random, name='api_BoneAge_allocate_tasks_random'),
+	# TODO: 随机分配功能，单度开个功能框出来（选择标准、复选框用户后随机分配）
 	path('admin/export_bone_data/', views.api_export_bone_data, name='api_BoneAge_export_bone_data'),
 ]
 

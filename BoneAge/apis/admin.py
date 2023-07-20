@@ -252,14 +252,14 @@ def allocate_task(dcm, user, allocate_standard, allocated_to):  # 手动分配
             bone.save()
         except: pass
     
-    is_any_bone_error = sum(1 for bone in bones if bone.error != 0)
-    if not is_any_bone_error:
-        new_task.bone_age = GetBoneAge(
-            standard=new_task.standard,
-            sex = new_task.dcm_file.base_dcm.patient.sex,
-            bones = bones
-        )
-        new_task.save()
+    # is_any_bone_error = sum(1 for bone in bones if bone.error != 0)
+    # if not is_any_bone_error:
+    #     new_task.bone_age = GetBoneAge(
+    #         standard=new_task.standard,
+    #         sex = new_task.dcm_file.base_dcm.patient.sex,
+    #         bones = bones
+    #     )
+    #     new_task.save()
 
     dcm.error = 0
     dcm.save()
