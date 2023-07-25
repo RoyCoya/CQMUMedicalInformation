@@ -9,9 +9,9 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from BoneAge.apis.public_func import load_preference, login_check
-from BoneAge.models import DicomFile, Task
+from BoneAge.models import DicomFile, Task, PACS_QR
 
-# 个人主页（未完结任务）
+# 个人主页（未完结任务页面）
 def index(request, page_number):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return HttpResponseRedirect(reverse('BoneAge_admin',args=()))
@@ -85,7 +85,7 @@ def index(request, page_number):
     }
     return render(request,'BoneAge/index/index.html',context)
 
-# 完结任务
+# 完结任务页面
 def finished_tasks(request, page_number, ):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return admin(request)
@@ -154,7 +154,7 @@ def finished_tasks(request, page_number, ):
     }
     return render(request,'BoneAge/index/finished_tasks/finished_tasks.html',context)
 
-# 管理员
+# 管理员页面
 def admin(request):
     # 数据库状态检查
     error_dcm_count = DicomFile.objects.exclude(error=0).exclude(error=102).count()
@@ -163,10 +163,13 @@ def admin(request):
     # 可用于任务分配的账号
     user_model = get_user_model()
     evaluators = user_model.objects.filter(is_active=True).exclude(is_staff=True)
-    
+    # 远程PACS
+    PACS_list = PACS_QR.objects.all()
+
     context = {
         'unallocated_dcm' : unallocated_dcm,
         'error_dcm_count' : error_dcm_count,
         'evaluators' : evaluators,
+        'PACS_list' : PACS_list,
     }
     return render(request,'BoneAge/index/admin/admin.html', context)

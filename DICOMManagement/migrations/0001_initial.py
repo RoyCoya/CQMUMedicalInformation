@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID')),
                 ('modify_date', models.DateTimeField(auto_now=True, verbose_name='最后修改时间')),
                 ('create_date', models.DateTimeField(auto_now_add=True, verbose_name='创建时间')),
-                ('create_user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='dicomfile_creater', to=settings.AUTH_USER_MODEL, verbose_name='创建者')),
+                ('create_user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='dicomfile_creator', to=settings.AUTH_USER_MODEL, verbose_name='创建者')),
                 ('modify_user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='dicomfile_modifier', to=settings.AUTH_USER_MODEL, verbose_name='最后修改者')),
                 ('patient', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='PatientManagement.patient', verbose_name='所属患者')),
             ],

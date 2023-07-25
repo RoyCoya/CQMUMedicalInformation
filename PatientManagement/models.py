@@ -22,5 +22,5 @@ class Patient(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     #注意：任何情况下不要让系统或前后台允许删除patient数据。如果有筛选数据的必要，将其active设置为false即可
     active = models.BooleanField(default=True, verbose_name='启用')
-    modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='patient_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
+    modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='PatientManagement_Patient_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')

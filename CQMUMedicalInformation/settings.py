@@ -32,17 +32,20 @@ ALLOWED_HOSTS = ['localhost','127.0.0.1','0.0.0.0','192.168.8.127','172.18.37.10
 # Application definition
 
 INSTALLED_APPS = [
+    # Django基础包
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #自建App
+    # 自建内容
     'BoneAge.apps.BoneageConfig',
     'MainFrame.apps.MainframeConfig',
     'PatientManagement.apps.PatientmanagementConfig',
     'DICOMManagement.apps.DicommanagementConfig',
+    # 插件
+    'django_q',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -142,3 +146,28 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 登录验证
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
+
+# PACS本地配置
+PACS_local = {
+    "Name" : "CQMU",
+    "HttpPort" : 8042,
+    "DicomAet" : "CQMU",
+    "DicomPort" : 104,
+    "DefaultEncoding" : "Utf8",
+}
+
+# # django-q配置
+# Q_CLUSTER = {
+#     'redis': {
+#         'host': 'localhost',
+#         'port': 6379,
+#         'db': 0,
+#         'password': None,
+#         'socket_timeout': None,
+#         'charset': 'utf-8',
+#         'errors': 'strict',
+#         'unix_socket_path': None,
+#     },
+#     'retry' : 60,
+#     'timeout' : 10,
+# }

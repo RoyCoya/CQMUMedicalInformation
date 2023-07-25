@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('modify_date', models.DateTimeField(auto_now=True, verbose_name='最后修改时间')),
                 ('create_date', models.DateTimeField(auto_now_add=True, verbose_name='创建时间')),
                 ('base_dcm', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='BoneAge_DicomFile_base', to='DICOMManagement.DicomFile', verbose_name='DICOM信息基类')),
-                ('create_user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='BoneAge_DicomFile_creater', to=settings.AUTH_USER_MODEL, verbose_name='创建者')),
+                ('create_user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='BoneAge_DicomFile_creator', to=settings.AUTH_USER_MODEL, verbose_name='创建者')),
                 ('modify_user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='BoneAge_DicomFile_modifier', to=settings.AUTH_USER_MODEL, verbose_name='最后修改者')),
             ],
             options={
