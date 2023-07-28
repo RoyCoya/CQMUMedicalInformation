@@ -156,18 +156,18 @@ PACS_local = {
     "DefaultEncoding" : "Utf8",
 }
 
-# # django-q配置
-# Q_CLUSTER = {
-#     'redis': {
-#         'host': 'localhost',
-#         'port': 6379,
-#         'db': 0,
-#         'password': None,
-#         'socket_timeout': None,
-#         'charset': 'utf-8',
-#         'errors': 'strict',
-#         'unix_socket_path': None,
-#     },
-#     'retry' : 60,
-#     'timeout' : 10,
-# }
+# django-q配置
+Q_CLUSTER = {
+    'redis': {
+        'host': 'localhost',
+        'port': 6379,
+        'db': 0,
+        'password': None,
+        'socket_timeout': None,
+        'charset': 'utf-8',
+        'errors': 'strict',
+        'unix_socket_path': None,
+    },
+    'retry' : 60,
+    'timeout' : 10,
+}

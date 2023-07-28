@@ -1,3 +1,5 @@
+from datetime import time
+
 from django.contrib.auth import settings
 from django.db import models
 
@@ -200,6 +202,8 @@ class PACS_QR(models.Model):
     description = models.CharField(null=True, blank=True, max_length=500, verbose_name='描述')
     base_PACS = models.ForeignKey(base_PACS, verbose_name='PACS基类', on_delete=models.CASCADE)
     query = models.CharField(max_length=1000, verbose_name='影像筛选query')
+    start_time = models.TimeField(default=time(hour=6), verbose_name='每日启动时间')
+    end_time = models.TimeField(default=time(hour=23, minute=59, second=59), verbose_name='每日结束时间')
     interval = models.PositiveIntegerField(verbose_name='影像抓取间隔（分钟）')
     
     '''系统信息'''
