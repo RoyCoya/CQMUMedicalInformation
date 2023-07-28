@@ -17,7 +17,7 @@ def query(request):
     except Exception as e: return HttpResponseBadRequest(e)
 
     try:
-        Patient.objects.get(Patient_ID=patient_id)
+        patient_id = Patient.objects.get(Patient_ID=patient_id).id
         code = 200
     except: code = 404
 
@@ -31,7 +31,7 @@ def query(request):
         "msg" : msg,
         "time" : time.time(),
         "data" : {
-            "url" : reverse("PatientManagement_profile", args=(int(patient_id),)) + '?info_tab=' + info_tab,
+            "url" : "http://172.16.29.15:8000"+ reverse("PatientManagement_profile", args=(int(patient_id),)) + '?info_tab=' + info_tab,
         },
     }
     return HttpResponse(json.dumps(response), content_type="application/json")
