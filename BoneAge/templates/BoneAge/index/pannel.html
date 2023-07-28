@@ -4,14 +4,13 @@
     <div class="col-5">
         <div class="card shadow">
             <img src="{% static 'BoneAge/img/default_avator.png' %}" class="card-img-top border-bottom" alt="...">
-            <div class="card-body text-center">
-                <a href="{% url 'logout' %}" class="btn btn-danger">退出登录</a>
+            <div class="card-body text-center fw-bold">
+                {{user.last_name}}{{user.first_name}}
             </div>
         </div>
     </div>
     <div class="col-7">
-        <div class="mt-2"><strong>姓名：</strong>{{user.last_name}}{{user.first_name}}</div>
-        <div class="mt-2"><strong>身份：</strong>{% if user.is_staff %}管理员{% else %}评测员{% endif %}</div>
+        <div class="mt-2"><strong>权限：</strong>{% if user.is_staff %}管理员{% else %}评测员{% endif %}</div>
         <div class="mt-2"><strong>上次登陆：</strong>{{user.last_login|date:"Y-m-d H:i"}}</div>
         <hr>
         <div><strong>最后编辑：</strong>

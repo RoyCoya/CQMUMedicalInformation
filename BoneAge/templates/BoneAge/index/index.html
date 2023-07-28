@@ -16,7 +16,7 @@
 <!-- 欢迎栏、个人设置按钮 -->
 <div class="alert alert-primary d-flex justify-content-between" role="alert">
     <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
-    <a data-bs-toggle="offcanvas" href="#toolbar_right">个人设置 <i class="bi bi-gear"></i></a>
+    <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
 </div>
 
 <div class="row">
@@ -33,7 +33,7 @@
         {% endblock pannel %}
     </div>
 </div>
-{% include 'BoneAge/index/settings.html' %}
+{% include 'BoneAge/index/account_settings.html' %}
 {% endblock content_BoneAge %}
 
 {% block js_BoneAge %}

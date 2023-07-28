@@ -18,6 +18,7 @@ class admin_task(admin.ModelAdmin):
         'id',
         'dcm_file',
         'standard',
+        'bone_age',
         'allocated_to',
         'closed',
         'closed_date',
@@ -43,3 +44,5 @@ class admin_preference(admin.ModelAdmin):
         'default_bone',
     ]
 admin.site.register(Preference, admin_preference)
+
+admin.site.register(PACS_QR)

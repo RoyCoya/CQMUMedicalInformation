@@ -301,8 +301,3 @@ $("#task_marked").click(function (e) {
         $(this).addClass('bi-star');
     }
 });
-
-/* 测试用，输出骨骼信息 */
-// $("#show_bone_details").click(function (e) { 
-//     console.log(bones)
-// });

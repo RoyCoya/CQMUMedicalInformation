@@ -1,18 +1,20 @@
+from datetime import time
+
 from django.contrib.auth import settings
 from django.db import models
 
-from DICOMManagement.models import DicomFile as dicomfile_base_class
+from DICOMManagement.models import DicomFile as base_dcm_file, PACS as base_PACS
 
-# 骨龄专用Dicom文件扩展信息
+# 骨龄专用Dicom文件扩展信息（包含已分配和未分配的Task）
 class DicomFile(models.Model):
     class Meta:
-        verbose_name = '骨龄用dcm扩展信息'
-        verbose_name_plural = '骨龄用dcm扩展信息'
+        verbose_name = 'DICOM文件'
+        verbose_name_plural = 'DICOM文件'
     def __str__(self):
         return str(self.base_dcm.patient.name + str(self.id))
 
     # 父类来自Dicom管理app
-    base_dcm = models.OneToOneField(dicomfile_base_class, related_name='BoneAge_DicomFile_base', verbose_name='dcm基类', on_delete=models.CASCADE)
+    base_dcm = models.OneToOneField(base_dcm_file, related_name='BoneAge_DicomFile_base', verbose_name='dcm基类', on_delete=models.CASCADE)
 
     '''基础信息'''
     #如果已有DICOM 文件数据，请尽量不要修改保存路径方法（upload_to）。如有必要，请手动保存好所有已有dcm文件再重构数据库
@@ -33,7 +35,7 @@ class DicomFile(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_DicomFile_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
-    create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_DicomFile_creater', verbose_name='创建者', on_delete=models.PROTECT)
+    create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_DicomFile_creator', verbose_name='创建者', on_delete=models.PROTECT)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
 # 骨龄标注任务，与Dicom文件n:1对应（同一dcm可有多个不同标准的任务）
@@ -123,7 +125,7 @@ class BoneDetail(models.Model):
     task = models.ForeignKey(Task, related_name='BoneAge_BoneDetail_task', on_delete=models.CASCADE, verbose_name='所属任务')
     name = models.CharField(choices=bone_name_choice, max_length=23,verbose_name='骨名')
     # 评估结果。如对应任务为RUS标准则
-    assessment = models.IntegerField(default=-1, verbose_name='骨骼评测（RUS等级/CHN分值）')
+    assessment = models.IntegerField(default=-1, verbose_name='骨骼评测（等级）')
     error = models.IntegerField(default=202, choices=error_choice, verbose_name='错误类型')
     center_x = models.FloatField(default=-1, verbose_name='中心点x')
     center_y = models.FloatField(default=-1, verbose_name='中心点y')
@@ -186,3 +188,40 @@ class Preference(models.Model):
         max_length= 500,
         verbose_name="CHN 骨骼排序"
     )
+
+# 骨龄专用PACS远程Query and Retrieve配置
+class PACS_QR(models.Model):
+    class Meta:
+        verbose_name = 'PACS配置信息'
+        verbose_name_plural = 'PACS配置信息'
+    def __str__(self):
+        return self.base_PACS.name + '|' + self.name
+    
+    '''基础信息'''
+    name = models.CharField(max_length=50, verbose_name='配置名')
+    description = models.CharField(null=True, blank=True, max_length=500, verbose_name='描述')
+    base_PACS = models.ForeignKey(base_PACS, verbose_name='PACS基类', on_delete=models.CASCADE)
+    query = models.CharField(max_length=1000, verbose_name='影像筛选query')
+    start_time = models.TimeField(default=time(hour=6), verbose_name='每日启动时间')
+    end_time = models.TimeField(default=time(hour=23, minute=59, second=59), verbose_name='每日结束时间')
+    interval = models.PositiveIntegerField(verbose_name='影像抓取间隔（分钟）')
+    
+    '''系统信息'''
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    running = models.BooleanField(default=False, verbose_name='启用')
+    modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
+    modify_date_time = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
+    create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_creator', verbose_name='创建者', on_delete=models.PROTECT)
+    create_date_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
+# # TODO: 抓取记录
+# class PACS_log(models.Model):
+#     PACS = models.ForeignKey(PACS, on_delete=models.CASCADE, verbose_name='PACS')
+    
+
+#     '''系统信息'''
+#     id = models.AutoField(primary_key=True, verbose_name='ID')
+#     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
+#     modify_date_time = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
+#     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_creator', verbose_name='创建者', on_delete=models.PROTECT)
+#     create_date_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
