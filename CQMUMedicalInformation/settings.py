@@ -134,9 +134,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/userfile/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'userfile/')
-# 上传文件最大25M
-FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400
-DATA_UPLOAD_MAX_MEMORY_SIZE = 26214400
+# 上传文件最大大小
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 50
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 50
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -147,13 +147,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 
-# PACS本地配置
-PACS_local = {
-    "Name" : "CQMU",
-    "HttpPort" : 8042,
-    "DicomAet" : "CQMU",
-    "DicomPort" : 104,
-    "DefaultEncoding" : "Utf8",
+# PACS本地配置（Orthanc）
+PACS_LOCAL = {
+    'Name' : 'CQMU',
+    'HttpPort' : 8001,
+    'DicomAet' : 'CQMU',
+    'DicomPort' : 104,
+    'DefaultEncoding' : 'Utf8',
 }
 
 # django-q配置
@@ -168,6 +168,6 @@ Q_CLUSTER = {
         'errors': 'strict',
         'unix_socket_path': None,
     },
-    'retry' : 60,
-    'timeout' : 10,
+    'retry' : 60 * 20,
+    'timeout' : 60 * 15,
 }

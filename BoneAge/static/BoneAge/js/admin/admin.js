@@ -109,6 +109,7 @@ $("#allocation_confirm").click(function (e) {
                 'dcm_id_list' : dcm_id_list,
                 'standard_list' : JSON.stringify(standard_list),
                 'allocated_to' : $("#allocated_to option:selected").val(),
+                'confidence' : $("#confidence").val(),
             },
             dataType: "json",
             headers:{'X-CSRFToken': csrftoken},

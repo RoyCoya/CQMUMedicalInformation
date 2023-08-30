@@ -20,7 +20,7 @@
         {% endfor %}
     </ul><br>
     {% if img_convert_failed_files %}
-        <span class="fs-3"><strong class="text-warning">成功上传但像素数据出错：</strong> {{img_convert_failed_files|length}} 个</span><br>
+        <span class="fs-3"><strong class="text-warning">影像转换出错：</strong> {{img_convert_failed_files|length}} 个</span><br>
         <ul class="list-group list-group-numbered">
             {% for file_name in img_convert_failed_files %}
                 <li class="list-group-item">{{file_name}}</li>

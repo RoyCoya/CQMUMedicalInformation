@@ -1,7 +1,7 @@
 <h2 class="text-center">任务处理</h2>
 {% if unallocated_dcm %}
-    <div class="row d-flex">
-        <div class="col-7 operation">
+    <div class="row d-flex">    
+        <div class="col-12 operation">
             <div class="input-group">
                 <select name="operation" id="operation" class="form-select">
                     <option value="allocate" selected>分配</option>
@@ -25,9 +25,23 @@
                 </div>
                 <select name="allocated_to" id="allocated_to" class="form-select allocate_choice">
                     {% for evaluator in evaluators %}
-                        <option value="{{evaluator.id}}">{{evaluator.last_name}}{{evaluator.first_name}}</option>
+                        <option value="{{evaluator.id}}">
+                            {% if evaluator.last_name or evaluator.first_name %}
+                                {{evaluator.last_name}}{{evaluator.first_name}}
+                            {% else %}
+                                id {{evaluator.id}}
+                            {% endif %}
+                        </option>
                     {% endfor %}
                 </select>
+                <span class="input-group-text allocate_choice">
+                    置信度（%） 
+                    <i class="ms-1 bi bi-question-circle-fill text-primary"
+                    data-bs-toggle="tooltip" data-bs-placement="top"
+                    title="自动识别结果低于置信度时将标记为错误（非手骨）图像"></i>
+                </span>
+                <input class="form-control allocate_choice" type="number" value="75" min=50 max=100 step=5 id="confidence"
+                onchange="value=value.replace(/[^\d]/g, '');if(value<=50) value=50; if(value>=100) value=100;">
                 <button class="btn btn-outline-primary" id="submit">提交</button>
             </div>
         </div>
@@ -37,7 +51,7 @@
             <tr>
                 <th><div class="form-check" id="select_all">
                     <input class="form-check-input" type="checkbox" id="select_all_checkbox" value="select_all_checkbox" disabled>
-                    <span>任务ID</span>
+                    <span>影像ID</span>
                 </div></th>
                 <th>患者姓名（ID）</th>
                 <th>检查日期</th>
@@ -50,7 +64,12 @@
                     <td class="align-middle">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="allocate_{{dcm.id}}" value="{{dcm.id}}" disabled>
-                            <span>{{dcm.id}}</span>
+                            <span>
+                                {{dcm.base_dcm.id}}
+                                {% if dcm.error != 0 %}
+                                （<span class="text-danger">错误：{{dcm.get_error_display}}</span>）
+                                {% endif %}
+                            </span>
                         </div>
                     </td>
                     <td class="align-middle">{{dcm.base_dcm.patient.name}}（{{dcm.base_dcm.patient.Patient_ID}}）</td>

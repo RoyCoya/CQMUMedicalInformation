@@ -4,6 +4,7 @@ from django.contrib.auth import settings
 from django.db import models
 
 from DICOMManagement.models import DicomFile as base_dcm_file, PACS as base_PACS
+from django_q.models import Schedule
 
 # 骨龄专用Dicom文件扩展信息（包含已分配和未分配的Task）
 class DicomFile(models.Model):
@@ -19,11 +20,9 @@ class DicomFile(models.Model):
     '''基础信息'''
     #如果已有DICOM 文件数据，请尽量不要修改保存路径方法（upload_to）。如有必要，请手动保存好所有已有dcm文件再重构数据库
     error_choice = (
-        (0,'已解析'),
-        (102, '分配中'),
-        (202,'未初始化解析'),
+        (0,'正常'),
+        (102, '文件处理中'),
         (403,'识别为非手骨图'),
-        (415,'无法解析为图像'),
     )
     error = models.IntegerField(default=202, choices=error_choice, verbose_name="错误类型")
 
@@ -44,7 +43,7 @@ class Task(models.Model):
         verbose_name = '任务'
         verbose_name_plural = '任务'
     def __str__(self):
-        return str(self.dcm_file.base_dcm.patient.name + ' ' +self.dcm_file.base_dcm.patient.Patient_ID + ' | dcm id:' + ' ' + str(self.dcm_file.id)) 
+        return str(self.dcm_file.base_dcm.patient.name + ' ' +self.dcm_file.base_dcm.patient.Patient_ID + ' | task id:' + ' ' + str(self.id)) 
 
     '''基础信息'''
     dcm_file = models.ForeignKey(DicomFile,related_name='BoneAge_Task_affiliated_dcm', on_delete=models.CASCADE,verbose_name='对应dcm')
@@ -202,10 +201,20 @@ class PACS_QR(models.Model):
     description = models.CharField(null=True, blank=True, max_length=500, verbose_name='描述')
     base_PACS = models.ForeignKey(base_PACS, verbose_name='PACS基类', on_delete=models.CASCADE)
     query = models.CharField(max_length=1000, verbose_name='影像筛选query')
-    start_time = models.TimeField(default=time(hour=6), verbose_name='每日启动时间')
-    end_time = models.TimeField(default=time(hour=23, minute=59, second=59), verbose_name='每日结束时间')
-    interval = models.PositiveIntegerField(verbose_name='影像抓取间隔（分钟）')
-    
+    start_time = models.TimeField(default=time(hour=6), blank=True, null=True, verbose_name='每日启动时间')
+    end_time = models.TimeField(default=time(hour=23, minute=0), blank=True, null=True, verbose_name='每日结束时间')
+    interval = models.PositiveIntegerField(
+        default=5,
+        verbose_name='影像抓取间隔（分钟）',
+        help_text='太长会传输文件过多导致PACS堵塞，太短可能会缺失传入PACS有延误的影像。建议时间：5~10分钟。默认5分钟'
+    )
+    confidence = models.PositiveIntegerField(
+        default=80,
+        verbose_name='可信度（%）',
+        help_text='当AI识别出百分之多少的手部骨骼时视为一张手骨图。低于该可信度的将视为错误影像，不会入库。默认80'
+    )
+    allocate_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_allocate_to', verbose_name='将推流影像分配给', on_delete=models.PROTECT)
+
     '''系统信息'''
     id = models.AutoField(primary_key=True, verbose_name='ID')
     running = models.BooleanField(default=False, verbose_name='启用')
@@ -214,14 +223,14 @@ class PACS_QR(models.Model):
     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_creator', verbose_name='创建者', on_delete=models.PROTECT)
     create_date_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
-# # TODO: 抓取记录
-# class PACS_log(models.Model):
-#     PACS = models.ForeignKey(PACS, on_delete=models.CASCADE, verbose_name='PACS')
-    
+# 抓取记录
+class PACS_QR_Log(models.Model):
+    pacs_qr = models.ForeignKey(PACS_QR, on_delete=models.CASCADE, verbose_name='配置')
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, verbose_name='所属任务')
+    StudyDate = models.CharField(max_length=8, verbose_name='所查日期')
+    StudyTime = models.CharField(max_length=17, verbose_name='所查时间段')
+    retrieved_instances = models.CharField(max_length=5000, verbose_name='抓获结果（orthanc id）')
+    migrated = models.BooleanField(default=False, verbose_name='是否已迁移至系统')
 
-#     '''系统信息'''
-#     id = models.AutoField(primary_key=True, verbose_name='ID')
-#     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
-#     modify_date_time = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
-#     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_PACS_creator', verbose_name='创建者', on_delete=models.PROTECT)
-#     create_date_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    '''系统信息'''
+    id = models.AutoField(primary_key=True, verbose_name='ID')

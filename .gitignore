@@ -3,6 +3,7 @@
 **/__pycache__
 /static/*
 /userfile/*
+**/OrthancStorage
 
 # MacOS ignore
 *.DS_Store

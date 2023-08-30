@@ -12,7 +12,7 @@ class Patient(models.Model):
     '''基础信息'''
     Patient_ID = models.CharField(max_length=64, unique=True, verbose_name='Dicom Patient ID')
     name = models.CharField(max_length=100, verbose_name='姓名')
-    sex_choice = (('Male','男'),('Female','女'))
+    sex_choice = (('Male','男'),('Female','女'),('Other','其他'))
     sex = models.CharField(max_length=6, choices=sex_choice, verbose_name='性别')
     birthday = models.DateField(verbose_name='生日')
     
