@@ -31,11 +31,13 @@ def profile(request, patient_id):
     except: pass
 
     # 骨龄资料
-    tasks = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=True).order_by('closed_date')
+    tasks_history = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=True).order_by('-closed_date')
+    tasks_processing = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=False).order_by('-allocated_datetime')
 
     context = {
         'patient' : patient,
-        'tasks' : tasks,
+        'tasks_history' : tasks_history,
+        'tasks_processing' : tasks_processing,
         'back_page' : back_page,
         'back_page_get' : back_page_get,
         'back_page_args_get' : back_page_args_get,

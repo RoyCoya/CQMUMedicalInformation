@@ -79,7 +79,7 @@
                         <td class="align-middle"><span class="text-danger">读取失败</span></td>
                     {% endif %}
                     <td class="align-middle" style="width:15%">
-                        <img src="{{MEDIA_URL}}{{dcm.base_dcm.dcm_to_image}}" class="img-fluid" loading="lazy">
+                        <img src="{{dcm.base_dcm.dcm_to_image.url}}" class="img-fluid" loading="lazy">
                     </td>
                 </tr>
             {% endfor %}
