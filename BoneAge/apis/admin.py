@@ -66,8 +66,7 @@ def api_allocate_tasks(request):
 
     return HttpResponse('任务分配成功')
 
-def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated_to, confidence : float) -> bool:
-
+def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated_to, confidence : float, delete_with_source = False) -> bool:
     # 如果当前需要创建的任务已存在（异步时可能有冲突），则跳过
     if Task.objects.filter(dcm_file=dcm).filter(standard=allocate_standard): return 409
 
@@ -75,8 +74,6 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
     new_task = Task.objects.create(
         dcm_file = dcm,
         standard = allocate_standard,
-        allocated_to = allocated_to,
-        allocated_datetime = datetime.now(),
         modify_user = allocator
     )
     
@@ -105,11 +102,14 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
         except: pass
     
     detection_accuracy = 1 - sum(1 for bone in bones if bone.error != 0) / bones.count()
+    
     if detection_accuracy < confidence:
         dcm.error = 403
         dcm.save()
         new_task.delete()
+        if delete_with_source: delete_base_dcm(new_task.dcm_file.base_dcm)
         return False
+    
     if detection_accuracy == 1:
         new_task.bone_age = GetBoneAge(
             standard=new_task.standard,
@@ -118,6 +118,9 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
         )
         new_task.save()
 
+    new_task.allocated_to = allocated_to
+    new_task.allocated_datetime = datetime.now()
+    new_task.save()
     dcm.error = 0
     dcm.save()
 

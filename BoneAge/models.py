@@ -201,6 +201,11 @@ class PACS_QR(models.Model):
     description = models.CharField(null=True, blank=True, max_length=500, verbose_name='描述')
     base_PACS = models.ForeignKey(base_PACS, verbose_name='PACS基类', on_delete=models.CASCADE)
     query = models.CharField(max_length=1000, verbose_name='影像筛选query')
+    standard_choice = (
+        ('RUS','RUS-CHN标准'),
+        ('CHN','CHN标准'),
+    )
+    standard = models.CharField(choices=standard_choice, max_length=10, default='CHN',verbose_name='骨龄标准')
     start_time = models.TimeField(default=time(hour=6), blank=True, null=True, verbose_name='每日启动时间')
     end_time = models.TimeField(default=time(hour=23, minute=0), blank=True, null=True, verbose_name='每日结束时间')
     interval = models.PositiveIntegerField(

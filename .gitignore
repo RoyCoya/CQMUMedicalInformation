@@ -4,6 +4,7 @@
 /static/*
 /userfile/*
 **/OrthancStorage
+db.sqlite3-journal
 
 # MacOS ignore
 *.DS_Store

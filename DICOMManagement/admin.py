@@ -2,5 +2,13 @@ from django.contrib import admin
 
 from .models import *
 
-admin.site.register(DicomFile)
+class admin_DicomFile(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'patient',
+        'SOP_Instance_UID',
+        'create_date',
+        'create_user',
+    ]
+admin.site.register(DicomFile, admin_DicomFile)
 admin.site.register(PACS)

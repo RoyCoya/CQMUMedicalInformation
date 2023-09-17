@@ -1,4 +1,5 @@
 import cv2
+import traceback
 import os
 import numpy as np
 from typing import Tuple, List, Dict, Any
@@ -53,8 +54,8 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
         if base_DicomFile.objects.filter(SOP_Instance_UID=tags['SOPInstanceUID']):
             delete_base_dcm(new_dcm)
             return None, 409
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         delete_base_dcm(new_dcm)
         return None, 400
         
@@ -83,7 +84,7 @@ def delete_base_dcm(file : base_DicomFile):
     try:
         os.remove(file.dcm.path)
         os.remove(file.dcm_to_image.path)
-    except Exception as e: print(e)
+    except Exception: pass
     file.delete()
 
 def tags_check(file : base_DicomFile, tags_to_check : List[str], handler : str) -> Dict[str, Any]:
@@ -140,8 +141,8 @@ def image_convert_check(file : base_DicomFile) -> str:
         cv2.imwrite(settings.MEDIA_ROOT+file.dcm.name + ".png", img_array, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
         file.dcm_to_image = file.dcm.name + ".png"
         file.save()
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         delete_base_dcm(file)
         return 422
 
@@ -155,7 +156,7 @@ def get_dcm_patient(tags : dict, user) -> base_Patient:
             'M' : 'Male',
             'F' : 'Female',
             'O' : 'Other'
-        }[tags['PatientSex']](),
+        }[tags['PatientSex']],
         birthday=datetime.strptime(tags['PatientBirthDate'],'%Y%m%d').date(),
         modify_user=user,
     )
