@@ -23,9 +23,10 @@ class DicomFile(models.Model):
     SOP_Instance_UID = models.CharField(null=True, blank=True, unique=True, max_length=64, verbose_name='SOP Instance UID')
 
     # 扩展信息。只抽取一些重要的tag，不重要的需要时再去读取dicom文件
-    Study_Date = models.DateField(null=True, blank=True, verbose_name='Study Date')
-    Window_Center = models.CharField(null=True, blank=True, max_length=500, verbose_name='Window Center')
-    Window_Width = models.CharField(null=True, blank=True, max_length=500, verbose_name='Window Width')
+    Study_Date = models.DateField(null=True, blank=True, default=None, verbose_name='Study Date')
+    Study_Time = models.TimeField(null=True, blank=True, default=None, verbose_name='Study Time')
+    Window_Center = models.CharField(null=True, blank=True, default=None, max_length=500, verbose_name='Window Center')
+    Window_Width = models.CharField(null=True, blank=True, default=None, max_length=500, verbose_name='Window Width')
 
     '''系统信息'''
     id = models.AutoField(primary_key=True, verbose_name='ID')

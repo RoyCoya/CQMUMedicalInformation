@@ -65,11 +65,13 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
     # 扩展信息
     optional_tags = [
         'StudyDate',
+        'StudyTime',
         'WindowCenter',
         'WindowWidth',
     ]
     tags = tags_check(new_dcm, optional_tags, 'ignore')
     new_dcm.Study_Date = datetime.strptime(tags['StudyDate'],'%Y%m%d').date() if tags['StudyDate'] else None
+    new_dcm.Study_Time = datetime.strptime(tags['StudyTime'],'%H%M%S').time() if tags['StudyTime'] else None
     new_dcm.Window_Center = tags['WindowCenter']
     new_dcm.Window_Width = tags['WindowWidth']
 
