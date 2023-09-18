@@ -159,7 +159,7 @@ def admin(request):
     # 数据库状态检查
     error_dcm_count = DicomFile.objects.exclude(error=0).exclude(error=102).count()
     # TODO: 根据单一或数个标准查询未分配任务的dcm
-    unallocated_dcm = DicomFile.objects.annotate(dcm_tasks=Count('BoneAge_Task_affiliated_dcm')).exclude(dcm_tasks__gt=0).exclude(error=102)
+    unallocated_dcm = DicomFile.objects.annotate(dcm_tasks=Count('BoneAge_Task_affiliated_dcm')).exclude(dcm_tasks__gt=0).filter(error__in=[0,403]).filter(create_user=request.user)
     # 可用于任务分配的账号
     user_model = get_user_model()
     evaluators = user_model.objects.filter(is_active=True).exclude(is_staff=True)

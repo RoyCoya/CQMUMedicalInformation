@@ -1,0 +1,12 @@
+{
+    "Name" : "CQMUPlatform" ,
+    "DicomAet" : "CQMU" ,
+    "HttpPort" : 8001 ,
+    "DicomPort" : 104 ,
+    "DefaultEncoding" : "Utf8",
+    "DicomModalities" : {
+        "PACS" : [ "GEPACS", "172.16.19.107", 4100 ],
+        "Test" : ["TEST", "127.0.0.1", 4100]
+    },
+    "DicomScuTimeout" : 120
+}

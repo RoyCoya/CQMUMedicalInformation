@@ -20,10 +20,13 @@ class DicomFile(models.Model):
     dcm = models.FileField(upload_to='DicomFiles/%Y/%m/', verbose_name='dcm源文件')
     patient = models.ForeignKey(Patient, null=True, blank=True, verbose_name="所属患者", on_delete=models.PROTECT)
     dcm_to_image = models.ImageField(null=True, blank=True, upload_to='DicomFiles/%Y/%m/', verbose_name='dcm转图像')
-
-    '''扩展信息'''
     SOP_Instance_UID = models.CharField(null=True, blank=True, unique=True, max_length=64, verbose_name='SOP Instance UID')
-    Study_Date = models.DateField(null=True, blank=True, verbose_name='Study Date')
+
+    # 扩展信息。只抽取一些重要的tag，不重要的需要时再去读取dicom文件
+    Study_Date = models.DateField(null=True, blank=True, default=None, verbose_name='Study Date')
+    Study_Time = models.TimeField(null=True, blank=True, default=None, verbose_name='Study Time')
+    Window_Center = models.CharField(null=True, blank=True, default=None, max_length=500, verbose_name='Window Center')
+    Window_Width = models.CharField(null=True, blank=True, default=None, max_length=500, verbose_name='Window Width')
 
     '''系统信息'''
     id = models.AutoField(primary_key=True, verbose_name='ID')
@@ -32,8 +35,10 @@ class DicomFile(models.Model):
     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='DICOMManagement_DicomFile_creator', verbose_name='创建者', on_delete=models.PROTECT)
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
-# 远程PACS
 class PACS(models.Model):
+    """
+    远程PACS配置。每一个PACS相当于Orthanc中的一个modality
+    """
     class Meta:
         verbose_name = '远程PACS'
         verbose_name_plural = '远程PACS'
@@ -58,8 +63,10 @@ class PACS(models.Model):
     create_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='DICOMManagement_PACS_creator', verbose_name='创建者', on_delete=models.PROTECT)
     create_date_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
-# 自动生成的PACS配置文件
 class PACS_conf(models.Model):
+    """
+    自动生成的Orthanc config记录。暂未启用。
+    """
     class Meta:
         verbose_name = 'PACS配置记录'
         verbose_name_plural = 'PACS配置记录'

@@ -1,5 +1,6 @@
 {% extends 'BoneAge/base.html' %}
 {% load static %}
+{% load BoneAge_global_tags %}
 
 {% block title_BoneAge %}管理后台{% endblock title_BoneAge %}
 
@@ -10,7 +11,7 @@
 {% endblock css_BoneAge %}
 
 {% block content_BoneAge %}
-{% if error_dcm_count > 0 %}
+{% comment %} {% if error_dcm_count > 0 %}
 <div class="alert alert-warning d-flex justify-content-between" role="alert">
     <span>存在 {{error_dcm_count}} 个待处理错误报告，<a id="analyze" href="#">点击此处处理</a></span>
     <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
@@ -20,7 +21,11 @@
     <span>所有任务正常运行中。</span>
     <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
 </div>
-{% endif %}
+{% endif %} {% endcomment %}
+<div class="alert alert-primary d-flex justify-content-between" role="alert">
+    <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
+    <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
+</div>
 
 <div class="row mt-3">
     <!-- 系统配置区 -->
@@ -41,6 +46,10 @@
 {% block js_BoneAge %}
 <script src="{% static 'BoneAge/js/admin/admin.js' %}"></script>
 <script>
+    var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
     var url_api_allocate_tasks = "{% url 'api_BoneAge_allocate_tasks' %}"
     var url_api_delete_tasks = "{% url 'api_BoneAge_delete_tasks' %}"
 </script>

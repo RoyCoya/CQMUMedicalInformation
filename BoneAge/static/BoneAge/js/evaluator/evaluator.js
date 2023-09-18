@@ -215,7 +215,7 @@ $("#confirm_edit_bone_age").click(function (e) {
     }
 });
 /* 修改时骨龄差距过大显示 */
-$("#bone_age").on('input', function (e) {
+$("#bone_age").change(function (e) {
     $(this).val($(this).val().replace(/[^\d\.]/g,''))
     bone_age = $(this).val()
     if($(this).val() < 0) $(this).val(0);
