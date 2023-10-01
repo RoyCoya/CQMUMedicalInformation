@@ -230,7 +230,7 @@ class PACS_QR(models.Model):
 
 # 抓取记录
 class PACS_QR_Log(models.Model):
-    pacs_qr = models.ForeignKey(PACS_QR, on_delete=models.CASCADE, verbose_name='配置')
+    pacs_qr = models.ForeignKey(PACS_QR, on_delete=models.DO_NOTHING, verbose_name='配置')
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, verbose_name='所属任务')
     StudyDate = models.CharField(max_length=8, verbose_name='所查日期')
     StudyTime = models.CharField(max_length=17, verbose_name='所查时间段')

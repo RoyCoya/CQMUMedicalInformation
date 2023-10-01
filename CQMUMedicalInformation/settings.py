@@ -13,9 +13,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 
+DEBUG = True
+DATABASE_PWD = '#'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -23,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-$u0e6(x99928u*4vy99v5dqoy9ft8*d*k#+ub26buzswn@sic7'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost','127.0.0.1','0.0.0.0','192.168.8.127','172.18.37.103','26.171.34.214','192.168.1.102', '192.168.8.152','172.32.188.136',"172.16.29.15"]
+ALLOWED_HOSTS = [
+    'localhost','127.0.0.1','0.0.0.0',
+    '192.168.8.127','172.18.37.103','26.171.34.214','192.168.1.102', '192.168.8.152','172.32.188.136',"172.16.29.15"
+]
 
 
 # Application definition
@@ -85,8 +87,12 @@ WSGI_APPLICATION = 'CQMUMedicalInformation.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'cqmu',
+        'USER': 'RoyCoya',
+        'PASSWORD': DATABASE_PWD,
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 

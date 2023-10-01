@@ -1,7 +1,0 @@
-Django
-opencv-python
-pydicom
-onnxruntime
-Pillow
-django-q
-redis
