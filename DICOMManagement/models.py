@@ -17,9 +17,9 @@ class DicomFile(models.Model):
 
     '''基础信息'''
     #如果已有DICOM 文件数据，请尽量不要修改保存路径方法（upload_to）。如有必要，请手动保存好所有已有dcm文件再重构数据库
-    dcm = models.FileField(upload_to='DicomFiles/%Y/%m/', verbose_name='dcm源文件')
+    dcm = models.FileField(upload_to='DicomFiles/%Y/%m/', max_length=1000, verbose_name='dcm源文件')
     patient = models.ForeignKey(Patient, null=True, blank=True, verbose_name="所属患者", on_delete=models.PROTECT)
-    dcm_to_image = models.ImageField(null=True, blank=True, upload_to='DicomFiles/%Y/%m/', verbose_name='dcm转图像')
+    dcm_to_image = models.ImageField(null=True, blank=True, upload_to='DicomFiles/%Y/%m/', max_length=1000, verbose_name='dcm转图像')
     SOP_Instance_UID = models.CharField(null=True, blank=True, unique=True, max_length=64, verbose_name='SOP Instance UID')
 
     # 扩展信息。只抽取一些重要的tag，不重要的需要时再去读取dicom文件

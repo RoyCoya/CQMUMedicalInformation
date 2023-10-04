@@ -9,6 +9,8 @@ class admin_DicomFile(admin.ModelAdmin):
         'SOP_Instance_UID',
         'create_date',
         'create_user',
+        'dcm',
+        'dcm_to_image',
     ]
 admin.site.register(DicomFile, admin_DicomFile)
 admin.site.register(PACS)
