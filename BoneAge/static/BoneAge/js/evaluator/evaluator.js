@@ -148,8 +148,8 @@ $("a[id^=fix-]").click(function (e) {
         dataType: "json",
         headers:{'X-CSRFToken': csrftoken}
     });
-    if(String(location).includes('?')) window.location.replace(location + "&bone_fixed=" + bone_name_key);
-    else window.location.replace(location + "?bone_fixed=" + bone_name_key);
+    if(String(location).includes('?')) window.location.assign(location + "&bone_fixed=" + bone_name_key);
+    else window.location.assign(location + "?bone_fixed=" + bone_name_key);
 });
 
 /* 骨骼修改评分评级保存 */
@@ -267,7 +267,7 @@ $("#task_closed").click(function (e) {
 
 /* 完成任务，跳转至个人主页 */
 $("#finish_task").click(function (e) { 
-    window.location.replace(url_personal_index);
+    window.location.assign(url_personal_index);
 });
 
 /* 收藏任务 */
