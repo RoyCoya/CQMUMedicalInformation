@@ -1,5 +1,5 @@
 from django import template
-import datetime
+import math
 import time
 
 register = template.Library()
@@ -34,3 +34,13 @@ def transfercharacter_get_url(get_params):
     get_params = get_params.replace('/', r'%2F')
     get_params = get_params.replace(' ', r'%20')
     return get_params
+
+# 值相减
+@register.filter(name='subtract')
+def subtract(value, arg):
+    return value - arg
+
+# 取绝对值
+@register.filter(name='abs')
+def abs(value):
+    return math.fabs(value)
