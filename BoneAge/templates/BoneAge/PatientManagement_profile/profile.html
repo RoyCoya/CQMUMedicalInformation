@@ -10,7 +10,14 @@
                 <ul class="list-group list-group-flush col-7 p-0">
                     <li class="list-group-item">任务ID：{{task.id}}</li>
                     <li class="list-group-item">拍片时间：{{task.dcm_file.base_dcm.Study_Date}} {{task.dcm_file.base_dcm.Study_Time}}</li>
-                    <li class="list-group-item">预估骨龄：<strong>{{task.bone_age}}</strong>岁</li>
+                    <li class="list-group-item">预估骨龄：<strong>{{task.bone_age}}</strong>岁
+                    {% if task.bone_age|subtract:task.actual_age|abs > 1 %}
+                    <!-- 为啥tooltip不行 -->
+                    <i class="bi bi-exclamation-triangle-fill text-danger"
+                    data-bs-toggle="tooltip" data-bs-placement="top"
+                    title="注意：判断年龄与实际年龄差距大于1年！"></i>
+                    {% endif %}
+                    </li>
                     <li class="list-group-item">实际年龄：{{task.actual_age|floatformat:1}}岁</li>
                 </ul>
             </div>
