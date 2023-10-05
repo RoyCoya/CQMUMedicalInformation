@@ -33,6 +33,8 @@ def profile(request, patient_id):
     # 骨龄资料
     tasks_history = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=True).order_by('-closed_date')
     tasks_processing = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=False).order_by('-allocated_datetime')
+    for task in tasks_processing:
+        task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
 
     context = {
         'patient' : patient,

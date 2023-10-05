@@ -10,6 +10,8 @@ from BoneAge.models import BoneDetail, Task
 def evaluator(request, task_id):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     task = Task.objects.get(id=task_id)
+    BoneAge_dcm = task.dcm_file
+    patient = BoneAge_dcm.base_dcm.patient
     preference = load_preference(request)
 
     # 根据当前用户偏好的标准、骨骼顺序，加载骨骼数据
@@ -60,8 +62,9 @@ def evaluator(request, task_id):
     try: bone_fixed = request.GET['bone_fixed']
     except: pass
 
-    BoneAge_dcm = task.dcm_file
-    patient = BoneAge_dcm.base_dcm.patient
+    # 计算task当时患者的实际年龄
+    task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
+
     context = {
         'preference' : preference,
         'patient' : patient,
