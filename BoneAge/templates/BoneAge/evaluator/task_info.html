@@ -1,0 +1,45 @@
+{% load BoneAge_global_tags %}
+<div class="col-6 border-end">
+    <div class="d-flex justify-content-between col">
+        <h3><i class="bi bi-person-bounding-box"></i> 任务信息</h3>
+    </div>
+    <div class="row">   
+        <span class="col-6">
+            <strong>姓名：</strong>
+            <a id="patient_profile" href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?back_page=BoneAge_evaluator&args={{task.id}}">
+                {{patient.name}}
+            </a>
+        </span>
+        <span class="col-6">
+            <strong>患者ID：</strong>
+            <span>{{patient.Patient_ID}}</span>
+        </span>
+        <span class="col-6">
+            <strong>历史：</strong>
+            {% if historys > 0 %}
+                {% if back_page %}
+                    {% if back_page_get == 'PatientManagement_profile' %}
+                        <a id="patient_historys" 
+                            href="{{back_page}}"
+                            class="bi bi-clock-history"> {{historys}}份</a>
+                    {% else %}
+                        <a id="patient_historys" 
+                            href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge&back_page=BoneAge_evaluator&args={{task.id}}&else_get=back_page%3D{{back_page_get}}{% for arg in back_page_args_get %}%26args%3D{{arg}}{% endfor %}%26else_get%3D{{back_page_else_get|transfercharacter_get_url}}"
+                            class="bi bi-clock-history"> {{historys}}份</a>
+                    {% endif %}
+                {% else %}
+                    <a id="patient_historys" 
+                        href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge&back_page=BoneAge_evaluator&args={{task.id}}"
+                        class="bi bi-clock-history"> {{historys}}份</a>
+                {% endif %}
+                
+            {% else %}
+                无            
+            {% endif %}
+        </span>
+        <span class="col-6">
+            <strong>检查日期：</strong>
+            <span>{{task.dcm_file.base_dcm.Study_Date|date:"Y-n-j"}}</span>
+        </span>
+    </div>
+</div>

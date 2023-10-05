@@ -3,7 +3,7 @@
 <!-- 骨骼评分表 -->
 <div class="col-5 border-end">
     <div class="d-flex justify-content-between col">
-        <h3>骨骼评测</h3>
+        <h3>{{preference.get_standard_display}}</h3>
         {% comment %} <button id="show_bone_details">log 骨骼信息</button> {% endcomment %}
         {% if back_page %}
         <a class="btn btn-danger" href="{{back_page}}">
@@ -11,50 +11,47 @@
         </a>
         {% endif %}
     </div>
-    <label class="mb-2">标准：{{preference.get_standard_display}}</label>
     {% comment %} <label class="mb-2">数据：</label> {% endcomment %}
-    <ul class="list-group mb-2">
-        <div id="list-sum" class="list-group-item d-flex justify-content-between row pe-0">
-            <span class='col'>
-                <strong>任务ID：</strong>
-                {{task.id}}
-                <a href="#" id="task_marked" class="bi bi-star{% if task.marked %}-fill{% endif %} text-warning ps-1"></a>
-            </span>
-            <div class='col pe-0 d-flex justify-content-end'>
-                {% if task.closed %}
-                    <strong class="form-check-label text-primary pe-2">已完成</strong>
-                {% else %}
-                    <strong id="label_task_status" class="form-check-label text-success pe-2">进行中</strong>
-                {% endif %}
-                <div class="form-check form-switch">
-                    <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if task.closed %}checked{% endif %}>
-                </div>
+    <ul class="list-group mb-3 mt-2">
+        <div id="list-sum" class="list-group-item p-2">
+            <strong>任务ID：</strong>
+            {{task.id}}
+            <a href="#" id="task_marked" class="bi bi-star{% if task.marked %}-fill{% endif %} text-warning ps-1"></a>
+        </div>
+        <div class="list-group-item p-2 d-flex justify-content-start">
+            <strong>任务状态：</strong>
+            {% if task.closed %}
+                <strong class="form-check-label text-primary pe-2">已完成</strong>
+            {% else %}
+                <strong id="label_task_status" class="form-check-label text-success pe-2">进行中</strong>
+            {% endif %}
+            <div class="form-check form-switch">
+                <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if task.closed %}checked{% endif %}>
             </div>
         </div>
-        <div class="list-group-item row">
-            <div class="d-flex justify-content-between">
-                <span class="col">
-                    <strong>评测：</strong>
-                    <strong id="label_bone_age">？岁</strong>｜
-                    <strong id="label_bone_grade">？分</strong>
-                    <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger"
-                    data-bs-toggle="tooltip" data-bs-placement="top"
-                    title="注意：判断年龄与实际年龄差距大于1年！" hidden></i>
-                </span>
-                {% comment %} <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a> {% endcomment %}
-            </div>
-            <div>
-                <strong>实际：</strong>
-                <span>
-                    <span>{{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date|floatformat}}岁</span>｜
-                    {{patient.get_sex_display}}
-                    {% if patient.sex == 'Female' %}
-                        <i class="bi bi-gender-female" style="color:DeepPink"></i>
-                    {% else %}
-                        <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
-                    {% endif %}
-                </span>
-            </div>
+        <div class="list-group-item p-2">
+            <strong>评测：</strong>
+            <span data-bs-toggle="tooltip" data-bs-placement="top"
+            title="点击复制：（可在个人设置更改）">
+                <strong id="label_bone_age">？岁</strong>｜
+                <strong id="label_bone_grade">？分</strong>
+            </span>
+            <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger"
+            data-bs-toggle="tooltip" data-bs-placement="top"
+            title="注意：判断年龄与实际年龄差距大于1年！" hidden></i>
+            {% comment %} <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a> {% endcomment %}
+        </div>
+        <div class="list-group-item p-2">
+            <strong>实际：</strong>
+            <span>
+                <span>{{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date|floatformat}}岁</span>｜
+                {{patient.get_sex_display}}
+                {% if patient.sex == 'Female' %}
+                    <i class="bi bi-gender-female" style="color:DeepPink"></i>
+                {% else %}
+                    <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
+                {% endif %}
+            </span>
         </div>
     </ul>
     <ul class="list-group">
