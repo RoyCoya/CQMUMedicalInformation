@@ -57,15 +57,17 @@ def retrieve(pacs_qr, schedule, query):
     title = '【' + pacs_qr.name + '|' + str(schedule.id) + '|' + str(schedule.repeats) +'】'
     StudyDate = query['StudyDate']
     StudyTime = query['StudyTime']
-    print(title + 'C-MOVE开始于' + datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
     print(title + 'StudyDuration:' + StudyDate + ' ' + StudyTime)
+    print(title + 'C-MOVE开始于' + datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
     orthanc = OrthancApiClient('http://localhost:' + str(settings.PACS_LOCAL['HttpPort']) + '/')
     remote_modality_alias = pacs_qr.base_PACS.name
     remote_studies = orthanc.modalities.query_studies(
         from_modality=remote_modality_alias,
         query=query
     )
-    for study in remote_studies: orthanc.modalities.retrieve_study(from_modality='PACS',dicom_id=study.dicom_id)
+    for index, study in enumerate(remote_studies):
+        print(title + '获取序列：' + str(index + 1) + '/' + str(len(remote_studies)))
+        orthanc.modalities.retrieve_study(from_modality='PACS',dicom_id=study.dicom_id)
     
     instances = []
     studies = orthanc.studies.find(query)
@@ -93,8 +95,8 @@ def clear_unmigrated(task):
     if not logs: return None
     title = '【CQMU入库同步】'
     print(title + '开始于' + datetime.now().strftime('%Y/%m/%d %H:%M:%S') + '，共' + str(len(logs)) + '条捕获记录需同步')
-    print('记录id：')
-    for log in logs: print(str(log.id))
+    log_id = ' '.join(str(log.id) for log in logs)
+    print(title + '记录id：' + log_id)
     successed_count = 0
     for log in logs:
         pacs_qr = log.pacs_qr
@@ -131,7 +133,9 @@ def migrate(orthanc, instance_ids, allocate_to, prefix):
             )
             if not new_dcm: continue
             new_dcms.append(new_dcm)
-        except Exception: continue
+        except Exception:
+            traceback.print_exc()
+            continue
     return new_dcms
 
 # TODO: 带休息时间的启动。暂时不考虑。注意跨天问题。

@@ -38,7 +38,6 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
         create_user=user,
         modify_user=user,
     )
-
     # 基础信息
     try:
         required_tags = [
@@ -50,8 +49,12 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
             'PatientBirthDate',
         ]
         tags = tags_check(new_dcm, required_tags, 'delete')
-        if None in tags.values(): return None, 400
+        if None in tags.values():
+            print('【error】Missing Tags')
+            delete_base_dcm(new_dcm)
+            return None, 400
         if base_DicomFile.objects.filter(SOP_Instance_UID=tags['SOPInstanceUID']):
+            print('【error】duplicate dicom')
             delete_base_dcm(new_dcm)
             return None, 409
     except Exception:
@@ -70,8 +73,14 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
         'WindowWidth',
     ]
     tags = tags_check(new_dcm, optional_tags, 'ignore')
-    new_dcm.Study_Date = datetime.strptime(tags['StudyDate'],'%Y%m%d').date() if tags['StudyDate'] else None
-    new_dcm.Study_Time = datetime.strptime(tags['StudyTime'],'%H%M%S').time() if tags['StudyTime'] else None
+
+    Study_Date = parse_date_time(tags['StudyDate'], ['%Y%m%d'])
+    Study_Time = parse_date_time(tags['StudyTime'], ['%H%M%S', '%H%M%S.%f'])
+    if Study_Date and Study_Time:
+        new_dcm.Study_Date = Study_Date.date()
+        new_dcm.Study_Time = Study_Time.time()
+    else: return None, 400
+
     new_dcm.Window_Center = tags['WindowCenter']
     new_dcm.Window_Width = tags['WindowWidth']
 
@@ -83,10 +92,10 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
     return new_dcm, 0
 
 def delete_base_dcm(file : base_DicomFile):
-    try:
-        os.remove(file.dcm.path)
-        os.remove(file.dcm_to_image.path)
-    except Exception: pass
+    try: os.remove(file.dcm_to_image.path)
+    except: pass
+    try: os.remove(file.dcm.path)
+    except: pass
     file.delete()
 
 def tags_check(file : base_DicomFile, tags_to_check : List[str], handler : str) -> Dict[str, Any]:
@@ -178,3 +187,9 @@ def normalize(img_normalize, number):
     img_normalize = (img_normalize - low) / (high - low)
     img_normalize = (img_normalize * number).astype('uint8')
     return img_normalize
+
+def parse_date_time(value, formats):
+    for fmt in formats:
+        try: return datetime.strptime(value, fmt)
+        except: continue
+    return None

@@ -11,12 +11,14 @@
 
 {% block content_BoneAge %}
 <div class="row mt-2">
-    <div class="col-6 border-end">
+    <div class="col-xl-6 col-md-5 border-end">
         <div class="row">
+            {% include 'BoneAge/evaluator/task_info.html' %}
+            {% include 'BoneAge/evaluator/img_operations.html' %}
             {% include 'BoneAge/evaluator/main_image.html' %}
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-xl-6 col-md-7">
         <div class="row">
             {% include 'BoneAge/evaluator/bone_details.html' %}
         </div>
@@ -133,7 +135,7 @@
     var dcm_id = {{dcm.id}}
     var brightness = {{dcm.brightness}}
     var contrast = {{dcm.contrast}}
-    var actual_age = {{patient.birthday|get_dcm_age:dcm.base_dcm.Study_Date}}
+    var actual_age = {{task.actual_age}}
     var sex = '{{patient.sex|lower}}'
     var url_static = '{% get_static_prefix %}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
