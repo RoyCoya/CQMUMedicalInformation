@@ -1,0 +1,37 @@
+<form>
+  <div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">ID</label>
+    <div class="input-group">
+        <select class="form-select form-control w-25">
+            <option selected>任务</option>
+            <option value="1">患者</option>
+            <option value="2">影像</option>
+          </select>
+        <input type="number" class="form-control w-75" />
+    </div>
+  </div>
+  <div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">患者姓名</label>
+    <input type="text" class="form-control" />
+  </div>
+  <div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">患者年龄（检查时）</label>
+    <div class="input-group">
+        <input type="number" class="form-control" value="0.0"/>
+        <span class="input-group-text">～</span>
+        <input type="number" class="form-control" value="18.0"/>
+    </div>
+  </div>
+  <!-- TODO: bootstrap datetime picker https://mdbootstrap.com/ <div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">检查日期</label>
+    <div class="input-group">
+        <input type="number" class="form-control" value="0.0"/>
+        <span class="input-group-text">～</span>
+        <input type="number" class="form-control" value="18.0"/>
+    </div>
+  </div> -->
+  <div class="text-end">
+    <button type="submit" class="btn btn-primary">完成</button>
+    <button type="submit" class="btn btn-secondary">重置</button>
+  </div>
+</form>

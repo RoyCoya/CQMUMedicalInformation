@@ -11,7 +11,7 @@ pages = [
 	# 评分器
 	path('evaluator/<int:task_id>/', views.evaluator, name='BoneAge_evaluator'),
 	# 骨龄记录库
-	path('library/', views.dicom_library, name='BoneAge_dicom_library'),
+	path('library/', views.library, name='BoneAge_library'),
 ]
 
 apis = [

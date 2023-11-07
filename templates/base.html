@@ -20,49 +20,7 @@
     <!--正文区-->
 
     <!-- 导航栏 -->
-    <nav class="{% block nav_sticky_top %}sticky-top{% endblock nav_sticky_top %} navbar navbar-expand-lg navbar-dark text-light d-flex justify-content-between" style="z-index:1021;">
-        <div class="container-fluid col">
-            <a class="navbar-brand ms-2" href="{% url 'MainFrame_index' %}">
-                <img src="{% static 'img/CQMU_logos/logo-reverse.png' %}" width="40" height="40" alt="">
-                <span class="ms-2 align-middle">重庆医科大学·智慧医疗平台</span>
-            </a>
-            <div class="collapse navbar-collapse" id="nav-collapse">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link {% block nav_index %}{% endblock %}" href="{% url 'MainFrame_index' %}">首页</a>
-                    </li>
-                    <li class="nav-item dropdown ms-2">
-                        <a class="nav-link dropdown-toggle {% block nav_PatientManagement %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">患者管理</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item {% block nav_PatientManagement_1 %}{% endblock %}" href="#">test1</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item {% block nav_PatientManagement_2 %}{% endblock %}" href="#">test2</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown ms-2">
-                        <a class="nav-link dropdown-toggle {% block nav_BoneAge %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
-                            骨龄评分系统
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 %}">个人主页</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item {% block nav_BoneAge_library %}{% endblock %}" href="{% url 'BoneAge_dicom_library' %}">Dicom数据库</a></li>
-                        </ul>
-                    </li>
-                    {% if request.user.is_authenticated and request.user.is_staff %}
-                    <li class="nav-item ms-2">
-                        <a class="nav-link" href="/admin/">管理后台</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-        <button class="navbar-toggler col-1 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#nav-collapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        {% block logout %}
-        {% endblock logout%}
-    </nav>
+    {% include "headbar.html" %}
 
     {% block content %}
     {% endblock %}
