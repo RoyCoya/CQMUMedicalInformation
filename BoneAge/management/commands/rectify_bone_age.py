@@ -13,11 +13,13 @@ class Command(BaseCommand):
             self.stdout.write('scanning %d/%d' % (i+1, tasks.count()))
             is_any_bone_error = sum(1 for bone in bones if bone.error != 0)
             if not is_any_bone_error:
-                task.bone_age = GetBoneAge(
+                bone_age = GetBoneAge(
                     standard=task.standard,
                     sex = task.dcm_file.base_dcm.patient.sex,
                     bones = bones
                 )
+                if not bone_age: continue
+                task.bone_age = bone_age
                 rectified_count += 1
                 task.save()
         self.stdout.write(
