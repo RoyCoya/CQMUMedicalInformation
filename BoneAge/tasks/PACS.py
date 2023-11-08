@@ -3,6 +3,7 @@ import traceback
 from datetime import datetime, timedelta, time
 from orthanc_api_client import OrthancApiClient
 from orthanc_api_client.resources import Resources
+from orthanc_api_client.exceptions import HttpError, ResourceNotFound
 
 from django.conf import settings
 from django_q.models import Schedule
@@ -61,14 +62,22 @@ def retrieve(pacs_qr, schedule, query):
     print(title + 'C-MOVE开始于' + datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
     orthanc = OrthancApiClient('http://localhost:' + str(settings.PACS_LOCAL['HttpPort']) + '/')
     remote_modality_alias = pacs_qr.base_PACS.name
-    remote_studies = orthanc.modalities.query_studies(
-        from_modality=remote_modality_alias,
-        query=query
-    )
+    try:
+        remote_studies = orthanc.modalities.query_studies(
+            from_modality=remote_modality_alias,
+            query=query
+        )
+    except: return None
     for index, study in enumerate(remote_studies):
         print(title + '获取序列：' + str(index + 1) + '/' + str(len(remote_studies)))
-        orthanc.modalities.retrieve_study(from_modality='PACS',dicom_id=study.dicom_id)
-    
+        try:
+            orthanc.modalities.retrieve_study(from_modality='PACS',dicom_id=study.dicom_id)
+        except HttpError as e:
+            if e.http_status_code in (404, 500): pass
+            else: print(e)
+        except Exception as e: print(e)
+        print('获取成功')
+
     instances = []
     studies = orthanc.studies.find(query)
     for study in studies:
@@ -77,7 +86,8 @@ def retrieve(pacs_qr, schedule, query):
                 for instance in series.instances:
                     instances.append(instance.orthanc_id)
             else:
-                Resources(orthanc,'series/').delete(series.orthanc_id)
+                try: Resources(orthanc,'series/').delete(series.orthanc_id)
+                except: pass
     print(title + 'C-MOVE完成于：' + datetime.now().strftime('%Y/%m/%d %H:%M:%S') + '，共' + str(len(instances)) + '个影像文件')
     
     return PACS_QR_Log.objects.create(
@@ -88,7 +98,6 @@ def retrieve(pacs_qr, schedule, query):
         retrieved_instances='\n'.join(instances)
     )
 
-# 解析后放入CQMU系统
 def clear_unmigrated(task): 
     orthanc = OrthancApiClient('http://localhost:' + str(settings.PACS_LOCAL['HttpPort']) + '/')
     logs = PACS_QR_Log.objects.filter(migrated=False)
@@ -133,6 +142,7 @@ def migrate(orthanc, instance_ids, allocate_to, prefix):
             )
             if not new_dcm: continue
             new_dcms.append(new_dcm)
+        except ResourceNotFound: pass
         except Exception:
             traceback.print_exc()
             continue

@@ -8,5 +8,5 @@
         "PACS" : [ "GEPACS", "172.16.19.107", 4100 ],
         "Test" : ["TEST", "127.0.0.1", 4100]
     },
-    "DicomScuTimeout" : 120
+    "DicomScuTimeout" : 180
 }
