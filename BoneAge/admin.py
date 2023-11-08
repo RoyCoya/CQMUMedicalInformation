@@ -4,6 +4,9 @@ from .models import *
 
 # TODO:找时间优化下。编码参考里有资料
 class admin_dicomfile(admin.ModelAdmin):
+    raw_id_fields = (
+        'base_dcm',
+    )
     list_display = [
         'id',
         'base_dcm',
@@ -14,6 +17,9 @@ class admin_dicomfile(admin.ModelAdmin):
 admin.site.register(DicomFile, admin_dicomfile)
 
 class admin_task(admin.ModelAdmin):
+    raw_id_fields = (
+        'dcm_file',
+    )
     list_display = [
         'id',
         'dcm_file',
@@ -27,6 +33,9 @@ class admin_task(admin.ModelAdmin):
 admin.site.register(Task, admin_task)
 
 class admin_bonedetail(admin.ModelAdmin):
+    raw_id_fields = (
+        'task',
+    )
     list_display = [
         'id',
         'task',

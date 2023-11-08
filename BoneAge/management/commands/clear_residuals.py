@@ -5,7 +5,6 @@ from orthanc_api_client import OrthancApiClient
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from BoneAge.apis.Standard.Converter import GetBoneAge
 from DICOMManagement.models import DicomFile
 
 def delete_dcm(relative_path, file_path):
