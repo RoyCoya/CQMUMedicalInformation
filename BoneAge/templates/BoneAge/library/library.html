@@ -10,18 +10,19 @@
 {% block content_BoneAge %}
 {% load static %}
 
-<div class="row mt-5">
-    <div class="col-9 border-end">
-        <h1>任务搜索</h1>
+<div class="row mt-3">
+    <h1 class="text-center">骨龄记录库</h1>
+    <div class="col-3 border-end">
         <!-- 过滤器 -->
-        {% include 'BoneAge/dcm_library/filter.html' %}
+        {% include 'BoneAge/library/filter.html' %}
     </div>
-    <div class="col-3">
-
+    <div class="col-9">
+        <!-- 过滤结果 -->
+        
     </div>
 </div>
 
 {% endblock content_BoneAge %}
 {% block js_BoneAge %}
-<script src="{% static 'BoneAge/js/dcm_library/library.js' %}"></script>
+<script src="{% static 'BoneAge/js/library/library.js' %}"></script>
 {% endblock js_BoneAge %}

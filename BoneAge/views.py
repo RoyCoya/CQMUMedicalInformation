@@ -1,4 +1,4 @@
-from BoneAge.pages import index as page_index, dicom_library as page_dicom_library, evaluator as page_evaluator
+from BoneAge.pages import index as page_index, evaluator as page_evaluator, library as page_library
 from BoneAge.apis import settings as api_settings, evaluation as api_evaluation, task as api_task, admin as api_admin, superuser as api_superuser
 
 '''
@@ -9,7 +9,7 @@ def index(request, page_number): return page_index.index(request, page_number)
 def finished_tasks(request, page_number): return page_index.finished_tasks(request, page_number)
 def admin(request): return page_index.admin(request)
 # dcm库
-def dicom_library(request): return page_dicom_library.dicom_library(request)
+def library(request): return page_library.library(request)
 # 评分器
 def evaluator(request, task_id): return page_evaluator.evaluator(request,task_id)
 

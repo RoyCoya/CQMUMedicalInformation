@@ -1,5 +1,6 @@
 def GetBoneAge(standard, sex, bones):
     grade = 0
+    if sex not in ('Male','Female'): return None
     for bone in bones: grade += Level_Grade[standard][sex][bone.name][bone.assessment]
     return next((age for age,age_range in Age_Grade[standard][sex].items() if age_range[0] <= grade <= age_range[1]), -1)
 

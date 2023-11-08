@@ -1,0 +1,9 @@
+Django
+matplotlib
+numpy
+onnxruntime
+opencv_python
+opencv_python_headless
+Pillow
+pydicom
+PyMySQL
