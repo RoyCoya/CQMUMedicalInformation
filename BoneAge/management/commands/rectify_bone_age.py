@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         rectified_count = 0
-        tasks = Task.objects.filter(closed=True, bone_age=-1)
+        tasks = Task.objects.all()
         for i, task in enumerate(tasks):
             bones = BoneDetail.objects.filter(task=task)
             self.stdout.write('scanning %d/%d' % (i+1, tasks.count()))
