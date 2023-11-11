@@ -2,34 +2,97 @@
   <div class="mb-2">
     <label for="exampleInputEmail1" class="form-label">ID</label>
     <div class="input-group">
-        <select class="form-select form-control w-25">
-            <option selected>任务</option>
-            <option value="1">患者</option>
-            <option value="2">影像</option>
-          </select>
-        <input type="number" class="form-control w-75" />
+      <select class="form-select form-control w-25">
+        <option selected>任务</option>
+        <option value="1">患者</option>
+        <option value="2">影像</option>
+      </select>
+      <input type="number" class="form-control w-75" />
     </div>
   </div>
+
+  <div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">任务状态</label>
+    <div class="input-group">
+      <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="" checked />
+      </div>
+      <span class="input-group-text bg-white">所有</span>
+      <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="" checked />
+      </div>
+      <span class="input-group-text bg-white text-primary">未完成</span>
+      <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="" checked />
+      </div>
+      <span class="input-group-text bg-white text-danger">审核中</span>
+      <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="" checked />
+      </div>
+      <span class="input-group-text bg-white text-success">已完成</span>
+    </div>
+  </div>
+  
   <div class="mb-2">
     <label for="exampleInputEmail1" class="form-label">患者姓名</label>
     <input type="text" class="form-control" />
   </div>
+
   <div class="mb-2">
-    <label for="exampleInputEmail1" class="form-label">患者年龄（检查时）</label>
+    <label for="exampleInputEmail1" class="form-label">患者性别</label>
     <div class="input-group">
-        <input type="number" class="form-control" value="0.0"/>
-        <span class="input-group-text">～</span>
-        <input type="number" class="form-control" value="18.0"/>
+      <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="" checked />
+      </div>
+      <span class="input-group-text bg-white">所有</span>
+      <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="" checked />
+      </div>
+      <span class="input-group-text bg-white" style="color:DodgerBlue">男</span>
+      <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="" checked />
+      </div>
+      <span class="input-group-text bg-white" style="color:DeepPink">女</span>
     </div>
   </div>
-  <!-- TODO: bootstrap datetime picker https://mdbootstrap.com/ <div class="mb-2">
+
+  <div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">检查时年龄</label>
+    <div class="input-group">
+      <input type="number" class="form-control" value="0.0" />
+      <span class="input-group-text">～</span>
+      <input type="number" class="form-control" value="18.0" />
+    </div>
+  </div>
+
+  <div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">检查时骨龄</label>
+    <div class="input-group">
+      <input type="number" class="form-control" value="0.0" />
+      <span class="input-group-text">～</span>
+      <input type="number" class="form-control" value="18.0" />
+    </div>
+  </div>
+
+  <fieldset disabled>
+    <div class="mb-2">
+      <label for="exampleInputEmail1" class="form-label">检查日期</label>
+      <input type="text" class="form-control disabled" />
+    </div>
+    <div class="mb-2">
+      <label for="exampleInputEmail1" class="form-label">任务分配日期</label>
+      <input type="text" class="form-control disabled" />
+    </div>
+  </fieldset>
+
+  <!--   TODO: bootstrap datetime picker https://mdbootstrap.com/ <div class="mb-2">
     <label for="exampleInputEmail1" class="form-label">检查日期</label>
     <div class="input-group">
         <input type="number" class="form-control" value="0.0"/>
         <span class="input-group-text">～</span>
         <input type="number" class="form-control" value="18.0"/>
     </div>
-  </div> -->
+  </div>   -->
   <div class="text-end">
     <button type="submit" class="btn btn-primary">完成</button>
     <button type="submit" class="btn btn-secondary">重置</button>
