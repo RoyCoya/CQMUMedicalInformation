@@ -19,10 +19,12 @@ def evaluator(request, task_id):
     bone_order = {
         'RUS' : lambda : preference.bone_order_RUS.split("|"),
         'CHN' : lambda : preference.bone_order_CHN.split("|"),
-    }[preference.standard]()
+    }[task.standard]()
     for bone_name in bone_order:
-        try: bone_detail = BoneDetail.objects.get(name=bone_name,task=task)
-        except Exception as e:return HttpResponseBadRequest(e)
+        try: 
+            print(bone_name)
+            bone_detail = BoneDetail.objects.get(name=bone_name,task=task)
+        except Exception as e:return HttpResponseBadRequest('数据库存在骨骼信息缺失，或骨骼名字无法对应。请联系管理员检查数据库。')
         bone_details.append(bone_detail)
     preference.bone_order = bone_order
 
