@@ -97,7 +97,6 @@ $("#save_offset").click(function (e) {
 
 /* 骨骼切换列表 */
 $("span[id^=view-]").click(function (e) {
-    console.log(1)
     $("span[id^=view-]").parent().removeClass('active')
     $("span[id^=error-]").parent().removeClass('active')
     $("a[id^=fix-").attr('hidden','hidden')

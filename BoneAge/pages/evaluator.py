@@ -24,9 +24,7 @@ def evaluator(request, task_id):
         "CHN": lambda: preference.bone_order_CHN.split("|"),
     }[task.standard]()
     for bone_name in bone_order:
-        try:
-            print(bone_name)
-            bone_detail = BoneDetail.objects.get(name=bone_name, task=task)
+        try: bone_detail = BoneDetail.objects.get(name=bone_name, task=task)
         except Exception as e:
             return HttpResponseBadRequest("数据库存在骨骼信息缺失，或骨骼名字无法对应。请联系管理员检查数据库。")
         bone_details.append(bone_detail)

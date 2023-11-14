@@ -50,11 +50,9 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
         ]
         tags = tags_check(new_dcm, required_tags, 'delete')
         if None in tags.values():
-            print('【error】Missing Tags')
             delete_base_dcm(new_dcm)
             return None, 400
         if base_DicomFile.objects.filter(SOP_Instance_UID=tags['SOPInstanceUID']):
-            print('【error】duplicate dicom')
             delete_base_dcm(new_dcm)
             return None, 409
     except Exception:
