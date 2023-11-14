@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from BoneAge.apis.Standard.Converter import GetBoneAge
+from BoneAge.apis.standard import GetBoneAge
 from BoneAge.models import BoneDetail, Task
 class Command(BaseCommand):
     help = "根据当前的计算方式重新结算所有数据的骨龄"

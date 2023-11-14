@@ -7,9 +7,7 @@ from django.contrib.auth import get_user_model
 from django.http import *
 from django.shortcuts import redirect, render
 
-
-from BoneAge.apis.Standard.BoneName import CHN, RUS_CHN
-from BoneAge.apis.Standard.Converter import GetBoneAge
+from BoneAge.apis.standard import GetBoneAge, GetBoneName
 from BoneAge.apis.public_func import login_check
 from BoneAge.apis.bone_analysis import bone_detect
 from BoneAge.apis.dicom import create_dcm, delete_base_dcm
@@ -61,6 +59,7 @@ def api_allocate_tasks(request):
     # 当前提交的dcm状态改为“处理中”，使这些dcm在处理界面隐藏
     dcms_to_allocate.update(error = 102)
 
+    # TODO:分配出错的handle
     for dcm in dcms_to_allocate: 
         for standard in allocate_standard: allocate_task(dcm, allocator, standard, allocated_to, confidence)
 
@@ -78,10 +77,7 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
     )
     
     # 创建骨骼信息
-    bone_name_list = {
-        'RUS' : lambda : RUS_CHN,
-        'CHN' : lambda : CHN,
-    }[new_task.standard]()
+    bone_name_list = GetBoneName(new_task.standard)
     for bone_name in bone_name_list: BoneDetail.objects.create(
         task=new_task, name=bone_name, modify_user=allocator, error=404
     )
@@ -111,11 +107,18 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
         return False
     
     if detection_accuracy == 1:
-        new_task.bone_age = GetBoneAge(
+        bone_age = GetBoneAge(
             standard=new_task.standard,
             sex = new_task.dcm_file.base_dcm.patient.sex,
             bones = bones
         )
+        if not bone_age:
+            dcm.error = 500
+            dcm.save()
+            new_task.delete()
+            if delete_with_source: delete_base_dcm(new_task.dcm_file.base_dcm)
+            return False
+        new_task.bone_age = bone_age
         new_task.save()
 
     new_task.allocated_to = allocated_to

@@ -1,20 +1,22 @@
-<table class="table table-hover mt-3">
+<table class="table table-hover mt-3 text-nowrap">
   <thead>
     <tr>
       <th>任务ID</th>
       <th>任务状态</th>
-      <th>任务分配时间</th>
       <th>患者名/ID</th>
+      <th>影像ID</th>
+      <th>骨龄标准</th>
       <th>患者性别</th>
       <th>检查时年龄</th>
       <th>检查时骨龄</th>
+      <th>任务分配时间</th>
       <th>检查时间</th>
       <th>预览图</th>
     </tr>
   </thead>
   <tbody>
     {% for task in tasks %}
-      {% include 'BoneAge/library/task.html' with task=task%}
+      {% include 'BoneAge/library/task.html' with task=task %}
     {% endfor %}
   </tbody>
 </table>

@@ -22,7 +22,8 @@ class DicomFile(models.Model):
     error_choice = (
         (0,'正常'),
         (102, '文件处理中'),
-        (403,'识别为非手骨图'),
+        (403, '识别为非手骨图'),
+        (500, '结算骨龄出错，患者性别未知或其他代码问题')
     )
     error = models.IntegerField(default=202, choices=error_choice, verbose_name="错误类型")
 

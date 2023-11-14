@@ -86,7 +86,7 @@ def index(request, page_number):
     return render(request,'BoneAge/index/index.html',context)
 
 # 完结任务页面
-def finished_tasks(request, page_number, ):
+def finished_tasks(request, page_number):
     if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     if request.user.is_staff: return admin(request)
     order, is_descend = 5, 1
