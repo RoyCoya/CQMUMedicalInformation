@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 
 from BoneAge.apis.public_func import login_check
 from BoneAge.models import BoneDetail, DicomFile, Task
+from BoneAge.apis.standard import GetBoneAge
 
 
 # 修改图像亮度、对比度偏移量
@@ -30,6 +31,13 @@ def api_modify_bone_detail(request):
     bone_detail.remarks = request.POST['remarks']
     bone_detail.modify_user = request.user
     bone_detail.save()
+
+    bones = BoneDetail.objects.filter(task=task)
+    task.bone_age = GetBoneAge(
+            standard=task.standard,
+            sex = task.dcm_file.base_dcm.patient.sex,
+            bones = bones
+    )
     task.modify_user = request.user
     task.save()
     return HttpResponse('成功修改骨骼信息')
