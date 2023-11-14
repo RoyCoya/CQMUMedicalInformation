@@ -30,11 +30,11 @@ def profile(request, patient_id):
     try: info_tab = request.GET['info_tab']
     except: pass
 
-    # 骨龄资料
+    # 骨龄数据
     tasks_history = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=True).order_by('-closed_date')
+    for task in tasks_history: task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
     tasks_processing = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=False).order_by('-allocated_datetime')
-    for task in tasks_processing:
-        task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
+    for task in tasks_processing: task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
 
     context = {
         'patient' : patient,

@@ -38,6 +38,7 @@
                     <li class="list-group-item">任务ID：{{task.id}}</li>
                     <li class="list-group-item">拍片时间：{{task.dcm_file.base_dcm.Study_Date}} {{task.dcm_file.base_dcm.Study_Time}}</li>
                     <li class="list-group-item">骨龄：{{task.bone_age}}岁</li>
+                    <li class="list-group-item">实际年龄：{{task.actual_age|floatformat:1}}岁</li>
                 </ul>
             </div>
         </div>
