@@ -54,8 +54,6 @@ class Task(models.Model):
     )
     standard = models.CharField(choices=standard_choice, max_length=10, default='RUS',verbose_name='任务标准')
     bone_age = models.FloatField(default=-1.0, verbose_name='骨龄')
-    allocated_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='BoneAge_Task_allocated_to', verbose_name='分配给', on_delete=models.PROTECT)
-    allocated_datetime = models.DateTimeField(null=True, blank=True, verbose_name="分配时间")
     closed = models.BooleanField(default=False, verbose_name='已完成')
     closed_date = models.DateTimeField(null=True, blank=True, verbose_name='完成时间')
     marked = models.BooleanField(default=False, verbose_name='收藏')
@@ -63,6 +61,9 @@ class Task(models.Model):
 
     '''系统信息'''
     id = models.AutoField(primary_key=True,verbose_name='ID')
+    allocator = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_Task_allocator', verbose_name='任务分派者', on_delete=models.PROTECT)
+    allocated_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='BoneAge_Task_allocated_to', verbose_name='分配给', on_delete=models.PROTECT)
+    allocated_datetime = models.DateTimeField(null=True, blank=True, verbose_name="分配时间")
     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_Task_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
 

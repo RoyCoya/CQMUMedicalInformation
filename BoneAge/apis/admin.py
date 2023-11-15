@@ -73,7 +73,8 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
     new_task = Task.objects.create(
         dcm_file = dcm,
         standard = allocate_standard,
-        modify_user = allocator
+        modify_user = allocator,
+        allocator = allocator,
     )
     
     # 创建骨骼信息
