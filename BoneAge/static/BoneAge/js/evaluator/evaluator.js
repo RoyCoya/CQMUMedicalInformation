@@ -197,7 +197,7 @@ $("#bone_age").change(function (e) {
     if($(this).val() > 18) $(this).val(18);
     $("#warning_age_misregistration").attr('hidden','hidden')
     bone_age = $(this).val()
-    $("#label_bone_age").text(bone_age + '岁');
+    $("#label_bone_age").text(bone_age);
     if(bone_age >= 0 && Math.abs(actual_age - bone_age) >= 1){
         $("#warning_age_misregistration").removeAttr('hidden');
     }
