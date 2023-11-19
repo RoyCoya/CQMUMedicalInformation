@@ -1,0 +1,19 @@
+<div class="row">
+    {% comment %} <span class="align-self-center col-2">共 {{tasks_count}} 项，合 {{page_count}} 页</span> {% endcomment %}
+    <nav class="col-8">
+        <ul class="pagination justify-content-end">
+            {% comment %} <li class="page-item"><a class="page-link" href="{% url redirect_url 1  %}?order={{order}}&is_descend={{is_descend}}">首页</a></li> {% endcomment %}
+            {% for page_number in page_numbers %}
+            <li class="page-item"><a class="page-link" href="{% url 'BoneAge_library' %}?page={{ page_number }}">{{ page_number }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% comment %} <div class="col-2">
+        <div class="input-group">
+            <button class="btn btn-outline-{% if tasks_finished %}success{% else %}primary{% endif %}" type="button" id="page_jump">跳转</button>
+            <input id="page_jump_number" type="number" class="form-control" min=1 max={{page_count}} placeholder="{{page_number}}">
+            <span class="input-group-text">页</span>
+        </div>
+    </div>
+    <span id="page_jump_url" hidden>{% url redirect_url 0  %}?order={{order}}&is_descend={{is_descend}}</span> {% endcomment %}
+</div>
