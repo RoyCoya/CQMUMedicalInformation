@@ -78,8 +78,8 @@ $.fn.update_bone_age = function(){
         })
         if(bone_age >= 0){
             $("#bone_age").val(bone_age);
-            $("#label_bone_age").text(bone_age + "岁");
-            $("#label_bone_grade").text(grade + "分");
+            $("#label_bone_age").text(bone_age);
+            $("#label_bone_grade").text(grade);
             // 差距过大提示
             if(Math.abs(actual_age - bone_age) >= 1){
                 $("#warning_age_misregistration").removeAttr('hidden');
@@ -125,7 +125,7 @@ $(document).ready(function () {
     /* 如果数据库中存在骨龄数据，则用数据库中的值 */
     if(task['bone_age'] >= 0){
         $("#bone_age").val(task['bone_age']);
-        $("#label_bone_age").text(task['bone_age'] + "岁");
+        $("#label_bone_age").text(task['bone_age']);
     }
 });
 
@@ -151,4 +151,26 @@ $("#bone_details_level").on('input', function (e) {
     bone['level'] = $("#bone_details_level").val()
     $.fn.update_bone_age()
     bone['level'] = level
+});
+
+/* 骨龄复制到剪贴板 */
+$("#label_bone_age").click(async function (e) { 
+    var text = "骨龄（左手）：约" + $(this).text() + "岁。";
+    try{
+        await navigator.clipboard.writeText(text);
+        alert("已复制到剪贴板：\n" + text);
+    } catch(e){
+        alert('发生错误：' + e)
+    }
+});
+
+/* 骨骼分数复制到剪贴板 */
+$("#label_bone_grade").click(async function (e) { 
+    var text = "按RUS-CHN法测算，左手、腕骨发育成熟度评分为" + $(this).text() + "分。";
+    try{
+        await navigator.clipboard.writeText(text);
+        alert("已复制到剪贴板：\n" + text);
+    } catch(e){
+        alert('发生错误：' + e)
+    }
 });

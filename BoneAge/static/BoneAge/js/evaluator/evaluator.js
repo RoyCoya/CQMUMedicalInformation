@@ -200,7 +200,7 @@ $("#confirm_edit_bone_age").click(function (e) {
     else{
         $("#bone_age_invalid").hide()
         bone_age = parseFloat(bone_age)
-        $("#label_bone_age").text(bone_age + " 岁")
+        $("#label_bone_age").text(bone_age)
         $("#label_bone_age").removeClass('text-danger')
         task['bone_age'] = bone_age
         $.ajax({
@@ -222,7 +222,7 @@ $("#bone_age").change(function (e) {
     $("#bone_age_great_differ_warning").hide()
     $("#warning_age_misregistration").attr('hidden','hidden')
     bone_age = $(this).val()
-    $("#label_bone_age").text(bone_age + '岁');
+    $("#label_bone_age").text(bone_age);
     if(bone_age >= 0 && Math.abs(actual_age - bone_age) >= 1){
         $("#warning_age_misregistration").removeAttr('hidden');
         $("#bone_age_great_differ_warning").show()
