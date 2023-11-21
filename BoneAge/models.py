@@ -182,10 +182,10 @@ class Preference(models.Model):
         verbose_name="RUS 骨骼排序"
     )
     bone_order_CHN = models.CharField(
-        default='Radius|Capitate|Hamate|First Metacarpal|Third Metacarpal|Fifth Metacarpal|'
+        default='Radius|First Metacarpal|Third Metacarpal|Fifth Metacarpal|'
         'First Proximal Phalange|Third Proximal Phalange|Fifth Proximal Phalange|'
         'Third Middle Phalange|Fifth Middle Phalange|'
-        'First Distal Phalange|Third Distal Phalange|Fifth Distal Phalange',
+        'First Distal Phalange|Third Distal Phalange|Fifth Distal Phalange|Capitate|Hamate',
         max_length= 500,
         verbose_name="CHN 骨骼排序"
     )
