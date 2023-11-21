@@ -9,6 +9,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from BoneAge.apis.public_func import load_preference, login_check
+from BoneAge.apis.dicom import get_study_age
 from BoneAge.models import DicomFile, Task, PACS_QR
 
 # 个人主页（未完结任务页面）
@@ -34,15 +35,17 @@ def index(request, page_number):
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
-        # TODO:想个办法把age排序做出来
-        # 2 : lambda : 'dcm_file__age',
+        2 : lambda : 'study_age',
         3 : lambda : 'dcm_file__base_dcm__Study_Date',
         4 : lambda : 'allocated_datetime',
     }[order]()
-    if is_descend:
-        order_para = '-' + order_para
-    unfinished_tasks = unfinished_tasks.order_by(order_para)
+    for task in unfinished_tasks: task.study_age = get_study_age(task.dcm_file.base_dcm)
+    if is_descend: order_para = '-' + order_para
+    if order not in [2,]: unfinished_tasks = unfinished_tasks.order_by(order_para)
+    # 需要复杂处理的排序字段
+    else: unfinished_tasks = sorted(unfinished_tasks, key=lambda x: x.study_age, reverse=True) if is_descend else sorted(unfinished_tasks, key=lambda x: x.study_age)
     unfinished_tasks_count = len(unfinished_tasks)
+
     # 已完结任务
     finished_tasks = Task.objects.filter(standard=preference.standard).filter(allocated_to=request.user).filter(closed=True).order_by('-closed_date')
     finished_tasks_count = len(finished_tasks)
@@ -100,20 +103,19 @@ def finished_tasks(request, page_number):
     finished_tasks = Task.objects.filter(standard=preference.standard).filter(closed=True).filter(allocated_to=request.user)
     finished_today_count = len(finished_tasks.filter(closed_date__gt=datetime.date.today()))
     # 按所需排序条件对完结任务列表进行排序
-    if order > 5:
-        return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
+    if order > 5 or order < 0: return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
-        # TODO:想个办法把age排序做出来
-        # 2 : lambda : 'dcm_file__age',
+        2 : lambda : 'dcm_file__age',
         3 : lambda : 'dcm_file__base_dcm__Study_Date',
         4 : lambda : 'allocated_datetime',
         5 : lambda : 'closed_date'
     }[order]()
-    if is_descend:
-        order_para = '-' + order_para
-    finished_tasks = finished_tasks.order_by(order_para)
+    for task in finished_tasks: task.study_age = get_study_age(task.dcm_file.base_dcm)
+    if is_descend: order_para = '-' + order_para
+    if order not in [2,]: finished_tasks = finished_tasks.order_by(order_para)
+    else: finished_tasks = sorted(finished_tasks, key=lambda x: x.study_age, reverse=True) if is_descend else sorted(finished_tasks, key=lambda x: x.study_age)
     finished_tasks_count = len(finished_tasks)
     unfinished_tasks = Task.objects.exclude(dcm_file__error=102).filter(standard=preference.standard).filter(allocated_to=request.user).filter(closed=False).order_by('id')
     unfinished_tasks_count = len(unfinished_tasks)
