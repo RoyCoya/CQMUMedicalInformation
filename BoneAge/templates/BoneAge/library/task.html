@@ -28,7 +28,7 @@
     {{ task.dcm_file.base_dcm.patient.name }}<br />{{ task.dcm_file.base_dcm.patient.Patient_ID }}
   </td>
   <td class="align-middle table-warning">{{ task.dcm_file.base_dcm.patient.get_sex_display }}</td>
-  <td class="align-middle table-warning">???</td>
+  <td class="align-middle table-warning">{{ task.study_age }}</td>
   <td class="align-middle table-warning">{{ task.bone_age }}</td>
   <td class="align-middle table-warning">{{ task.dcm_file.base_dcm.Study_Date }} {{ task.dcm_file.base_dcm.Study_Time }}</td>
 

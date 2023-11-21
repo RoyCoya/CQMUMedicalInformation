@@ -6,6 +6,7 @@ from django.urls import reverse
 from BoneAge.apis.public_func import load_preference, login_check
 from BoneAge.models import BoneDetail, Task
 from BoneAge.apis.standard import GetJSON
+from BoneAge.apis.dicom import get_study_age
 
 
 # 评分器
@@ -112,7 +113,7 @@ def evaluator(request, task_id):
         pass
 
     # 计算task当时患者的实际年龄
-    task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
+    task.actual_age = get_study_age(task.dcm_file.base_dcm)
 
     # 加载骨龄标准的内容
     standard = GetJSON(task.standard)

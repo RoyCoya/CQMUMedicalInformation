@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from BoneAge.apis.public_func import login_check
 from BoneAge.models import Task
+from BoneAge.apis.dicom import get_study_age
 from PatientManagement.models import Patient
 
 # 患者个人资料
@@ -32,9 +33,9 @@ def profile(request, patient_id):
 
     # 骨龄数据
     tasks_history = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=True).order_by('-closed_date')
-    for task in tasks_history: task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
+    for task in tasks_history: task.actual_age = get_study_age(task.dcm_file.base_dcm)
     tasks_processing = Task.objects.filter(dcm_file__base_dcm__patient__id=patient_id).filter(closed=False).order_by('-allocated_datetime')
-    for task in tasks_processing: task.actual_age = (task.dcm_file.base_dcm.Study_Date - patient.birthday).days / 365
+    for task in tasks_processing: task.actual_age = get_study_age(task.dcm_file.base_dcm)
 
     context = {
         'patient' : patient,
