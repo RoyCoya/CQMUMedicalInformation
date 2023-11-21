@@ -23,7 +23,6 @@ apis = [
 	path('evaluator/offset/save/', views.api_save_image_offset, name='api_BoneAge_save_image_offset'),
 	path('evaluator/bone_detail/save/', views.api_modify_bone_detail, name='api_BoneAge_modify_bone_detail'),
 	path('evaluator/bone_postion/save/', views.api_modify_bone_position, name='api_BoneAge_modify_bone_position'),
-	path('evaluator/bone_age/save/', views.api_modify_bone_age, name='api_BoneAge_modify_bone_age'),
 	path('evaluator/task/finish/', views.api_finish_task, name='api_BoneAge_finish_task'),
 	path('evaluator/task/mark/', views.api_mark_task, name='api_BoneAge_mark_task'),
 	# 骨龄记录库

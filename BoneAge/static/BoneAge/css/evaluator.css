@@ -17,3 +17,8 @@
 .bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before, .bs-tooltip-end .tooltip-arrow::before{border-right-color: rgb(203,68,74);}
 .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-top .tooltip-arrow::before{border-top-color: rgb(203,68,74);}
 .bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before, .bs-tooltip-bottom .tooltip-arrow::before{border-bottom-color: rgb(203,68,74);}
+/* check按钮底色改为绿色 */
+.form-check-input:checked{
+  background-color: green;
+  border-color: grey;
+}

@@ -24,7 +24,6 @@ def api_preference_switch_default_bone(request): return api_settings.api_prefere
 def api_save_image_offset(request): return api_evaluation.api_save_image_offset(request)
 def api_modify_bone_detail(request): return api_evaluation.api_modify_bone_detail(request)
 def api_modify_bone_position(request): return api_evaluation.api_modify_bone_position(request)
-def api_modify_bone_age(request): return api_evaluation.api_modify_bone_age(request)
 # 任务处理
 def api_finish_task(request): return api_task.api_finish_task(request)
 def api_mark_task(request): return api_task.api_mark_task(request)

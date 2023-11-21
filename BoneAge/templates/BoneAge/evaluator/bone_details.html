@@ -21,9 +21,9 @@
         <div class="list-group-item p-2 d-flex justify-content-start">
             <strong>任务状态：</strong>
             {% if task.closed %}
-                <strong class="form-check-label text-primary pe-2">已完成</strong>
+                <strong class="form-check-label text-success pe-2">已完成</strong>
             {% else %}
-                <strong id="label_task_status" class="form-check-label text-success pe-2">进行中</strong>
+                <strong id="label_task_status" class="form-check-label text-primary pe-2">进行中</strong>
             {% endif %}
             <div class="form-check form-switch">
                 <input id="task_closed" class="form-check-input" type="checkbox" role="switch" {% if task.closed %}checked{% endif %}>
@@ -39,7 +39,6 @@
             <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger"
             data-bs-toggle="tooltip" data-bs-placement="top"
             title="注意：判断年龄与实际年龄差距大于1年！" hidden></i>
-            {% comment %} <a id="edit_bone_age" data-bs-toggle="modal" data-bs-target="#modal_edit_bone_age" href="#" class="bi bi-pencil-square col-1" style="font-size:1.05rem"></a> {% endcomment %}
         </div>
         <div class="list-group-item p-2">
             <strong>实际：</strong>
@@ -103,30 +102,6 @@
     </div>
 </div>
 
-<!-- 编辑骨龄弹出框 -->
-<div class="modal fade" id="modal_edit_bone_age" tabindex="-1" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">骨龄判断</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <label>骨龄（实际年龄 {{task.actual_age|floatformat:1}} 岁）：</label>
-                <input id="bone_age" type="number" class="form-control" placeholder="" min=0 max=18 step=0.1 required>
-                <div id="bone_age_great_differ_warning" class="invalid-feedback text-danger">
-                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> 注意：判断年龄与实际年龄差距大于1年！
-                </div>
-                <div id="bone_age_invalid" class="invalid-feedback text-danger">
-                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> 错误：请填写骨龄！
-                </div>
-                <label class="mt-2">备注：</label>
-                <textarea id="bone_age_remarks" class="form-control" maxlength="300" placeholder="非必填"></textarea>
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-danger" href="#" id="confirm_edit_bone_age">确认</a>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            </div>
-        </div>
-    </div>
-</div>
+<textarea id="bone_age_remarks" class="form-control invisible" maxlength="300" placeholder="非必填"></textarea>
+
+<input id="bone_age" type="number" class="form-control invisible" placeholder="" min=0 max=18 step=0.1 required>
