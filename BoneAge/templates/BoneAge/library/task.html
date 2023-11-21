@@ -8,8 +8,8 @@
       {{ task.closed_date }}
   </td>
   <td class="align-middle table-success">{{ task.standard }}</td>
-  <td class="align-middle table-success">{{ task.allocator }}</td>
-  <td class="align-middle table-success">{{ task.allocated_to }}</td>
+  <td class="align-middle table-success">{{ task.allocator.last_name }}{{ task.allocator.first_name }}</td>
+  <td class="align-middle table-success">{{ task.allocated_to.last_name }}{{ task.allocated_to.first_name }}</td>
   <td class="align-middle table-success">{{ task.allocated_datetime }}</td>
   {% else %}
   <td class="align-middle table-primary">{{ task.id }}</td>
@@ -17,12 +17,10 @@
     {{ task.closed }}
   </td>
   <td class="align-middle table-primary">{{ task.standard }}</td>
-  <td class="align-middle table-primary">{{ task.allocator }}</td>
-  <td class="align-middle table-primary">{{ task.allocated_to }}</td>
+  <td class="align-middle table-primary">{{ task.allocator.last_name }}{{ task.allocator.first_name }}</td>
+  <td class="align-middle table-primary">{{ task.allocated_to.last_name }}{{ task.allocated_to.first_name }}</td>
   <td class="align-middle table-primary">{{ task.allocated_datetime }}</td>
   {% endif %}
-  
-  
 
   <td class="align-middle table-warning">
     {{ task.dcm_file.base_dcm.patient.name }}<br />{{ task.dcm_file.base_dcm.patient.Patient_ID }}
