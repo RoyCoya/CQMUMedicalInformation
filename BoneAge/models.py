@@ -54,7 +54,14 @@ class Task(models.Model):
     )
     standard = models.CharField(choices=standard_choice, max_length=10, default='RUS',verbose_name='任务标准')
     bone_age = models.FloatField(default=-1.0, verbose_name='骨龄')
-    closed = models.BooleanField(default=False, verbose_name='已完成')
+    status_choice = (
+        ('processing', '进行中'),
+        ('reported', '检错中'),
+        ('verifying', '审核中'),
+        ('finished', '已完成'),
+    )
+    status = models.CharField(choices=status_choice, max_length=10, default='processing',verbose_name='任务状态')
+    closed = models.BooleanField(default=False, verbose_name='已完结')
     closed_date = models.DateTimeField(null=True, blank=True, verbose_name='完成时间')
     marked = models.BooleanField(default=False, verbose_name='收藏')
     remarks = models.TextField(null=True, blank=True, max_length=300, verbose_name="备注")
