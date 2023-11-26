@@ -22,6 +22,7 @@ class admin_task(admin.ModelAdmin):
     )
     list_display = [
         'id',
+        'status',
         'dcm_file',
         'standard',
         'bone_age',

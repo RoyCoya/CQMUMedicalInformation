@@ -55,7 +55,6 @@ $.fn.switch_bone = function(bone_name_key){
 /* 如果所有骨骼等级数据与定位正常，则计算分数并显示参考年龄 */
 $.fn.update_bone_age = function(){
     $('#warning_age_misregistration').attr('hidden', 'hidden');
-    $('#bone_age_great_differ_warning').hide();
     $("#bone_age").removeAttr('disabled');
     $("#bone_age").attr('placeholder','')
     $('#label_bone_age').removeClass('text-danger');
@@ -88,7 +87,6 @@ $.fn.update_bone_age = function(){
             // 差距过大提示
             if(Math.abs(actual_age - bone_age) >= 1){
                 $("#warning_age_misregistration").removeAttr('hidden');
-                $("#bone_age_great_differ_warning").show()
             }
         }
     }

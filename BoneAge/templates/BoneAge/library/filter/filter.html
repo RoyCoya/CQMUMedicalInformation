@@ -1,0 +1,30 @@
+<h2>筛选器</h2>
+<form id="form_filter">
+  {% csrf_token %}
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#filter_task">任务</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#filter_patient">患者</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#filter_dicom">影像</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="filter_task">
+      {% include 'BoneAge/library/filter/task.html' %}
+    </div>
+    <div class="tab-pane" id="filter_patient">
+      {% include 'BoneAge/library/filter/patient.html' %}
+    </div>
+    <div class="tab-pane" id="filter_dicom">
+      {% include 'BoneAge/library/filter/dicom.html' %}
+    </div>
+  </div>
+  <div class="text-end mt-3">
+    <button type="submit" class="btn btn-primary">完成</button>
+    <button type="reset" class="btn btn-secondary">重置</button>
+  </div>
+</form>

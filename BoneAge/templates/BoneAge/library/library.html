@@ -14,12 +14,10 @@
 
 {% block content_BoneAge %}
   {% load static %}
-
   <div class="row mt-3">
-    <h1 class="text-center">骨龄记录库</h1>
     <div class="col-3 border-end">
       <!-- 过滤器 -->
-      {% include 'BoneAge/library/filter.html' %}
+      {% include 'BoneAge/library/filter/filter.html' %}
     </div>
     <div class="col-9">
       <!-- 过滤结果 -->
@@ -31,5 +29,6 @@
   </div>
 {% endblock %}
 {% block js_BoneAge %}
+  {% include "BoneAge/library/library_js.html" %}
   <script src="{% static 'BoneAge/js/library/library.js' %}"></script>
 {% endblock %}

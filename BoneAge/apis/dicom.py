@@ -191,3 +191,6 @@ def parse_date_time(value, formats):
         try: return datetime.strptime(value, fmt)
         except: continue
     return None
+
+def get_study_age(dcm: base_DicomFile):
+    return round((dcm.Study_Date - dcm.patient.birthday).days / 365, 1)

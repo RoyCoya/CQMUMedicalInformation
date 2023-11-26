@@ -2,8 +2,6 @@
 //csrf token
 const getCookie = (name) => document.cookie.match(`[;\s+]?${name}=([^;]*)`)?.pop();
 const csrftoken = getCookie('csrftoken');
-// 骨龄填写的modal
-var bone_age_modal = new bootstrap.Modal($('#modal_edit_bone_age'), {keyboard: false})
 // 任务存在未完成内容的提示modal
 var task_notcompleted_modal = new bootstrap.Modal($('#modal_task_notcompleted'), {keyboard: false})
 // 完成任务的确认modal
@@ -191,46 +189,18 @@ $('#modify_bone_position').click(function (e) {
     $("#bone_details_level").focus()
 });
 
-/* 手动修改骨龄 */
-$("#confirm_edit_bone_age").click(function (e) { 
-    var bone_age = $("#bone_age").val()
-    if(bone_age == ''){
-        $("#bone_age_invalid").show()
-    }
-    else{
-        $("#bone_age_invalid").hide()
-        bone_age = parseFloat(bone_age)
-        $("#label_bone_age").text(bone_age)
-        $("#label_bone_age").removeClass('text-danger')
-        task['bone_age'] = bone_age
-        $.ajax({
-            type: "post",
-            url: url_api_modify_bone_age,
-            data: task,
-            dataType: "json",
-            headers:{'X-CSRFToken': csrftoken}
-        });
-        bone_age_modal.hide()
-    }
-});
 /* 修改时骨龄差距过大显示 */
 $("#bone_age").change(function (e) {
     $(this).val($(this).val().replace(/[^\d\.]/g,''))
     bone_age = $(this).val()
     if($(this).val() < 0) $(this).val(0);
     if($(this).val() > 18) $(this).val(18);
-    $("#bone_age_great_differ_warning").hide()
     $("#warning_age_misregistration").attr('hidden','hidden')
     bone_age = $(this).val()
     $("#label_bone_age").text(bone_age);
     if(bone_age >= 0 && Math.abs(actual_age - bone_age) >= 1){
         $("#warning_age_misregistration").removeAttr('hidden');
-        $("#bone_age_great_differ_warning").show()
     }
-});
-/* 关闭骨龄输入页面时刷新骨龄 */
-$('#modal_edit_bone_age button[data-bs-dismiss=modal]').click(function (e) { 
-    $.fn.update_bone_age()
 });
 
 /* 将本条评测任务标记为已完成 */
@@ -246,8 +216,8 @@ $("#task_closed").click(function (e) {
         if(!is_shortcut_enable) finish_task_modal.show();
         this.checked = true
         $('#label_task_status').text('已完成')
-        $('#label_task_status').removeClass('text-success')
-        $('#label_task_status').addClass('text-primary')
+        $('#label_task_status').removeClass('text-primary')
+        $('#label_task_status').addClass('text-success')
         task['closed'] = true
         task['bone_age'] = bone_age
         $.ajax({

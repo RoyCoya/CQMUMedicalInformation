@@ -1,5 +1,5 @@
 from BoneAge.pages import index as page_index, evaluator as page_evaluator, library as page_library
-from BoneAge.apis import settings as api_settings, evaluation as api_evaluation, task as api_task, admin as api_admin, superuser as api_superuser
+from BoneAge.apis import preference as api_settings, evaluation as api_evaluation, task as api_task, admin as api_admin, superuser as api_superuser
 
 '''
 界面
@@ -10,6 +10,7 @@ def finished_tasks(request, page_number): return page_index.finished_tasks(reque
 def admin(request): return page_index.admin(request)
 # dcm库
 def library(request): return page_library.library(request)
+def navigator(request): return page_library.navigator(request)
 # 评分器
 def evaluator(request, task_id): return page_evaluator.evaluator(request,task_id)
 
@@ -24,7 +25,6 @@ def api_preference_switch_default_bone(request): return api_settings.api_prefere
 def api_save_image_offset(request): return api_evaluation.api_save_image_offset(request)
 def api_modify_bone_detail(request): return api_evaluation.api_modify_bone_detail(request)
 def api_modify_bone_position(request): return api_evaluation.api_modify_bone_position(request)
-def api_modify_bone_age(request): return api_evaluation.api_modify_bone_age(request)
 # 任务处理
 def api_finish_task(request): return api_task.api_finish_task(request)
 def api_mark_task(request): return api_task.api_mark_task(request)

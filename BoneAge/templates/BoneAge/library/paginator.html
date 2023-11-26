@@ -4,7 +4,7 @@
         <ul class="pagination justify-content-end">
             {% comment %} <li class="page-item"><a class="page-link" href="{% url redirect_url 1  %}?order={{order}}&is_descend={{is_descend}}">首页</a></li> {% endcomment %}
             {% for page_number in page_numbers %}
-            <li class="page-item"><a class="page-link" href="{% url 'BoneAge_library' %}?page={{ page_number }}">{{ page_number }}</a></li>
+            <li class="page-item"><a class="page-link" href="{% url 'BoneAge_library' %}?page={{ page_number }}&{{ query_str }}">{{ page_number }}</a></li>
             {% endfor %}
         </ul>
     </nav>

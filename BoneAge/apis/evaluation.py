@@ -64,14 +64,3 @@ def api_modify_bone_position(request):
     task.modify_user = request.user
     task.save()
     return HttpResponse('成功修改骨骼标注位置')
-
-# 修改骨龄
-def api_modify_bone_age(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    task_id = request.POST['id']
-    task = Task.objects.get(id=task_id)
-    
-    task.bone_age = float(request.POST['bone_age'])
-    task.modify_user = request.user
-    task.save()
-    return HttpResponse('成功修改骨龄')
