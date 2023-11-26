@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+# app_name = 'BoneAge'
+
 pages = [
 	# 医生主页（未完成任务）
 	path('page/<int:page_number>/', views.index, name='BoneAge_index'),
@@ -12,6 +14,7 @@ pages = [
 	path('evaluator/<int:task_id>/', views.evaluator, name='BoneAge_evaluator'),
 	# 骨龄记录库
 	path('library/', views.library, name='BoneAge_library'),
+    path('library/navigator/', views.navigator, name='library_navigator')
 ]
 
 apis = [
