@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs, urlencode
+
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
@@ -40,22 +42,27 @@ def library(request):
     # TODO: 排序结果
     tasks = tasks.order_by("-allocated_datetime")
 
-    for task in tasks:
-        task.study_age = get_study_age(task.dcm_file.base_dcm)
-
     # 查询内容分页
     current_page_number = query.get("page", 1)
     pages = Paginator(tasks, 15)
     page_numbers = pages.get_elided_page_range(current_page_number)
     tasks = pages.page(current_page_number)
+    for task in tasks: task.study_age = get_study_age(task.dcm_file.base_dcm)
 
     context = {
-        "query_str": request.META["QUERY_STRING"],
+        "query_str": None,
         "tasks": tasks,
         "page_numbers": page_numbers,
         "has_previos": tasks.has_previous(),
         "has_next": tasks.has_next(),
     }
+
+    # 单独取出filter相关的查询参数
+    query_params = request.GET.dict()
+    query_params.pop('page', None)
+    print(query_params)
+    context['query_str'] = "&".join([f"{key}={value}" for key, value in query_params.items()])
+
     return render(request, "BoneAge/library/library.html", context)
 
 

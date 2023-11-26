@@ -28,7 +28,13 @@
   <td class="align-middle table-warning">{{ task.dcm_file.base_dcm.patient.get_sex_display }}</td>
   <td class="align-middle table-warning">{{ task.study_age }}</td>
 
-  <td class="align-middle table-secondary">{{ task.bone_age }}</td>
+  <td class="align-middle table-secondary">
+    {% if task.bone_age >= 0 %}
+      {{ task.bone_age }}
+    {% else %}
+      识别出错
+    {% endif %}
+  </td>
   <td class="align-middle table-secondary">{{ task.dcm_file.base_dcm.Study_Date }} {{ task.dcm_file.base_dcm.Study_Time }}</td>
   <td class="align-middle table-secondary">{{ task.dcm_file.base_dcm.id }}</td>
   <td class="align-middle table-secondary" style="width:10%">

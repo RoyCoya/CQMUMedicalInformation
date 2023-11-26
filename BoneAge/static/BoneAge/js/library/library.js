@@ -1,8 +1,10 @@
 var urlParams = new URLSearchParams(window.location.search);
 /* 加载已经存在的查询条件 */
 $(document).ready(function () {
-    $('#form_filter input').each(function () {
+    console.log(urlParams);
+    $('#form_filter input, #form_filter select').each(function () {
         var inputName = $(this).attr('name');
+        console.log(inputName);
         if (urlParams.has(inputName)) {
             $(this).val(urlParams.get(inputName));
         }
