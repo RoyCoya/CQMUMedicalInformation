@@ -1,9 +1,11 @@
 <div class="row">
-    <nav class="col-8">
-        <ul class="pagination justify-content-end">
-            {% for page_number in page_numbers %}
-            <li class="page-item"><a class="page-link" href="{% url 'BoneAge_library' %}?page={{ page_number }}{% if query_str %}&{{ query_str }}{% endif %}">{{ page_number }}</a></li>
-            {% endfor %}
-        </ul>
-    </nav>
+  <nav class="col-8">
+    <ul class="pagination justify-content-end">
+      {% for page_number in page_numbers %}
+        <li class="page-item {% if page_number == current_page_number %}active{% endif %}">
+          <a class="page-link" href="{% url 'BoneAge_library' %}?page={{ page_number }}{% if query_str %}&{{ query_str }}{% endif %}">{{ page_number }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
 </div>

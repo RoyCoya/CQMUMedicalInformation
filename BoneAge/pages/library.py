@@ -43,7 +43,7 @@ def library(request):
     tasks = tasks.order_by("-allocated_datetime")
 
     # 查询内容分页
-    current_page_number = query.get("page", 1)
+    current_page_number = int(query.get("page", 1))
     pages = Paginator(tasks, 15)
     page_numbers = pages.get_elided_page_range(current_page_number)
     tasks = pages.page(current_page_number)
@@ -52,6 +52,7 @@ def library(request):
     context = {
         "query_str": None,
         "tasks": tasks,
+        "current_page_number" : current_page_number,
         "page_numbers": page_numbers,
         "has_previos": tasks.has_previous(),
         "has_next": tasks.has_next(),
