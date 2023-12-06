@@ -2,7 +2,7 @@
 <h2>未评测</h2>
 <div class='row'>
     {% for task in tasks_processing %}
-    <a href="{% url 'BoneAge_evaluator' task.id %}?back_page=PatientManagement_profile&args={{patient.id}}&else_get=info_tab%3DBoneAge%26back_page%3D{{back_page_get}}{% for arg in back_page_args_get %}%26args%3D{{arg}}{% endfor %}{% if back_page_else_get %}%26else_get%3D{{back_page_else_get|transfercharacter_get_url}}{% endif %}"
+    <a href="{% url 'BoneAge_evaluator' task.id %}"
     class="mb-3 col-5 p-0 m-4">
         <div class="card border-primary">
             <div class="row">
@@ -29,7 +29,7 @@
 <h2 class="text-success">历史记录</h2>
 <div class='row'>
     {% for task in tasks_history %}
-    <a href="{% url 'BoneAge_evaluator' task.id %}?back_page=PatientManagement_profile&args={{patient.id}}&else_get=info_tab%3DBoneAge%26back_page%3D{{back_page_get}}{% for arg in back_page_args_get %}%26args%3D{{arg}}{% endfor %}{% if back_page_else_get %}%26else_get%3D{{back_page_else_get|transfercharacter_get_url}}{% endif %}"
+    <a href="{% url 'BoneAge_evaluator' task.id %}"
     class="mb-3 col-5 p-0 m-4">
         <div class="card border-success">
             <div class="row">

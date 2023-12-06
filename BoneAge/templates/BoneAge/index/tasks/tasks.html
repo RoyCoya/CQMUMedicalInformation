@@ -1,12 +1,12 @@
 {% if tasks_finished %}
 <h2 class="text-center text-success">
     <i class="bi bi-check2-all text-success"></i>
-    完结任务 （{{preference.get_standard_display}}）
+    完结任务 （{{standard}}）
 </h2>
 {% else %}
 <h2 class="text-center">
     <i class="bi bi-receipt"></i>
-    任务列表（{{preference.get_standard_display}}）
+    任务列表（{{standard}}）
 </h2>
 {% endif %}
 <table class="table table-hover">

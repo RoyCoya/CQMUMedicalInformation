@@ -6,7 +6,7 @@
     <div class="row">   
         <span class="col-6">
             <strong>姓名：</strong>
-            <a id="patient_profile" href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?back_page=BoneAge_evaluator&args={{task.id}}">
+            <a id="patient_profile" href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}">
                 {{patient.name}}
             </a>
         </span>
@@ -17,22 +17,9 @@
         <span class="col-6">
             <strong>历史：</strong>
             {% if historys > 0 %}
-                {% if back_page %}
-                    {% if back_page_get == 'PatientManagement_profile' %}
-                        <a id="patient_historys" 
-                            href="{{back_page}}"
-                            class="bi bi-clock-history"> {{historys}}份</a>
-                    {% else %}
-                        <a id="patient_historys" 
-                            href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge&back_page=BoneAge_evaluator&args={{task.id}}&else_get=back_page%3D{{back_page_get}}{% for arg in back_page_args_get %}%26args%3D{{arg}}{% endfor %}%26else_get%3D{{back_page_else_get|transfercharacter_get_url}}"
-                            class="bi bi-clock-history"> {{historys}}份</a>
-                    {% endif %}
-                {% else %}
-                    <a id="patient_historys" 
-                        href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge&back_page=BoneAge_evaluator&args={{task.id}}"
-                        class="bi bi-clock-history"> {{historys}}份</a>
-                {% endif %}
-                
+                <a id="patient_historys" 
+                href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge"
+                class="bi bi-clock-history"> {{historys}}份</a>                
             {% else %}
                 无            
             {% endif %}

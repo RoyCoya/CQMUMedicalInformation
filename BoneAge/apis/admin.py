@@ -6,16 +6,16 @@ from django.contrib.auth import get_user_model
 
 from django.http import *
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 
 from BoneAge.apis.standard import GetBoneAge, GetBoneName
-from BoneAge.apis.public_func import login_check
 from BoneAge.apis.bone_analysis import bone_detect
 from BoneAge.apis.dicom import create_dcm, delete_base_dcm
 from BoneAge.models import BoneDetail, DicomFile, Task
 
 # 手动上传dcm
+@login_required
 def api_upload_dcm(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权上传dcm文件")
     # TODO:错误列表改成[{name:'', error:''}]形式
@@ -42,11 +42,11 @@ def api_upload_dcm(request):
         'duplicate_files' : duplicate_files,
         'img_convert_failed_files' : img_convert_failed_files,
     }
-    return render(request, 'BoneAge/index/admin/upload_results.html', context)
+    return render(request, 'BoneAge/admin/upload_results.html', context)
 
 # 任务分配
+@login_required
 def api_allocate_tasks(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     allocator = request.user
     if not allocator.is_staff: return HttpResponseBadRequest("您无权分配任务")
 
@@ -65,6 +65,7 @@ def api_allocate_tasks(request):
 
     return HttpResponse('任务分配成功')
 
+@login_required
 def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated_to, confidence : float, delete_with_source = False) -> bool:
     # 如果当前需要创建的任务已存在（异步时可能有冲突），则跳过
     if Task.objects.filter(dcm_file=dcm).filter(standard=allocate_standard): return 409
@@ -132,8 +133,8 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
 
 # 删除任务
 # 删除方式：only_task（保留影像在DICOMManagement中）、with_source（连带删除影像）
+@login_required
 def api_delete_tasks(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权删除任务")
 

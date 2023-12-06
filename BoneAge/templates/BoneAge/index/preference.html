@@ -18,11 +18,11 @@
             </div>
             <hr/>
             <div class="row">
-                <div class="align-self-center col-4 ps-0">评测标准：</div>
+                <div class="align-self-center col-4 ps-0">主页默认标准：</div>
                 <div class="col-8 pe-0">
                     <select class="form-select" id="preference_standard">
-                        <option value="RUS" {% if preference.standard == "RUS" %}selected{% endif %}>RUS-CHN</option>
-                        <option value="CHN" {% if preference.standard == "CHN" %}selected{% endif %}>CHN</option>
+                        <option value="RUS">RUS-CHN</option>
+                        <option value="CHN">CHN</option>
                     </select> 
                 </div>
             </div>
@@ -37,6 +37,10 @@
                         {% endif %}
                     </select>
                 </div>
+            </div>
+            <div class="row mt-3">
+                默认骨骼顺序：
+                {% for bone in preference. %}{% endfor %}
             </div>
             <hr/>
             <div class="row">

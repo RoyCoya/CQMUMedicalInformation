@@ -160,7 +160,7 @@ class Preference(models.Model):
         ('RUS','RUS-CHN标准'),
         ('CHN','CHN标准'),
     )
-    standard = models.CharField(choices=standard_choice, max_length=10, default='RUS',verbose_name='默认骨龄标准')
+    standard = models.CharField(choices=standard_choice, max_length=10, default='RUS',verbose_name='主页默认骨龄标准')
     default_bone_choice = (
         ('radius','桡骨'),
         ('ulna','尺骨'),

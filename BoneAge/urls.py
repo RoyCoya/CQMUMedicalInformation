@@ -5,22 +5,21 @@ from . import views
 
 pages = [
 	# 医生主页（未完成任务）
-	path('page/<int:page_number>/', views.index, name='BoneAge_index'),
+	path('page/<int:page_number>/', views.page_index, name='BoneAge_index'),
 	# 医生主页（已完成任务）
-	path('finished/page/<int:page_number>/', views.finished_tasks, name='BoneAge_finished_tasks'),
+	path('finished/page/<int:page_number>/', views.page_finished_tasks, name='BoneAge_finished_tasks'),
 	# 管理员主页
-	path('admin/', views.admin, name='BoneAge_admin'),
+	path('admin/', views.page_admin, name='BoneAge_admin'),
 	# 评分器
-	path('evaluator/<int:task_id>/', views.evaluator, name='BoneAge_evaluator'),
+	path('evaluator/<int:task_id>/', views.page_evaluator, name='BoneAge_evaluator'),
 	# 骨龄记录库
-	path('library/', views.library, name='BoneAge_library'),
-    path('library/navigator/', views.navigator, name='library_navigator')
+	path('library/', views.page_library, name='BoneAge_library'),
+    path('library/navigator/', views.page_navigator, name='library_navigator')
 ]
 
 apis = [
 	# 个人偏好
 	path('preference/shortcut/', views.api_preference_switch_shortcut, name='api_BoneAge_preference_switch_shortcut'),
-	path('preference/standard/', views.api_preference_switch_standard, name='api_BoneAge_preference_switch_standard'),
 	path('preference/defaultbone/', views.api_preference_switch_default_bone, name='api_BoneAge_preference_switch_default_bone'),
 	# 评分器
 	path('evaluator/offset/save/', views.api_save_image_offset, name='api_BoneAge_save_image_offset'),

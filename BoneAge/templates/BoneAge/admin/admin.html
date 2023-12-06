@@ -27,23 +27,25 @@
   <div class="row mt-3">
     <!-- 系统配置区 -->
     <div class="col-4 border-end">
-      {% include 'BoneAge/index/admin/system_configuration.html' %}
+      {% include 'BoneAge/admin/system_configuration.html' %}
     </div>
     <!-- 任务分配区 -->
     <div class="col-8">
-      {% include 'BoneAge/index/admin/task_allocation.html' %}
+      {% include 'BoneAge/admin/task_allocation.html' %}
     </div>
   </div>
 
   <!-- 个人设置侧边栏 -->
-  {% include 'BoneAge/index/admin/account_settings.html' %}
+  {% include 'BoneAge/admin/preference.html' %}
   <!-- 分配任务弹窗 -->
-  {% include 'BoneAge/index/admin/modal_task_allocation.html' %}
+  {% include 'BoneAge/admin/modal_task_allocation.html' %}
   <!-- 删除任务弹窗 -->
-  {% include 'BoneAge/index/admin/modal_task_delete.html' %}
+  {% include 'BoneAge/admin/modal_task_delete.html' %}
+
 {% endblock %}
 
 {% block js_BoneAge %}
+  <script src="{% static 'js/Sortable.min.js' %}"></script>
   <script src="{% static 'BoneAge/js/admin/admin.js' %}"></script>
   <script>
     var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

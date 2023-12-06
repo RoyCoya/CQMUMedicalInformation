@@ -1,30 +1,16 @@
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
-from BoneAge.apis.public_func import login_check
 from BoneAge.models import Task
 from BoneAge.apis.dicom import get_study_age
 from PatientManagement.models import Patient
 
 # 患者个人资料
+@login_required
 def profile(request, patient_id):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     patient = Patient.objects.get(id=patient_id)
-
-    # 前一页面（页面唯一name+参数args组装reverse，else_get传其他可能需要的参数）
-    back_page = back_page_get = back_page_args_get = back_page_else_get = None
-    try: back_page_get = request.GET['back_page']
-    except: pass
-    try: back_page_args_get = tuple(request.GET.getlist('args'))
-    except: pass
-    try: back_page_else_get = request.GET['else_get']
-    except: pass
-    try:
-        back_page = reverse(back_page_get,args=back_page_args_get) + '?'
-        if back_page_else_get:
-            back_page += back_page_else_get
-    except: pass
 
     # 默认显示栏目
     info_tab = None
@@ -41,10 +27,6 @@ def profile(request, patient_id):
         'patient' : patient,
         'tasks_history' : tasks_history,
         'tasks_processing' : tasks_processing,
-        'back_page' : back_page,
-        'back_page_get' : back_page_get,
-        'back_page_args_get' : back_page_args_get,
-        'back_page_else_get' : back_page_else_get,
         'info_tab' : info_tab,
     }
     return render(request, 'PatientManagement/profile/profile.html', context)

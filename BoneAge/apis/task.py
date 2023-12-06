@@ -3,13 +3,13 @@ from datetime import datetime
 from django.conf import settings
 from django.http import *
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 
-from BoneAge.apis.public_func import login_check
 from BoneAge.models import Task
 
 # 完成任务
+@login_required
 def api_finish_task(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     task_id = request.POST['id']
     task = Task.objects.get(id=task_id)
 
@@ -23,8 +23,8 @@ def api_finish_task(request):
     return HttpResponse('任务已标记为完成')
 
 # 收藏任务
+@login_required
 def api_mark_task(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     task = Task.objects.get(id=request.POST['task'])
     user = request.user
     if user != task.allocated_to: return HttpResponseBadRequest("该任务未分配于您")

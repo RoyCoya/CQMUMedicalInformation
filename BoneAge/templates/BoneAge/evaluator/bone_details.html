@@ -4,14 +4,7 @@
 <div class="col-5 border-end">
     <div class="d-flex justify-content-between col">
         <h3>{{task.get_standard_display}}</h3>
-        {% comment %} <button id="show_bone_details">log 骨骼信息</button> {% endcomment %}
-        {% if back_page %}
-        <a class="btn btn-danger" href="{{back_page}}">
-            <i class="bi bi-arrow-left text-light me-1"></i> 返回
-        </a>
-        {% endif %}
     </div>
-    {% comment %} <label class="mb-2">数据：</label> {% endcomment %}
     <ul class="list-group mb-3 mt-2">
         <div id="list-sum" class="list-group-item p-2">
             <strong>任务ID：</strong>
@@ -102,7 +95,7 @@
         </div>
         <div class="text-start" id="bone_discription" hidden>
             <img class="img-fluid" id="bone_discription_img">
-            {% include 'BoneAge/evaluator/bone_discription_'|add:preference.standard|add:'.html' %}
+            {% include 'BoneAge/evaluator/bone_discription_'|add:task.standard|add:'.html' %}
         </div>
     </div>
 </div>

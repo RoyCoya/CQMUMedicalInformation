@@ -33,7 +33,7 @@
         {% endblock pannel %}
     </div>
 </div>
-{% include 'BoneAge/index/account_settings.html' %}
+{% include 'BoneAge/index/preference.html' %}
 {% endblock content_BoneAge %}
 
 {% block js_BoneAge %}
@@ -51,13 +51,7 @@
     var preference_standard = '{{preference.standard}}'
     var preference_default_bone = '{{preference.default_bone}}'
     var url_api_preference_switch_shortcut = "{% url 'api_BoneAge_preference_switch_shortcut' %}"
-    var url_api_preference_switch_standard = "{% url 'api_BoneAge_preference_switch_standard' %}"
     var url_api_preference_switch_default_bone = "{% url 'api_BoneAge_preference_switch_default_bone' %}"
 </script>
-{% block js_BoneAge_back_params %}
-<script>
-    var back_page_params = "?back_page=BoneAge_index&args={{page_number}}&else_get=order%3D{{order}}%26is_descend%3D{{is_descend}}"
-</script>
-{% endblock js_BoneAge_back_params %}
 <script src="{% static 'BoneAge/js/index/index.js' %}"></script>
 {% endblock js_BoneAge %}

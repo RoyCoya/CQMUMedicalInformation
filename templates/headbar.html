@@ -24,7 +24,7 @@
                         骨龄评分系统
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% url 'BoneAge_index' 1 %}">个人主页</a></li>
+                        <li><a class="dropdown-item {% block nav_BoneAge_index %}{% endblock %}" href="{% if user.is_staff %}{% url "BoneAge_admin" %}{% else %}{% url 'BoneAge_index' 1 %}{% endif %}">个人主页</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item {% block nav_BoneAge_library %}{% endblock %}" href="{% url 'BoneAge_library' %}">骨龄记录库</a></li>
                         <li><a class="dropdown-item disabled" href="#">开发中</a></li>

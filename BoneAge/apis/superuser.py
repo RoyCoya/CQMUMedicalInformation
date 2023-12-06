@@ -4,13 +4,13 @@ from shutil import copyfile
 from django.conf import settings
 from django.http import *
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 
-from BoneAge.apis.public_func import login_check
 from BoneAge.models import BoneDetail, Task
 
 # 导出数据
+@login_required
 def api_export_bone_data(request):
-    if login_check(request): return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 

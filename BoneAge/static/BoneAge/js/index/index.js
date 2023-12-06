@@ -35,10 +35,10 @@ $("th[id^=order_]").click(function () {
 
 /* 任务列表跳转 */
 $("tr[id^=evaluator]").click(function () { 
-    window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/" + back_page_params)
+    window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/")
 });
 $("div[id^=evaluator]").click(function () { 
-    window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/" + back_page_params)
+    window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/")
 });
 
 /* 页面跳转 */
@@ -59,23 +59,6 @@ $("#preference_shortcut").click(function (e) {
         data: {"shortcut" : this.checked,},
         dataType: "json",
         headers:{'X-CSRFToken': csrftoken}
-    });
-});
-
-// 切换评测标准
-$('#preference_standard').change(function (e) { 
-    $.ajax({
-        type: "post",
-        url: url_api_preference_switch_standard,
-        data: {"standard" : $(this).val()},
-        dataType: "json",
-        headers:{'X-CSRFToken': csrftoken},
-        success : function(){
-            window.location.assign(location)
-        },
-        error : function(){
-            window.location.assign(location)
-        },
     });
 });
 

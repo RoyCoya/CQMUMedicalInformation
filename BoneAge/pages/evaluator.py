@@ -2,17 +2,17 @@ from django.conf import settings
 from django.http import *
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
-from BoneAge.apis.public_func import load_preference, login_check
+from BoneAge.apis.public_func import load_preference
 from BoneAge.models import BoneDetail, Task
 from BoneAge.apis.standard import GetJSON
 from BoneAge.apis.dicom import get_study_age
 
 
 # 评分器
+@login_required
 def evaluator(request, task_id):
-    if login_check(request):
-        return redirect("%s?next=%s" % (settings.LOGIN_URL, request.path))
     task = Task.objects.get(id=task_id)
     BoneAge_dcm = task.dcm_file
     patient = BoneAge_dcm.base_dcm.patient
@@ -37,7 +37,7 @@ def evaluator(request, task_id):
     if task.closed:
         try:
             pre_task = (
-                Task.objects.filter(standard=preference.standard)
+                Task.objects.filter(standard=task.standard)
                 .filter(allocated_to=request.user, closed=True)
                 .filter(closed_date__gt=task.closed_date)
                 .order_by("closed_date")
@@ -47,7 +47,7 @@ def evaluator(request, task_id):
             pass
         try:
             next_task = (
-                Task.objects.filter(standard=preference.standard)
+                Task.objects.filter(standard=task.standard)
                 .filter(allocated_to=request.user, closed=True)
                 .filter(closed_date__lt=task.closed_date)
                 .order_by("closed_date")
@@ -58,7 +58,7 @@ def evaluator(request, task_id):
     else:
         try:
             pre_task = (
-                Task.objects.filter(standard=preference.standard)
+                Task.objects.filter(standard=task.standard)
                 .filter(allocated_to=request.user, closed=False)
                 .filter(id__lt=task.id)
                 .last()
@@ -67,7 +67,7 @@ def evaluator(request, task_id):
             pass
         try:
             next_task = (
-                Task.objects.filter(standard=preference.standard)
+                Task.objects.filter(standard=task.standard)
                 .filter(allocated_to=request.user, closed=False)
                 .filter(id__gt=task.id)
                 .first()
@@ -83,27 +83,6 @@ def evaluator(request, task_id):
         .filter(closed=True)
         .count()
     )
-
-    # 前一页面
-    back_page = back_page_get = back_page_args_get = back_page_else_get = None
-    try:
-        back_page_get = request.GET["back_page"]
-    except:
-        pass
-    try:
-        back_page_args_get = tuple(request.GET.getlist("args"))
-    except:
-        pass
-    try:
-        back_page_else_get = request.GET["else_get"]
-    except:
-        pass
-    try:
-        back_page = reverse(back_page_get, args=back_page_args_get) + "?"
-        if back_page_else_get:
-            back_page += back_page_else_get
-    except:
-        pass
 
     # 修复骨骼时刷新页面的骨骼
     bone_fixed = None
@@ -127,10 +106,6 @@ def evaluator(request, task_id):
         "next_task": next_task,
         "bone_details": bone_details,
         "historys": historys,
-        "back_page": back_page,
-        "back_page_get": back_page_get,
-        "back_page_args_get": back_page_args_get,
-        "back_page_else_get": back_page_else_get,
         "bone_fixed": bone_fixed,
         "standard": standard,
     }
