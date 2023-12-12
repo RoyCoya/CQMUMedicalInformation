@@ -36,7 +36,7 @@
   </div>
 
   <!-- 个人设置侧边栏 -->
-  {% include 'BoneAge/admin/preference.html' %}
+  {% include 'BoneAge/preference/preference.html' %}
   <!-- 分配任务弹窗 -->
   {% include 'BoneAge/admin/modal_task_allocation.html' %}
   <!-- 删除任务弹窗 -->
@@ -55,4 +55,5 @@
     var url_api_allocate_tasks = "{% url 'api_BoneAge_allocate_tasks' %}"
     var url_api_delete_tasks = "{% url 'api_BoneAge_delete_tasks' %}"
   </script>
+  {% include "BoneAge/preference/preference_js.html" %}
 {% endblock %}

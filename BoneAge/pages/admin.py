@@ -3,9 +3,11 @@ from django.db.models import Count
 from django.shortcuts import render
 
 from BoneAge.models import DicomFile, PACS_QR
+from BoneAge.apis.public_func import load_preference
 
 # 管理员页面
 def admin(request):
+    preference = load_preference(request)
     # 数据库状态检查
     error_dcm_count = DicomFile.objects.exclude(error=0).exclude(error=102).count()
     # TODO: 根据单一或数个标准查询未分配任务的dcm
@@ -17,6 +19,7 @@ def admin(request):
     PACS_list = PACS_QR.objects.all()
 
     context = {
+        'preference' : preference,
         'unallocated_dcm' : unallocated_dcm,
         'error_dcm_count' : error_dcm_count,
         'evaluators' : evaluators,

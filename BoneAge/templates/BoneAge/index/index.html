@@ -33,7 +33,7 @@
         {% endblock pannel %}
     </div>
 </div>
-{% include 'BoneAge/index/preference.html' %}
+{% include 'BoneAge/preference/preference.html' %}
 {% endblock content_BoneAge %}
 
 {% block js_BoneAge %}
@@ -48,10 +48,7 @@
     var page_count = {{page_count}}
     var tasks_finished = {% block is_task_finished %}false{% endblock is_task_finished %}
     var preference_shortcut = {% if preference.shortcut %}true{% else %}false{% endif %}
-    var preference_standard = '{{preference.standard}}'
-    var preference_default_bone = '{{preference.default_bone}}'
-    var url_api_preference_switch_shortcut = "{% url 'api_BoneAge_preference_switch_shortcut' %}"
-    var url_api_preference_switch_default_bone = "{% url 'api_BoneAge_preference_switch_default_bone' %}"
 </script>
 <script src="{% static 'BoneAge/js/index/index.js' %}"></script>
+{% include "BoneAge/preference/preference_js.html" %}
 {% endblock js_BoneAge %}

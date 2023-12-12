@@ -11,10 +11,6 @@ $(document).ready(function () {
     is_descend == 1 ? 
         $("th[id^=order_" + order + "] i").addClass('bi-caret-down-fill') :
         $("th[id^=order_" + order + "] i").addClass('bi-caret-up-fill')
-
-    // 偏好设置
-    $('#preference_standard').val(preference_standard);
-    $('#preference_default_bone').val(preference_default_bone);
 });
 
 /* 列表表头排序跳转 */
@@ -48,27 +44,4 @@ $("#page_jump").click(function (e) {
     else if(page_jump_number > page_count) page_jump_number = page_count;
     page_jump_url = $("#page_jump_url").text().replace('/0/', '/' + page_jump_number + '/');
     window.location.assign(page_jump_url)
-});
-
-/* 偏好设置 */
-// 开关快捷键
-$("#preference_shortcut").click(function (e) { 
-    $.ajax({
-        type: "post",
-        url: url_api_preference_switch_shortcut,
-        data: {"shortcut" : this.checked,},
-        dataType: "json",
-        headers:{'X-CSRFToken': csrftoken}
-    });
-});
-
-// 切换默认骨骼
-$('#preference_default_bone').change(function (e) { 
-    $.ajax({
-        type: "post",
-        url: url_api_preference_switch_default_bone,
-        data: {"default_bone" : $(this).val()},
-        dataType: "json",
-        headers:{'X-CSRFToken': csrftoken}
-    });
 });
