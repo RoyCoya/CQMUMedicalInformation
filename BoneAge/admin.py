@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from .models import *
 
-# TODO:找时间优化下。编码参考里有资料
 class admin_dicomfile(admin.ModelAdmin):
     raw_id_fields = (
         'base_dcm',

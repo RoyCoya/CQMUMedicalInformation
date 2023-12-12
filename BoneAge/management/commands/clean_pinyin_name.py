@@ -1,4 +1,3 @@
-# TODO: 之后换成和RIS、HIS对接？
 import os
 
 from django.conf import settings

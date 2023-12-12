@@ -14,8 +14,9 @@
             </i> 
             {{patient.get_sex_display}}
         </span>
-        {% comment %} #TODO:这里之后换成age，生日另起一行 {% endcomment %}
-        <span class="ms-3">{{patient.birthday}}</span>
+        <span class="ms-3">{{patient.age}}岁</span>
+        <br>
+        <span>{{patient.birthday}}</span>
     </p>
     <p><select class="form-select">
         <option value="ID_card" selected>身份证</option>

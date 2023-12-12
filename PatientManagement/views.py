@@ -1,5 +1,5 @@
 from PatientManagement.pages import profile as page_profile
-from PatientManagement.apis import query as api_query
+from PatientManagement.apis import query
 
 '''
 界面
@@ -11,4 +11,4 @@ def profile(request, patient_id): return page_profile.profile(request, patient_i
 接口
 '''
 # 患者查询
-def query(request): return api_query.query(request)
+def api_query(request): return query.query(request)

@@ -10,7 +10,7 @@ from BoneAge.models import BoneDetail, Task
 
 # 导出数据
 @login_required
-def api_export_bone_data(request):
+def export_bone_data(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权导出数据")
 

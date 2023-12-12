@@ -9,7 +9,7 @@ pages = [
 
 apis = [
     # 查询患者是否存在并返回其资料url
-	path('patient/query/', views.query, name="PatientManagement_query"),
+	path('patient/query/', views.api_query, name="PatientManagement_query"),
 ]
 
 urlpatterns = pages + apis

@@ -1,5 +1,5 @@
 # 判断一张手骨图是不是“过暗”
-# TODO: 之后放在推流和手动分配任务流程末尾？
+# 注：暂时用不着了，现在用dicom自带的窗宽窗位tag进行压缩
 
 import cv2
 import matplotlib.pyplot as plt

@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from django.conf import settings
-from django.http import *
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 
@@ -9,27 +8,34 @@ from BoneAge.models import Task
 
 # 完成任务
 @login_required
-def api_finish_task(request):
-    task_id = request.POST['id']
-    task = Task.objects.get(id=task_id)
-
-    if request.POST['closed'] == 'true':
-        task.closed = True
-        task.status = 'finished'
-    task.bone_age = request.POST['bone_age']
-    task.closed_date = datetime.now()
-    task.modify_user = request.user
-    task.save()
-    return HttpResponse('任务已标记为完成')
+def finish_task(request):
+    task_id = str(request.POST.get('id'))
+    if not task_id: return JsonResponse({"message":"未发送任务id"}, status=400)
+    try:
+        task = Task.objects.get(id=task_id if task_id.isdigit() else None)
+        if request.POST.get('closed') == 'true':
+            task.closed = True
+            task.status = 'finished'
+        task.bone_age = request.POST.get('bone_age') if request.POST.get('bone_age') else -1
+        task.closed_date = datetime.now()
+        task.modify_user = request.user
+        task.save()
+        return JsonResponse({"message":"任务已标记为完成"})
+    except Exception as e: return JsonResponse({"message" : f"请求失败：{e}"}, status=500)
 
 # 收藏任务
 @login_required
-def api_mark_task(request):
-    task = Task.objects.get(id=request.POST['task'])
+def mark_task(request):
     user = request.user
-    if user != task.allocated_to: return HttpResponseBadRequest("该任务未分配于您")
-    
-    task.marked = True if request.POST['marked'] == 'true' else False
-    task.save()
+    task_id = str(request.POST.get('task'))
 
-    return HttpResponse('任务收藏状态已切换')
+    try:
+        task = Task.objects.get(id=task_id if task_id.isdigit() else None)
+        
+        if user != task.allocated_to: return JsonResponse({"message":"该任务未分配于您"}, status=403)
+        
+        task.marked = True if request.POST['marked'] == 'true' else False
+        task.save()
+
+        return JsonResponse({"message":"任务收藏状态已切换"})
+    except Exception as e: JsonResponse({"message" : f"请求错误{e}"}, status=500)

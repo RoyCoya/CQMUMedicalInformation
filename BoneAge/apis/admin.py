@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-
+from django.core.exceptions import ValidationError
 from django.http import *
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -15,10 +15,9 @@ from BoneAge.models import BoneDetail, DicomFile, Task
 
 # 手动上传dcm
 @login_required
-def api_upload_dcm(request):
+def upload_dcm(request):
     user = request.user
     if not user.is_staff: return HttpResponseBadRequest("您无权上传dcm文件")
-    # TODO:错误列表改成[{name:'', error:''}]形式
     success_files = []
     broken_files = []
     duplicate_files = []
@@ -46,29 +45,40 @@ def api_upload_dcm(request):
 
 # 任务分配
 @login_required
-def api_allocate_tasks(request):
+def allocate_tasks(request):
     allocator = request.user
     if not allocator.is_staff: return HttpResponseBadRequest("您无权分配任务")
 
-    dcms_to_allocate_ids = [int(id) for id in str(request.POST['dcm_id_list']).split(' ')[0:-1]]
-    dcms_to_allocate = DicomFile.objects.filter(id__in=dcms_to_allocate_ids)
-    allocate_standard = json.loads(request.POST['standard_list'])
-    allocated_to = get_user_model().objects.get(id=request.POST['allocated_to'])
-    confidence = int(request.POST['confidence']) / 100
-    
-    # 当前提交的dcm状态改为“处理中”，使这些dcm在处理界面隐藏
-    dcms_to_allocate.update(error = 102)
+    try:
+        dcms_to_allocate_ids = [int(id) for id in str(request.POST.get('dcm_id_list', [])).split(' ')[0:-1] if id.isdigit()]
+        dcms_to_allocate = DicomFile.objects.filter(id__in=dcms_to_allocate_ids)
+        allocate_standard = json.loads(request.POST.get('standard_list', []))
+        allocated_to_id = request.POST.get('allocated_to')
+        if not str(allocated_to_id).isdigit(): return JsonResponse({"message": '分配id出错'}, status=400)
+        allocated_to = get_user_model().objects.get(id=int(allocated_to_id))
+        confidence = int(request.POST['confidence']) / 100
+        
+        # 当前提交的dcm状态改为“处理中”，使这些dcm在处理界面隐藏
+        dcms_to_allocate.update(error = 102)
 
-    # TODO:分配出错的handle
-    for dcm in dcms_to_allocate: 
-        for standard in allocate_standard: allocate_task(dcm, allocator, standard, allocated_to, confidence)
-
-    return HttpResponse('任务分配成功')
+        success_allocated = []
+        error_allocated = []
+        for dcm in dcms_to_allocate: 
+            for standard in allocate_standard: 
+                try:
+                    allocate_task(dcm, allocator, standard, allocated_to, confidence)
+                    success_allocated.append(dcm)
+                except Exception as e: error_allocated.append(str(dcm) + ":" + str(e))
+        success_response = "成功分配：" + str(success_allocated) + "\n"
+        error_response = "分配出错：" + str(error_allocated) + "\n"
+        response = success_response + error_response
+        return JsonResponse({"message": f"请求成功\n{response}"})
+    except Exception as e: return JsonResponse({"message": f"请求失败：{str(e)}"}, status=500)
 
 @login_required
 def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated_to, confidence : float, delete_with_source = False) -> bool:
     # 如果当前需要创建的任务已存在（异步时可能有冲突），则跳过
-    if Task.objects.filter(dcm_file=dcm).filter(standard=allocate_standard): return 409
+    if Task.objects.filter(dcm_file=dcm).filter(standard=allocate_standard): raise ValidationError('任务已经存在，无法重复添加')
 
     # 创建任务
     new_task = Task.objects.create(
@@ -106,7 +116,7 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
         dcm.save()
         new_task.delete()
         if delete_with_source: delete_base_dcm(new_task.dcm_file.base_dcm)
-        return False
+        raise ValidationError("识别为非手骨图像")
     
     if detection_accuracy == 1:
         bone_age = GetBoneAge(
@@ -119,7 +129,7 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
             dcm.save()
             new_task.delete()
             if delete_with_source: delete_base_dcm(new_task.dcm_file.base_dcm)
-            return False
+            raise ValidationError("结算骨龄出错")
         new_task.bone_age = bone_age
         new_task.save()
 
@@ -134,11 +144,10 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
 # 删除任务
 # 删除方式：only_task（保留影像在DICOMManagement中）、with_source（连带删除影像）
 @login_required
-def api_delete_tasks(request):
-    user = request.user
-    if not user.is_staff: return HttpResponseBadRequest("您无权删除任务")
+def delete_tasks(request):
+    if not request.user.is_staff: return JsonResponse({"message": "请求失败：您无权删除任务"}, status=403)
 
-    dcms_to_delete_ids = str(request.POST['dcm_id_list']).split(' ')[0:-1]
+    dcms_to_delete_ids = str(request.POST.get('dcm_id_list')).split(' ')[0:-1]
     dcms_to_delete = DicomFile.objects.filter(id__in=dcms_to_delete_ids)
 
     # 当前提交的dcm状态改为“处理中”，使这些dcm在处理界面隐藏
@@ -150,6 +159,7 @@ def api_delete_tasks(request):
         {
             'only_task' : lambda : dcm.delete(),
             'with_dcm' : lambda : delete_base_dcm(dcm.base_dcm),
-        }[request.POST['type']]()
-
-    return HttpResponse('任务删除成功')
+        }[request.POST.get('type', 'with_dcm')]()
+    
+    dcms_to_delete_ids = "，".join(dcms_to_delete_ids)
+    return JsonResponse({"message": f"删除成功，id：{dcms_to_delete_ids}"})

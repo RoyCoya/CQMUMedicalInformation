@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -11,6 +13,7 @@ from PatientManagement.models import Patient
 @login_required
 def profile(request, patient_id):
     patient = Patient.objects.get(id=patient_id)
+    patient.age = round((datetime.now().date() - patient.birthday).days / 365, 1)
 
     # 默认显示栏目
     info_tab = None

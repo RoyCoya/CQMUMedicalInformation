@@ -1,6 +1,4 @@
-from django.conf import settings
-from django.http import *
-from django.shortcuts import redirect
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from BoneAge.models import BoneDetail, DicomFile, Task
@@ -9,7 +7,7 @@ from BoneAge.apis.standard import GetBoneAge
 
 # 修改图像亮度、对比度偏移量
 @login_required
-def api_save_image_offset(request):
+def save_image_offset(request):
     BoneAge_dcm = DicomFile.objects.get(id=request.POST['dcm_id'])
     BoneAge_dcm.brightness = request.POST['brightness']
     BoneAge_dcm.contrast = request.POST['contrast']
@@ -17,11 +15,11 @@ def api_save_image_offset(request):
     task = Task.objects.get(dcm_file=BoneAge_dcm)
     task.modify_user = request.user
     task.save()
-    return HttpResponse('已修改图像亮度对比度偏移量')
+    return JsonResponse({'message': '已修改图像亮度对比度偏移量'})
 
 # 修改骨骼评分评级备注等详细信息
 @login_required
-def api_modify_bone_detail(request):
+def modify_bone_detail(request):
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
     task = bone_detail.task
@@ -40,11 +38,11 @@ def api_modify_bone_detail(request):
     )
     task.modify_user = request.user
     task.save()
-    return HttpResponse('成功修改骨骼信息')
+    return JsonResponse({'message': '成功修改骨骼信息'})
 
 # 修改骨骼定位
 @login_required
-def api_modify_bone_position(request):
+def modify_bone_position(request):
     bone_detail_id = request.POST['id']
     bone_detail = BoneDetail.objects.get(id=bone_detail_id)
     task = bone_detail.task
@@ -63,4 +61,4 @@ def api_modify_bone_position(request):
     bone_detail.save()
     task.modify_user = request.user
     task.save()
-    return HttpResponse('成功修改骨骼标注位置')
+    return JsonResponse({'message': '成功修改骨骼标注位置'})

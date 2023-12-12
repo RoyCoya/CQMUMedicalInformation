@@ -25,10 +25,9 @@ class Command(BaseCommand):
     help = "清理开发过程中留下的冗余dicom文件（没被数据库记录的）"
 
     def handle(self, *args, **options):
-        root_dir = 'D:/CQMUMedicalInformation/userfile'
-        orthanc = OrthancApiClient('http://localhost:' + str(settings.PACS_LOCAL['HttpPort']) + '/')
-        orthanc.patients.delete_all()
-
+        root_dir = settings.MEDIA_ROOT
+        
+        print("开始删除不存在于数据库中的冗余影像文件")
         for dirpath, dirnames, filenames in os.walk(root_dir):
             for filename in tqdm(filenames):
                 file_path = os.path.join(dirpath, filename)
@@ -36,3 +35,6 @@ class Command(BaseCommand):
                 relative_path = os.path.normpath(relative_path).replace('\\', '/')
                 if filename.endswith('.dcm'): delete_dcm(relative_path, file_path)
                 if filename.endswith('.png'): delete_png(relative_path, file_path)
+        print("开始清理orthanc残留影像")
+        orthanc = OrthancApiClient('http://localhost:' + str(settings.PACS_LOCAL['HttpPort']) + '/')
+        orthanc.patients.delete_all()
