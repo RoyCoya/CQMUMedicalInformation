@@ -18,7 +18,7 @@ def evaluator(request, task_id):
     patient = BoneAge_dcm.base_dcm.patient
     preference = load_preference(request)
 
-    # 根据当前用户偏好的标准、骨骼顺序，加载骨骼数据
+    # 根据当前任务的标准，按偏好加载骨骼数据
     bone_details = []
     bone_order = {
         "RUS": lambda: preference.bone_order_RUS.split("|"),
@@ -30,6 +30,12 @@ def evaluator(request, task_id):
             return HttpResponseBadRequest("数据库存在骨骼信息缺失，或骨骼名字无法对应。请联系管理员检查数据库。")
         bone_details.append(bone_detail)
     preference.bone_order = bone_order
+
+    # 加载默认骨骼
+    preference.default_bone = {
+        "RUS" : preference.rus_default_bone,
+        "CHN" : preference.chn_default_bone,
+    }[task.standard]
 
     # 上下一个任务（用于快捷键切换），若当前任务完结则以时间倒序为准，若当前任务未完成则以任务id为准
     pre_task = None

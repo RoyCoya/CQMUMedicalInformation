@@ -19,8 +19,7 @@ pages = [
 
 apis = [
 	# 个人偏好
-	path('preference/shortcut/', views.api_preference_switch_shortcut, name='api_BoneAge_preference_switch_shortcut'),
-	path('preference/defaultbone/', views.api_preference_switch_default_bone, name='api_BoneAge_preference_switch_default_bone'),
+	path('preference/standard/', views.api_preference_save, name='api_BoneAge_preference_save'),
 	# 评分器
 	path('evaluator/offset/save/', views.api_save_image_offset, name='api_BoneAge_save_image_offset'),
 	path('evaluator/bone_detail/save/', views.api_modify_bone_detail, name='api_BoneAge_modify_bone_detail'),

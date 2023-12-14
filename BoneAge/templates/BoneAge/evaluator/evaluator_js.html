@@ -42,7 +42,7 @@
     var url_personal_index = "{% url 'BoneAge_index' 1 %}"
     var url_personal_index_task_finished = "{% url 'BoneAge_finished_tasks' 1 %}"
     var url_api_save_image_offset = "{% url 'api_BoneAge_save_image_offset' %}"
-    var default_bone = ("{{preference.default_bone}}").replace('RUS_', "").replace('CHN', "")
+    var default_bone = ("{{preference.default_bone}}")
     var is_shortcut_enable = false
     var url_api_mark_task = "{% url 'api_BoneAge_mark_task' %}"
     var bone_fixed = undefined
@@ -61,7 +61,7 @@
 {% if preference.shortcut %}
 <script>
     is_shortcut_enable = true
-    var bone_order = [{% for bone in preference.bone_order %}'{{bone|slugify}}',{% endfor %}]
+    var bone_order = [{% for bone in bone_order %}'{{bone|slugify}}',{% endfor %}]
     var is_task_has_pre = false
     var is_task_has_next = false
     {% if pre_task %}

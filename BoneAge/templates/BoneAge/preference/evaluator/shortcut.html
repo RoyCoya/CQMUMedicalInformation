@@ -1,0 +1,68 @@
+<div class="d-flex justify-content-start mt-2">
+  <span>
+    启用
+    <i class="bi bi-question-circle-fill" data-bs-toggle="tooltip" data-bs-placement="bottom"></i>
+    ：
+  </span>
+  <div class="form-check form-switch">
+    <input id="shortcut" class="form-check-input" type="checkbox" role="switch" {% if preference.shortcut %}checked{% endif %}/>
+  </div>
+</div>
+<table class="table mt-2">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">功能</th>
+      <th scope="col">快捷键</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="align-middle">上一骨骼</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="W" readonly />
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">下一骨骼</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="S" readonly />
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">上一等级</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="←" readonly />
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">下一等级</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="→" readonly />
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">上一任务</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="A" readonly />
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">下一任务</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="D" readonly />
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">完成任务</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="F" readonly />
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">退出评测器</td>
+      <td class="align-middle">
+        <input type="text" class="form-control" value="Q" readonly />
+      </td>
+    </tr>
+  </tbody>
+</table>

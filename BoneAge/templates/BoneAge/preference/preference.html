@@ -1,51 +1,46 @@
 <div class="offcanvas offcanvas-end" data-bs-focus="false" tabindex="-1" id="account_settings">
-    <div class="offcanvas-header row border-bottom d-flex justify-content-between">
-        <h4>个人设置</h4>
-    </div>
-    <div class="offcanvas-body">
-        <div class="container">
-            <div class="d-flex justify-content-between mt-1">
-                <span>
-                    启用快捷键
-                    <i class="bi bi-question-circle-fill"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="在评测器中，按 W 或 S 切换骨骼；按 A 或 D 切换任务；按 F 完成任务；按 Q 退出评分器"></i>
-                    ：
-                </span>    
-                <div class="form-check form-switch">
-                    <input id="preference_shortcut" class="form-check-input" type="checkbox" role="switch" {% if preference.shortcut %}checked{% endif %}>
-                </div>
+  <div class="offcanvas-header row border-bottom d-flex justify-content-between">
+    <h4>个人设置</h4>
+  </div>
+  <div class="offcanvas-body">
+    <div class="container">
+      <form id="preference">
+        {% csrf_token %}
+        {% if not user.is_staff %}
+          <div>
+            <h5 class="text-center">主页</h5>
+            {% include 'BoneAge/preference/index.html' %}
+          </div>
+          <hr />
+        {% endif %}
+        <div>
+          <h5 class="text-center">评测器</h5>
+          <ul class="nav nav-tabs" id="evaluator_tabs">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#evaluator_shortcut" type="button">快捷键</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#evaluator_CHN" type="button">CHN</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#evaluator_RUS" type="button">RUS-CHN</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane pt-3 active" id="evaluator_shortcut">
+              {% include 'BoneAge/preference/evaluator/shortcut.html' %}
             </div>
-            <hr/>
-            <div class="row">
-                <div class="align-self-center col-4 ps-0">主页默认标准：</div>
-                <div class="col-8 pe-0">
-                    <select class="form-select" id="preference_standard">
-                        <option value="RUS">RUS-CHN</option>
-                        <option value="CHN">CHN</option>
-                    </select> 
-                </div>
+            <div class="tab-pane pt-3" id="evaluator_CHN">
+              {% include 'BoneAge/preference/evaluator/CHN.html' %}
             </div>
-            <div class="row mt-3">
-                <div class="align-self-center col-4 ps-0">默认骨骼：</div>
-                <div class="col-8 pe-0">
-                    <select class="form-select" id="preference_default_bone">
-                        {% if preference.standard == "RUS" %}
-                            {% include "BoneAge/index/bone_options/RUS.html" %}
-                        {% elif preference.standard == "CHN" %}
-                            {% include "BoneAge/index/bone_options/CHN.html" %}
-                        {% endif %}
-                    </select>
-                </div>
+            <div class="tab-pane pt-3" id="evaluator_RUS">
+              {% include 'BoneAge/preference/evaluator/RUS.html' %}
             </div>
-            <div class="row mt-3">
-                默认骨骼顺序：
-                {% for bone in preference. %}{% endfor %}
-            </div>
-            <hr/>
-            <div class="row">
-                <a href="{% url 'logout' %}" class="btn btn-danger">退出登录</a>
-            </div>
+          </div>
         </div>
+        <hr />
+        <button class="w-100 btn btn-primary" type="submit" form="preference">保存设置</button>
+      </form>
     </div>
+  </div>
 </div>

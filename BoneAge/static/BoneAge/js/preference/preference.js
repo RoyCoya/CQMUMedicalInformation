@@ -1,28 +1,29 @@
 /* 偏好设置 */
+
+// 初始化
 $(document).ready(function () {
-    // 初始化
-    $('#preference_standard').val(preference_standard);
-    $('#preference_default_bone').val(preference_default_bone);
+    $('#index_standard').val(index_standard);
+    $('#chn_default_bone').val(chn_default_bone);
+    $('#rus_default_bone').val(rus_default_bone);
 });
 
-// 开关快捷键
-$("#preference_shortcut").click(function (e) { 
+// 保存设置
+$('#preference').on('submit', function (e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append('shortcut', $("#shortcut").prop('checked')? "True":"False");
     $.ajax({
-        type: "post",
-        url: url_api_preference_switch_shortcut,
-        data: {"shortcut" : this.checked,},
-        dataType: "json",
-        headers:{'X-CSRFToken': csrftoken}
-    });
-});
-
-// 切换默认骨骼
-$('#preference_default_bone').change(function (e) { 
-    $.ajax({
-        type: "post",
-        url: url_api_preference_switch_default_bone,
-        data: {"default_bone" : $(this).val()},
-        dataType: "json",
-        headers:{'X-CSRFToken': csrftoken}
-    });
+        url: api_preference_save,
+        type: 'post',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            alert(data.message);
+        },
+        error: function (xhr, status, error) {
+            var exception = "【" + xhr.status + "】" + xhr.responseJSON.message;
+            alert(exception);
+        }
+    })
 });

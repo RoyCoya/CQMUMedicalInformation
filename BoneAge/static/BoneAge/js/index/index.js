@@ -14,7 +14,7 @@ $(document).ready(function () {
 });
 
 /* 列表表头排序跳转 */
-$("th[id^=order_]").click(function () {
+$("#tasks th[id^=order_]").click(function () {
     order_next = $(this).attr("id").replace("order_","")
     if(order == order_next)
         is_descend = is_descend == 1 ? 0 : 1
@@ -30,10 +30,10 @@ $("th[id^=order_]").click(function () {
 });
 
 /* 任务列表跳转 */
-$("tr[id^=evaluator]").click(function () { 
+$("#tasks tr[id^=evaluator]").click(function () { 
     window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/")
 });
-$("div[id^=evaluator]").click(function () { 
+$("#tasks div[id^=evaluator]").click(function () { 
     window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/")
 });
 

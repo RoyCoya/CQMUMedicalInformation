@@ -50,7 +50,8 @@ class admin_preference(admin.ModelAdmin):
         'user',
         'shortcut',
 		'standard',
-        'default_bone',
+        'chn_default_bone',
+        'rus_default_bone',
     ]
 admin.site.register(Preference, admin_preference)
 

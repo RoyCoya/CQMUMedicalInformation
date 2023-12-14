@@ -160,10 +160,9 @@ class Preference(models.Model):
         ('RUS','RUS-CHN标准'),
         ('CHN','CHN标准'),
     )
-    standard = models.CharField(choices=standard_choice, max_length=10, default='RUS',verbose_name='主页默认骨龄标准')
-    default_bone_choice = (
+    standard = models.CharField(choices=standard_choice, max_length=10, default='CHN',verbose_name='主页默认骨龄标准')
+    default_bone_choice = [
         ('radius','桡骨'),
-        ('ulna','尺骨'),
         ('first-metacarpal','第一掌骨'),
         ('third-metacarpal','第三掌骨'),
         ('fifth-metacarpal','第五掌骨'),
@@ -175,10 +174,11 @@ class Preference(models.Model):
         ('first-distal-phalange','第一远节指骨'),
         ('third-distal-phalange','第三远节指骨'),
         ('fifth-distal-phalange','第五远节指骨'),
-        ('capitate','头状骨'),
-        ('hamate','钩骨'),
-    )
-    default_bone = models.CharField(choices=default_bone_choice, max_length=100, default='radius',verbose_name='默认骨骼')
+    ]
+    chn_default_bone_choice = tuple(default_bone_choice + [('capitate','头状骨'),('hamate','钩骨')])
+    chn_default_bone = models.CharField(choices=chn_default_bone_choice, max_length=100, default='radius',verbose_name='CHN默认骨骼')
+    rus_default_bone_choice = tuple(default_bone_choice + [('ulna','尺骨')])
+    rus_default_bone = models.CharField(choices=rus_default_bone_choice, max_length=100, default='radius',verbose_name='RUS默认骨骼')
     shortcut = models.BooleanField(default=True, verbose_name='启用快捷键')
     bone_order_RUS = models.CharField(
         default='Radius|Ulna|First Metacarpal|Third Metacarpal|Fifth Metacarpal|'

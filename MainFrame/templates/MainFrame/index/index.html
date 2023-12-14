@@ -7,13 +7,6 @@
 {% block css %}
 {% endblock %}
 
-{% block logout %}
-    {% if request.user.is_authenticated %}
-        <div class="me-2">您好，{{user.username}}。<a class="text-light" href="{% url 'logout' %}" style="text-decoration: underline;color:white">点此退出登录</a></div>
-    {% endif %}
-{% endblock logout %}
-
-
 {% block content %}
 {% comment %} {% load static %} {% endcomment %}
 <!-- 轮播栏 -->
