@@ -17,7 +17,10 @@
           <h5 class="text-center">评测器</h5>
           <ul class="nav nav-tabs" id="evaluator_tabs">
             <li class="nav-item">
-              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#evaluator_shortcut" type="button">快捷键</button>
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#evaluator_general" type="button">通用</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#evaluator_shortcut" type="button">快捷键</button>
             </li>
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#evaluator_CHN" type="button">CHN</button>
@@ -27,7 +30,10 @@
             </li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane pt-3 active" id="evaluator_shortcut">
+            <div class="tab-pane pt-3 active" id="evaluator_general">
+              {% include 'BoneAge/preference/evaluator/general.html' %}
+            </div>
+            <div class="tab-pane pt-3" id="evaluator_shortcut">
               {% include 'BoneAge/preference/evaluator/shortcut.html' %}
             </div>
             <div class="tab-pane pt-3" id="evaluator_CHN">

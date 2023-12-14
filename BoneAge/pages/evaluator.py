@@ -31,6 +31,10 @@ def evaluator(request, task_id):
     # 加载默认骨骼
     preference.default_bone = getattr(preference, task.standard.lower() + '_default_bone')
 
+    # 加载自定义骨龄、分数复制格式
+    preference.bone_age_copy_format = getattr(preference, 'bone_age_copy_format_' + task.standard.lower())
+    preference.grade_copy_format = getattr(preference, 'grade_copy_format_' + task.standard.lower())
+
     # 上下一个任务（用于快捷键切换），若当前任务完结则以时间倒序为准，若当前任务未完成则以任务id为准
     if task.closed:
         pre_task = (

@@ -1,16 +1,40 @@
-<div class="form-label">默认骨骼：</div>
-<select name="rus_default_bone" class="form-select" id="rus_default_bone">
-  <option value="radius">桡骨</option>
-  <option value="ulna">尺骨</option>
-  <option value="first-metacarpal">第一掌骨</option>
-  <option value="third-metacarpal">第三掌骨</option>
-  <option value="fifth-metacarpal">第五掌骨</option>
-  <option value="first-proximal-phalange">第一近节指骨</option>
-  <option value="third-proximal-phalange">第三近节指骨</option>
-  <option value="fifth-proximal-phalange">第五近节指骨</option>
-  <option value="third-middle-phalange">第三中节指骨</option>
-  <option value="fifth-middle-phalange">第五中节指骨</option>
-  <option value="first-distal-phalange">第一远节指骨</option>
-  <option value="third-distal-phalange">第三远节指骨</option>
-  <option value="fifth-distal-phalange">第五远节指骨</option>
-</select>
+<div class="mb-3">
+  <div class="form-label">骨龄复制格式：</div>
+  <input
+      type="text"
+      class="form-control"
+      name="bone_age_copy_format_rus"
+      value="{{ preference.bone_age_copy_format_rus }}"
+  />
+  <small class="form-text text-muted">用{age}代替骨龄</small>
+</div>
+
+<div class="mb-3">
+  <div class="form-label">分数复制格式：</div>
+  <input
+      type="text"
+      class="form-control"
+      name="grade_copy_format_rus"
+      value="{{ preference.grade_copy_format_rus }}"
+  />
+  <small class="form-text text-muted">用{grade}代替分数</small>
+</div>
+
+<div class="mb-3">
+  <div class="form-label">默认骨骼：</div>
+  <select name="rus_default_bone" class="form-select" id="rus_default_bone">
+    <option value="radius">桡骨</option>
+    <option value="ulna">尺骨</option>
+    <option value="first-metacarpal">第一掌骨</option>
+    <option value="third-metacarpal">第三掌骨</option>
+    <option value="fifth-metacarpal">第五掌骨</option>
+    <option value="first-proximal-phalange">第一近节指骨</option>
+    <option value="third-proximal-phalange">第三近节指骨</option>
+    <option value="fifth-proximal-phalange">第五近节指骨</option>
+    <option value="third-middle-phalange">第三中节指骨</option>
+    <option value="fifth-middle-phalange">第五中节指骨</option>
+    <option value="first-distal-phalange">第一远节指骨</option>
+    <option value="third-distal-phalange">第三远节指骨</option>
+    <option value="fifth-distal-phalange">第五远节指骨</option>
+  </select>
+</div>

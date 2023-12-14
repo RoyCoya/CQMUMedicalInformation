@@ -153,7 +153,7 @@ $("#bone_details_level").on('input', function (e) {
 
 /* 骨龄复制到剪贴板 */
 $("#label_bone_age").click(async function (e) { 
-    var text = "骨龄（左手）：约" + $(this).text() + "岁。";
+    var text = bone_age_copy_format.replace("{age}", $(this).text())
     try{
         await navigator.clipboard.writeText(text);
         alert("已复制到剪贴板：\n" + text);
@@ -164,7 +164,7 @@ $("#label_bone_age").click(async function (e) {
 
 /* 骨骼分数复制到剪贴板 */
 $("#label_bone_grade").click(async function (e) { 
-    var text = "按RUS-CHN法测算，左手、腕骨发育成熟度评分为" + $(this).text() + "分。";
+    var text = grade_copy_format.replace("{grade}", $(this).text())
     try{
         await navigator.clipboard.writeText(text);
         alert("已复制到剪贴板：\n" + text);

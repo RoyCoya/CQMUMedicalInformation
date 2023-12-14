@@ -196,6 +196,10 @@ class Preference(models.Model):
         max_length= 500,
         verbose_name="CHN 骨骼排序"
     )
+    bone_age_copy_format_chn = models.CharField(default=r"骨龄（左手）：约{age}岁。", max_length=1000, verbose_name="骨龄复制格式（CHN）")
+    grade_copy_format_chn = models.CharField(default=r"按CHN法测算，左手、腕骨发育成熟度评分为{grade}分。", max_length=1000, verbose_name="分数复制格式（CHN）")
+    bone_age_copy_format_rus = models.CharField(default=r"骨龄（左手）：约{age}岁。", max_length=1000, verbose_name="骨龄复制格式（RUS）")
+    grade_copy_format_rus = models.CharField(default=r"按RUS-CHN法测算，左手、腕骨发育成熟度评分为{grade}分。", max_length=1000, verbose_name="分数复制格式（RUS）")
 
 # 骨龄专用PACS远程Query and Retrieve配置
 class PACS_QR(models.Model):

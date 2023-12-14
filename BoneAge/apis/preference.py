@@ -16,6 +16,6 @@ def save(request):
             try:
                 setattr(preference, field_name, field_value)
                 preference.save()
-            except AttributeError: return JsonResponse({'message': f'不存在字段 {field_name}'}, status=400)
+            except: pass
         return JsonResponse({'message': '设置保存成功'})
-    except json.JSONDecodeError: return JsonResponse({'message': f'无效的 JSON 数据\n原数据：{request.body}'}, status=400)
+    except Exception as e: return JsonResponse({'message': f'访问出错：{str(e)}'}, status=400)
