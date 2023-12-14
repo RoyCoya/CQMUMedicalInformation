@@ -20,10 +20,7 @@ def evaluator(request, task_id):
 
     # 根据当前任务的标准，按偏好加载骨骼数据
     bone_details = []
-    bone_order = {
-        "RUS": lambda: preference.bone_order_RUS.split("|"),
-        "CHN": lambda: preference.bone_order_CHN.split("|"),
-    }[task.standard]()
+    bone_order = getattr(preference, 'bone_order_' + task.standard).split("|")
     for bone_name in bone_order:
         try: bone_detail = BoneDetail.objects.get(name=bone_name, task=task)
         except Exception as e:
@@ -32,54 +29,37 @@ def evaluator(request, task_id):
     preference.bone_order = bone_order
 
     # 加载默认骨骼
-    preference.default_bone = {
-        "RUS" : preference.rus_default_bone,
-        "CHN" : preference.chn_default_bone,
-    }[task.standard]
+    preference.default_bone = getattr(preference, task.standard.lower() + '_default_bone')
 
     # 上下一个任务（用于快捷键切换），若当前任务完结则以时间倒序为准，若当前任务未完成则以任务id为准
-    pre_task = None
-    next_task = None
     if task.closed:
-        try:
-            pre_task = (
-                Task.objects.filter(standard=task.standard)
-                .filter(allocated_to=request.user, closed=True)
-                .filter(closed_date__gt=task.closed_date)
-                .order_by("closed_date")
-                .first()
-            )
-        except:
-            pass
-        try:
-            next_task = (
-                Task.objects.filter(standard=task.standard)
-                .filter(allocated_to=request.user, closed=True)
-                .filter(closed_date__lt=task.closed_date)
-                .order_by("closed_date")
-                .last()
-            )
-        except:
-            pass
+        pre_task = (
+            Task.objects.filter(standard=task.standard)
+            .filter(allocated_to=request.user, closed=True)
+            .filter(closed_date__gt=task.closed_date)
+            .order_by("closed_date")
+            .first()
+        )
+        next_task = (
+            Task.objects.filter(standard=task.standard)
+            .filter(allocated_to=request.user, closed=True)
+            .filter(closed_date__lt=task.closed_date)
+            .order_by("closed_date")
+            .last()
+        )
     else:
-        try:
-            pre_task = (
-                Task.objects.filter(standard=task.standard)
-                .filter(allocated_to=request.user, closed=False)
-                .filter(id__lt=task.id)
-                .last()
-            )
-        except:
-            pass
-        try:
-            next_task = (
-                Task.objects.filter(standard=task.standard)
-                .filter(allocated_to=request.user, closed=False)
-                .filter(id__gt=task.id)
-                .first()
-            )
-        except:
-            pass
+        pre_task = (
+            Task.objects.filter(standard=task.standard)
+            .filter(allocated_to=request.user, closed=False)
+            .filter(id__lt=task.id)
+            .last()
+        )
+        next_task = (
+            Task.objects.filter(standard=task.standard)
+            .filter(allocated_to=request.user, closed=False)
+            .filter(id__gt=task.id)
+            .first()
+        )
 
     # 历史记录
     historys = (
@@ -91,11 +71,7 @@ def evaluator(request, task_id):
     )
 
     # 修复骨骼时刷新页面的骨骼
-    bone_fixed = None
-    try:
-        bone_fixed = request.GET["bone_fixed"]
-    except:
-        pass
+    bone_fixed = request.GET.get("bone_fixed")
 
     # 计算task当时患者的实际年龄
     task.actual_age = get_study_age(task.dcm_file.base_dcm)
