@@ -15,7 +15,7 @@
                     <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
                 {% endif %}
             </td>
-            <td>{{task.dcm_file.base_dcm.patient.birthday|get_dcm_age:task.dcm_file.base_dcm.Study_Date|floatformat}}</td>
+            <td>{{task.dcm_file.base_dcm.study_age}}</td>
             <td>{% if task.dcm_file.base_dcm.Study_Date %}
                     {{task.dcm_file.base_dcm.Study_Date|date:"Y-n-j"}}
                 {% else %}
@@ -29,7 +29,7 @@
             <td>
                 {% if task.history > 0 %}
                     <a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge"
-                    class="bi bi-clock-history" style="font-size:1.2rem"> 
+                    class="bi bi-clock-history"> 
                         {{task.history}} 份
                     </a>
                 {% endif %}

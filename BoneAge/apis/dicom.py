@@ -78,6 +78,7 @@ def create_base_dcm(file : File, user) -> Tuple[base_DicomFile, int]:
         new_dcm.Study_Date = Study_Date.date()
         new_dcm.Study_Time = Study_Time.time()
     else: return None, 400
+    new_dcm.study_age = round((new_dcm.Study_Date - new_dcm.patient.birthday).days / 365, 2)
 
     new_dcm.Window_Center = tags['WindowCenter']
     new_dcm.Window_Width = tags['WindowWidth']
@@ -191,6 +192,3 @@ def parse_date_time(value, formats):
         try: return datetime.strptime(value, fmt)
         except: continue
     return None
-
-def get_study_age(dcm: base_DicomFile):
-    return round((dcm.Study_Date - dcm.patient.birthday).days / 365, 1)

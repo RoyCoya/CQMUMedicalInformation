@@ -26,7 +26,7 @@
     {{ task.dcm_file.base_dcm.patient.name }}<br />{{ task.dcm_file.base_dcm.patient.Patient_ID }}
   </td>
   <td class="align-middle table-warning">{{ task.dcm_file.base_dcm.patient.get_sex_display }}</td>
-  <td class="align-middle table-warning">{{ task.study_age }}</td>
+  <td class="align-middle table-warning">{{ task.dcm_file.base_dcm.study_age }}</td>
 
   <td class="align-middle table-secondary">
     {% if task.bone_age >= 0 %}

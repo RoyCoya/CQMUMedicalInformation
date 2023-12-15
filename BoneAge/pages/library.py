@@ -8,7 +8,6 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 
-from BoneAge.apis.dicom import get_study_age
 from BoneAge.models import Task
 from PatientManagement.models import Patient
 
@@ -46,7 +45,6 @@ def library(request):
     pages = Paginator(tasks, 15)
     page_numbers = pages.get_elided_page_range(current_page_number)
     tasks = pages.page(current_page_number)
-    for task in tasks: task.study_age = get_study_age(task.dcm_file.base_dcm)
 
     context = {
         "query_str": None,

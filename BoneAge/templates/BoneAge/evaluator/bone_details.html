@@ -41,7 +41,7 @@
         <div class="list-group-item p-2">
             <strong>实际：</strong>
             <span>
-                <span>{{task.actual_age|floatformat:1}}岁</span>｜
+                <span>{{ task.dcm_file.base_dcm.study_age }}岁</span>｜
                 {{patient.get_sex_display}}
                 {% if patient.sex == 'Female' %}
                     <i class="bi bi-gender-female" style="color:DeepPink"></i>

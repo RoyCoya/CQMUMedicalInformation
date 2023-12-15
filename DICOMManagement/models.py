@@ -28,6 +28,8 @@ class DicomFile(models.Model):
     Window_Center = models.CharField(null=True, blank=True, default=None, max_length=500, verbose_name='Window Center')
     Window_Width = models.CharField(null=True, blank=True, default=None, max_length=500, verbose_name='Window Width')
 
+    study_age = models.DecimalField(null=True, blank=True, default=None, max_digits=4, decimal_places=2)
+
     '''系统信息'''
     id = models.AutoField(primary_key=True, verbose_name='ID')
     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='DICOMManagement_DicomFile_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)

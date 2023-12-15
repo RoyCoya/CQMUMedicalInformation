@@ -7,8 +7,6 @@ from django.contrib.auth.decorators import login_required
 from BoneAge.apis.public_func import load_preference
 from BoneAge.models import BoneDetail, Task
 from BoneAge.apis.standard import GetJSON
-from BoneAge.apis.dicom import get_study_age
-
 
 # 评分器
 @login_required
@@ -76,9 +74,6 @@ def evaluator(request, task_id):
 
     # 修复骨骼时刷新页面的骨骼
     bone_fixed = request.GET.get("bone_fixed")
-
-    # 计算task当时患者的实际年龄
-    task.actual_age = get_study_age(task.dcm_file.base_dcm)
 
     # 加载骨龄标准的内容
     standard = GetJSON(task.standard)

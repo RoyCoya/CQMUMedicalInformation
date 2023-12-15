@@ -8,7 +8,6 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from BoneAge.apis.public_func import load_preference
-from BoneAge.apis.dicom import get_study_age
 from BoneAge.models import Task
 
 # 个人主页（未完结任务页面）
@@ -32,15 +31,12 @@ def index(request, page_number):
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
-        2 : lambda : 'study_age',
+        2 : lambda : 'dcm_file__base_dcm__study_age',
         3 : lambda : 'dcm_file__base_dcm__Study_Date',
         4 : lambda : 'allocated_datetime',
     }[order]()
-    for task in unfinished_tasks: task.study_age = get_study_age(task.dcm_file.base_dcm)
     if is_descend: order_para = '-' + order_para
-    if order not in [2,]: unfinished_tasks = unfinished_tasks.order_by(order_para)
-    # 需要复杂处理的排序字段
-    else: unfinished_tasks = sorted(unfinished_tasks, key=lambda x: x.study_age, reverse=True) if is_descend else sorted(unfinished_tasks, key=lambda x: x.study_age)
+    unfinished_tasks = unfinished_tasks.order_by(order_para)
     unfinished_tasks_count = len(unfinished_tasks)
 
     # 已完结任务
@@ -56,7 +52,7 @@ def index(request, page_number):
     has_previous_page = unfinished_tasks_current_page.has_previous()
     has_next_page = unfinished_tasks_current_page.has_next()
 
-    # 查询每个患者的历史评测记录数量
+    # 给当前页面的任务补充历史记录计数
     for task in unfinished_tasks_current_page:
         task.history = Task.objects.filter(dcm_file__base_dcm__patient__id=task.dcm_file.base_dcm.patient.id).filter(closed=True).count()
 
@@ -105,15 +101,13 @@ def finished_tasks(request, page_number):
     order_para = {
         0 : lambda : 'id',
         1 : lambda : 'dcm_file__base_dcm__patient__Patient_ID',
-        2 : lambda : 'dcm_file__age',
+        2 : lambda : 'dcm_file__base_dcm__study_age',
         3 : lambda : 'dcm_file__base_dcm__Study_Date',
         4 : lambda : 'allocated_datetime',
         5 : lambda : 'closed_date'
     }[order]()
-    for task in finished_tasks: task.study_age = get_study_age(task.dcm_file.base_dcm)
     if is_descend: order_para = '-' + order_para
-    if order not in [2,]: finished_tasks = finished_tasks.order_by(order_para)
-    else: finished_tasks = sorted(finished_tasks, key=lambda x: x.study_age, reverse=True) if is_descend else sorted(finished_tasks, key=lambda x: x.study_age)
+    finished_tasks = finished_tasks.order_by(order_para)
     finished_tasks_count = len(finished_tasks)
     unfinished_tasks = Task.objects.exclude(dcm_file__error=102).filter(standard=standard).filter(allocated_to=request.user).filter(closed=False).order_by('id')
     unfinished_tasks_count = len(unfinished_tasks)
@@ -126,6 +120,7 @@ def finished_tasks(request, page_number):
     has_previous_page = finished_tasks_current_page.has_previous()
     has_next_page = finished_tasks_current_page.has_next()
 
+    # 给当前页面的任务补充历史记录计数
     for task in finished_tasks_current_page:
         task.history = Task.objects.filter(dcm_file__base_dcm__patient__id=task.dcm_file.base_dcm.patient.id).filter(closed=True).count() - 1
 
