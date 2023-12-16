@@ -133,6 +133,7 @@ def finished_tasks(request, page_number):
 
     context = {
         'preference' : preference,
+        'standard' : standard,
         'finished_tasks' : finished_tasks_current_page,
         'finished_tasks_count' : finished_tasks_count,
         'order' : order,
