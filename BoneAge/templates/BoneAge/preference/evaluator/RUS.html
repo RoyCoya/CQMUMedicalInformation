@@ -1,3 +1,4 @@
+{% load preference %}
 <div class="mb-3">
   <div class="form-label">骨龄复制格式：</div>
   <input
@@ -37,4 +38,13 @@
     <option value="third-distal-phalange">第三远节指骨</option>
     <option value="fifth-distal-phalange">第五远节指骨</option>
   </select>
+</div>
+
+<div class="mb-3">
+  <div class="form-label">骨骼排序（拖拽修改）：</div>
+  <ul id="bone_order_RUS" class="list-group">
+    {% for bone_name, bone_name_cn in preference.bone_order_RUS|BoneOrder %}
+      <li class="list-group-item" bone-name="{{ bone_name }}">· {{ bone_name_cn }}</li>
+    {% endfor %}
+  </ul>  
 </div>

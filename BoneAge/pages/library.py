@@ -58,7 +58,6 @@ def library(request):
     # 单独取出filter相关的查询参数
     query_params = request.GET.dict()
     query_params.pop('page', None)
-    print(query_params)
     context['query_str'] = "&".join([f"{key}={value}" for key, value in query_params.items()])
 
     return render(request, "BoneAge/library/library.html", context)

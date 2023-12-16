@@ -356,4 +356,4 @@ if __name__ == '__main__':
     model = OnnxInfer(model_path)
     img_in = 'E:/infer_ml/data/test/images/2802.png'
     output = model.do_infer(img_in)
-    print(output)
+    

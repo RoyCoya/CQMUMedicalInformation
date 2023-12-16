@@ -63,7 +63,7 @@
 {% if preference.shortcut %}
 <script>
     is_shortcut_enable = true
-    var bone_order = [{% for bone in bone_order %}'{{bone|slugify}}',{% endfor %}]
+    var bone_order = [{% for bone in preference.bone_order %}'{{bone|slugify}}',{% endfor %}]
     var is_task_has_pre = false
     var is_task_has_next = false
     {% if pre_task %}
