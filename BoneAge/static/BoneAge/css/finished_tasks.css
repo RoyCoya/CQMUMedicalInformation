@@ -20,3 +20,5 @@ td a:hover{text-decoration: underline !important;}
 /* 分页器 */
 .page-link{color: var(--success_color)!important;}
 .page-item.active .page-link{background-color: var(--success_color)!important;color: white!important; border-color: rgba(80, 253, 0, 0.757);}
+
+#tasks tbody tr{ cursor:pointer;}

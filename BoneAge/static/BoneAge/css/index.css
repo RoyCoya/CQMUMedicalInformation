@@ -14,3 +14,5 @@ tbody td a:hover{text-decoration: underline !important;}
 .list-group-item-action:focus, .list-group-item-action:hover{color:white;background-color: var(--success_color);}
 .list-group-item a{color:var(--success_color)}
 .list-group-item a:hover{text-decoration: underline !important;}
+
+#tasks tbody tr{ cursor:pointer;}
