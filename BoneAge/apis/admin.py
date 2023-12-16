@@ -1,4 +1,5 @@
 import json
+import traceback
 from datetime import datetime
 
 from django.conf import settings
@@ -68,14 +69,15 @@ def allocate_tasks(request):
                 try:
                     allocate_task(dcm, allocator, standard, allocated_to, confidence)
                     success_allocated.append(dcm)
-                except Exception as e: error_allocated.append(str(dcm) + ":" + str(e))
+                except Exception as e:
+                    print(traceback.format_exc())
+                    error_allocated.append(str(dcm) + ":" + str(e))
         success_response = "成功分配：" + str(success_allocated) + "\n"
         error_response = "分配出错：" + str(error_allocated) + "\n"
         response = success_response + error_response
         return JsonResponse({"message": f"请求成功\n{response}"})
     except Exception as e: return JsonResponse({"message": f"请求失败：{str(e)}"}, status=500)
 
-@login_required
 def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated_to, confidence : float, delete_with_source = False) -> bool:
     # 如果当前需要创建的任务已存在（异步时可能有冲突），则跳过
     if Task.objects.filter(dcm_file=dcm).filter(standard=allocate_standard): raise ValidationError('任务已经存在，无法重复添加')
