@@ -30,10 +30,10 @@ $("#tasks th[id^=order_]").click(function () {
 });
 
 /* 任务列表跳转 */
-$("#tasks tr[id^=evaluator]").click(function () { 
+$("tr[id^=evaluator]").click(function () { 
     window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/")
 });
-$("#tasks div[id^=evaluator]").click(function () { 
+$("div[id^=evaluator]").click(function () { 
     window.location.assign("/boneage/evaluator/" + $(this).attr('id').replace("evaluator_","") + "/")
 });
 
