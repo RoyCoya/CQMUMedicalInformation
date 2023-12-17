@@ -44,7 +44,7 @@
     var url_api_save_image_offset = "{% url 'api_BoneAge_save_image_offset' %}"
     var default_bone = ("{{preference.default_bone}}")
     var is_shortcut_enable = false
-    var url_api_mark_task = "{% url 'api_BoneAge_mark_task' %}"
+    {% comment %} var url_api_mark_task = "{% url 'api_BoneAge_mark_task' %}" {% endcomment %}
     var bone_fixed = undefined
     {% if bone_fixed %}
     bone_fixed = "{{ bone_fixed }}"

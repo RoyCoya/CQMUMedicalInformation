@@ -63,7 +63,6 @@ class Task(models.Model):
     status = models.CharField(choices=status_choice, max_length=10, default='processing',verbose_name='任务状态')
     closed = models.BooleanField(default=False, verbose_name='已完结')
     closed_date = models.DateTimeField(null=True, blank=True, verbose_name='完成时间')
-    marked = models.BooleanField(default=False, verbose_name='收藏')
     remarks = models.TextField(null=True, blank=True, max_length=300, verbose_name="备注")
 
     '''系统信息'''

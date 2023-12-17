@@ -28,7 +28,7 @@ def api_modify_bone_detail(request): return api_evaluation.modify_bone_detail(re
 def api_modify_bone_position(request): return api_evaluation.modify_bone_position(request)
 # 任务处理
 def api_finish_task(request): return api_task.finish_task(request)
-def api_mark_task(request): return api_task.mark_task(request)
+# def api_mark_task(request): return api_task.mark_task(request)
 # 管理员操作
 def api_upload_dcm(request): return api_admin.upload_dcm(request)
 def api_allocate_tasks(request): return api_admin.allocate_tasks(request)

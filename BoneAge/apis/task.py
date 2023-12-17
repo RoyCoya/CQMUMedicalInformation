@@ -23,19 +23,19 @@ def finish_task(request):
         return JsonResponse({"message":"任务已标记为完成"})
     except Exception as e: return JsonResponse({"message" : f"请求失败：{e}"}, status=500)
 
-# 收藏任务
-@login_required
-def mark_task(request):
-    user = request.user
-    task_id = str(request.POST.get('task'))
+# # 收藏任务
+# @login_required
+# def mark_task(request):
+#     user = request.user
+#     task_id = str(request.POST.get('task'))
 
-    try:
-        task = Task.objects.get(id=task_id if task_id.isdigit() else None)
+#     try:
+#         task = Task.objects.get(id=task_id if task_id.isdigit() else None)
         
-        if user != task.allocated_to: return JsonResponse({"message":"该任务未分配于您"}, status=403)
+#         if user != task.allocated_to: return JsonResponse({"message":"该任务未分配于您"}, status=403)
         
-        task.marked = True if request.POST['marked'] == 'true' else False
-        task.save()
+#         task.marked = True if request.POST['marked'] == 'true' else False
+#         task.save()
 
-        return JsonResponse({"message":"任务收藏状态已切换"})
-    except Exception as e: JsonResponse({"message" : f"请求错误{e}"}, status=500)
+#         return JsonResponse({"message":"任务收藏状态已切换"})
+#     except Exception as e: JsonResponse({"message" : f"请求错误{e}"}, status=500)

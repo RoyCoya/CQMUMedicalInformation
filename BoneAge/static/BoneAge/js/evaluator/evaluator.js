@@ -240,33 +240,33 @@ $("#finish_task").click(function (e) {
 });
 
 /* 收藏任务 */
-$("#task_marked").click(function (e) {
-    if($(this).hasClass('bi-star')){
-        $(this).removeClass('bi-star');
-        $(this).addClass('bi-star-fill');
-        $.ajax({
-            type: "post",
-            url: url_api_mark_task,
-            data: {
-                'marked' : true,
-                'task' : task['id'],
-            },
-            dataType: "json",
-            headers:{'X-CSRFToken': csrftoken}
-        });
-    }
-    else{
-        $.ajax({
-            type: "post",
-            url: url_api_mark_task,
-            data: {
-                'marked' : false,
-                'task' : task['id'],
-            },
-            dataType: "json",
-            headers:{'X-CSRFToken': csrftoken}
-        });
-        $(this).removeClass('bi-star-fill');
-        $(this).addClass('bi-star');
-    }
-});
+// $("#task_marked").click(function (e) {
+//     if($(this).hasClass('bi-star')){
+//         $(this).removeClass('bi-star');
+//         $(this).addClass('bi-star-fill');
+//         $.ajax({
+//             type: "post",
+//             url: url_api_mark_task,
+//             data: {
+//                 'marked' : true,
+//                 'task' : task['id'],
+//             },
+//             dataType: "json",
+//             headers:{'X-CSRFToken': csrftoken}
+//         });
+//     }
+//     else{
+//         $.ajax({
+//             type: "post",
+//             url: url_api_mark_task,
+//             data: {
+//                 'marked' : false,
+//                 'task' : task['id'],
+//             },
+//             dataType: "json",
+//             headers:{'X-CSRFToken': csrftoken}
+//         });
+//         $(this).removeClass('bi-star-fill');
+//         $(this).addClass('bi-star');
+//     }
+// });
