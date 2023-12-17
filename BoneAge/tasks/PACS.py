@@ -71,7 +71,7 @@ def retrieve(pacs_qr, schedule, query):
     for index, study in enumerate(remote_studies):
         print(title + '获取序列：' + str(index + 1) + '/' + str(len(remote_studies)))
         try:
-            orthanc.modalities.retrieve_study(from_modality='PACS',dicom_id=study.dicom_id)
+            orthanc.modalities.retrieve_study(from_modality=remote_modality_alias,dicom_id=study.dicom_id)
         except HttpError as e:
             if e.http_status_code in (404, 500): pass
             else: print(e)
