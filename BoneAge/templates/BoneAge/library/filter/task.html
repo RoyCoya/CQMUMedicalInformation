@@ -4,21 +4,27 @@
     <select name="status" class="form-select form-control">
       <option value="" selected>所有</option>
       <option value="processing">进行中</option>
-      <option value="reported">检错中</option>
-      <option value="verifying">审核中</option>
+      <option value="reported">等待检错</option>
+      <option value="verifying">等待审核</option>
       <option value="finished">已完成</option>
     </select>
   </div>
   <div class="mb-2">
     <label class="form-label">分配员</label>
-    <select name="allocator" class="form-select form-control" disabled>
+    <select name="allocator" class="form-select form-control">
       <option value="" selected>所有</option>
+      {% for admin in admins %}
+      <option value="{{ admin.username }}">{{ admin.last_name }}{{ admin.first_name }} | {{ admin.username }}</option>
+      {% endfor %}
     </select>
   </div>
   <div class="mb-2">
     <label class="form-label">分配至</label>
-    <select name="allocate_to" class="form-select form-control" disabled>
+    <select name="allocated_to" class="form-select form-control">
       <option value="" selected>所有</option>
+      {% for evaluator in evaluators %}
+      <option value="{{ evaluator.username }}">{{ evaluator.last_name }}{{ evaluator.first_name }} | {{ evaluator.username }}</option>
+      {% endfor %}
     </select>
   </div>
   <div class="mb-2">

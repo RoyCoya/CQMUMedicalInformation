@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 
 from BoneAge.models import Task
 from PatientManagement.models import Patient
@@ -20,8 +21,8 @@ def library(request):
     # 筛选结果
     tasks = Task.objects.all()
     tasks = tasks.filter(status=query.get("status")) if query.get("status") else tasks
-    # tasks = tasks.filter(allocator=query.get('allocator')) if query.get('allocator') else tasks
-    # tasks = tasks.filter(allocatee=query.get('allocatee')) if query.get('allocatee') else tasks
+    tasks = tasks.filter(allocator=get_user_model().objects.get(username=query.get('allocator'))) if query.get('allocator') else tasks
+    tasks = tasks.filter(allocated_to=get_user_model().objects.get(username=query.get('allocated_to'))) if query.get('allocated_to') else tasks
     # tasks = tasks.filter(allocated_datetime=query.get('allocated_datetime')) if query.get('allocated_datetime') else tasks
     tasks = (
         tasks.filter(dcm_file__base_dcm__patient__name__icontains=query.get("name"))
@@ -33,8 +34,16 @@ def library(request):
         if query.get("sex")
         else tasks
     )
-    # tasks = tasks.filter(study_age=query.get('study_age')) if query.get('study_age') else tasks
-    # tasks = tasks.filter(bone_age=query.get('bone_age')) if query.get('bone_age') else tasks
+    if query.get('study_age_min') and query.get('study_age_max'):
+        min_age = query.get('study_age_min')
+        max_age = query.get('study_age_max')
+        if min_age > max_age: min_age, max_age = max_age, min_age
+        tasks = tasks.filter(dcm_file__base_dcm__study_age__range=(min_age, max_age))
+    if query.get('bone_age_min') and query.get('bone_age_max'):
+        min_age = query.get('bone_age_min')
+        max_age = query.get('bone_age_max')
+        if min_age > max_age: min_age, max_age = max_age, min_age
+        tasks = tasks.filter(bone_age__range=(min_age, max_age))
     # tasks = tasks.filter(study_date=query.get('study_date')) if query.get('study_date') else tasks
 
     # TODO: 排序结果
@@ -45,6 +54,10 @@ def library(request):
     pages = Paginator(tasks, 15)
     page_numbers = pages.get_elided_page_range(current_page_number)
     tasks = pages.page(current_page_number)
+    
+    # filter用参数
+    admins = get_user_model().objects.filter(is_active=True).exclude(is_staff=False)
+    evaluators = get_user_model().objects.filter(is_active=True).exclude(is_staff=True)
 
     context = {
         "query_str": None,
@@ -53,6 +66,8 @@ def library(request):
         "page_numbers": page_numbers,
         "has_previos": tasks.has_previous(),
         "has_next": tasks.has_next(),
+        'admins' : admins,
+        'evaluators' : evaluators,
     }
 
     # 单独取出filter相关的查询参数
