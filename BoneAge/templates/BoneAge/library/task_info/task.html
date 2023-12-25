@@ -1,12 +1,12 @@
-<td class="align-middle table-{{ bg }}">{{ task.id }}</td>
-<td class="align-middle table-{{ bg }}">
+<td class="table-{{ bg }}">{{ task.id }}</td>
+<td class="table-{{ bg }}">
   {% if task.closed %}
     完成于：{{ task.closed_date }}
   {% else %}
     {{ task.get_status_display }}
   {% endif %}
 </td>
-<td class="align-middle table-{{ bg }}">{{ task.standard }}</td>
-<td class="align-middle table-{{ bg }}">{{ task.allocator.last_name }}{{ task.allocator.first_name }}</td>
-<td class="align-middle table-{{ bg }}">{{ task.allocated_to.last_name }}{{ task.allocated_to.first_name }}</td>
-<td class="align-middle table-{{ bg }}">{{ task.allocated_datetime }}</td>
+<td class="table-{{ bg }}">{{ task.standard }}</td>
+<td class="table-{{ bg }}">{{ task.allocator.last_name }}{{ task.allocator.first_name }}</td>
+<td class="table-{{ bg }}">{{ task.allocated_to.last_name }}{{ task.allocated_to.first_name }}</td>
+<td class="table-{{ bg }}">{{ task.allocated_datetime }}</td>

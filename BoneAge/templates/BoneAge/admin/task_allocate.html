@@ -53,8 +53,8 @@
     </thead>
     <tbody>
       {% for dcm in unallocated_tasks %}
-        <tr id="info_unallocated_{{ dcm.id }}">
-          <td class="align-middle">
+        <tr id="info_unallocated_{{ dcm.id }}" class="align-middle">
+          <td>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="allocate_{{ dcm.id }}" value="{{ dcm.id }}" disabled />
               <span>
@@ -65,15 +65,15 @@
               </span>
             </div>
           </td>
-          <td class="align-middle">{{ dcm.base_dcm.patient.name }}（{{ dcm.base_dcm.patient.Patient_ID }}）</td>
+          <td>{{ dcm.base_dcm.patient.name }}（{{ dcm.base_dcm.patient.Patient_ID }}）</td>
           {% if dcm.base_dcm.Study_Date %}
-            <td class="align-middle">{{ dcm.base_dcm.Study_Date }}</td>
+            <td>{{ dcm.base_dcm.Study_Date }}</td>
           {% else %}
-            <td class="align-middle">
+            <td>
               <span class="text-danger">读取失败</span>
             </td>
           {% endif %}
-          <td class="align-middle" style="width:15%">
+          <td style="width:15%">
             <img src="{{ dcm.base_dcm.dcm_to_image.url }}" class="img-fluid" loading="lazy" />
           </td>
         </tr>

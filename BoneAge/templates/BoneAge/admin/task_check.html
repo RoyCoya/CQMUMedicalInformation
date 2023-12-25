@@ -20,15 +20,16 @@
             table-warning
           {% elif task.status == 'reported' %}
             table-danger
-          {% endif %}">
-          <td class="align-middle unchecked_info_task">{{ task.id }}</td>
-          <td class="align-middle unchecked_info_patient">
+          {% endif %}
+          align-middle">
+          <td class="unchecked_info_task">{{ task.id }}</td>
+          <td class="unchecked_info_patient">
             <a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}">
               {{ task.dcm_file.base_dcm.patient.name }}（{{ task.dcm_file.base_dcm.patient.Patient_ID }}）
             </a>
           </td>
-          <td class="align-middle unchecked_info_evaluator">{{ task.dcm_file.base_dcm.study_age }}</td>
-          <td class="align-middle unchecked_info_evaluator">
+          <td class="unchecked_info_evaluator">{{ task.dcm_file.base_dcm.study_age }}</td>
+          <td class="unchecked_info_evaluator">
             {{ task.bone_age }}
             {% if task.bone_age|subtract:task.dcm_file.base_dcm.study_age|abs > 1 %}
               <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="注意：判断年龄与实际年龄差距大于1年！"
@@ -36,9 +37,9 @@
               ></i>
             {% endif %}
           </td>
-          <td class="align-middle unchecked_info_evaluator">{{ task.get_status_display }}</td>
-          <td class="align-middle unchecked_info_evaluator">{{ task.newest_log.get_operation_display }}</td>
-          <td class="align-middle unchecked_info_evaluator">{{ task.newest_log.comment }}</td>
+          <td class="unchecked_info_evaluator">{{ task.get_status_display }}</td>
+          <td class="unchecked_info_evaluator">{{ task.newest_log.get_operation_display }}</td>
+          <td class="unchecked_info_evaluator">{{ task.newest_log.comment }}</td>
           <td>
             <a href="{% url 'BoneAge_evaluator' task.id %}" class="bi btn btn-primary text-center">详情</a>
           </td>

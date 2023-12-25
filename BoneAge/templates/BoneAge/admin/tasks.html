@@ -1,10 +1,10 @@
 <h2 class="text-center">任务列表</h2>
 <ul class="nav nav-tabs" id="evaluator_tabs">
   <li class="nav-item">
-    <button class="nav-link unchecked_tasks active" data-bs-toggle="tab" data-bs-target="#task_check" type="button">
+    <button class="nav-link unchecked_tasks active align-middle" data-bs-toggle="tab" data-bs-target="#task_check" type="button">
       <span>待审核</span>
       {% if unchecked_tasks %}
-        <span class="align-middle badge rounded-pill bg-danger">
+        <span class="badge rounded-pill bg-danger">
           {% if unchecked_tasks|length > 99 %}99+{% endif %}
           {{ unchecked_tasks|length }}
         </span>
@@ -12,10 +12,10 @@
     </button>
   </li>
   <li class="nav-item">
-    <button class="nav-link position-relative" data-bs-toggle="tab" data-bs-target="#task_allocate" type="button">
+    <button class="nav-link position-relative align-middle" data-bs-toggle="tab" data-bs-target="#task_allocate" type="button">
       <span>待分配</span>
       {% if unallocated_tasks %}
-        <span class="align-middle badge rounded-pill bg-danger">
+        <span class="badge rounded-pill bg-danger">
           {% if unallocated_tasks|length > 99 %}99+{% endif %}
           {{ unallocated_tasks|length }}
         </span>

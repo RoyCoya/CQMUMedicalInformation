@@ -1,4 +1,4 @@
-<tr id="task_{{ task.id }}">
+<tr id="task_{{ task.id }}" class="align-middle">
   {% if task.status == 'processing' %}
     {% include "BoneAge/library/task_info/task.html" with bg="primary" %}
   {% elif task.status == 'verifying' %}
