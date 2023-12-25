@@ -11,25 +11,6 @@ $(document).keypress(function (e) {
     switch(keycode){
         /* 回车保存骨骼信息，并自动向下切换 */
         case(13) : $("#modify_bone_detail").trigger('click');
-        /* 按r汇报错误任务（评测员）或拒绝通过审核（管理员） */
-        case(82):
-        case(114) : {
-            if (is_admin) {
-                switch (task.status) {
-                    case "reported":
-                        $("#confirm_reject_report").click();
-                        break;
-                    case "verifying":
-                        $("#confirm_reject_submit").click();
-                        break;
-                    default: break;
-                }
-            }
-            else{
-                if(task.status=="processing") {$("#confirm_report").click();}
-            }
-            break;
-        }
         /* 按s向下切换骨骼 */
         case(83) : 
         case(115) : {
@@ -49,6 +30,26 @@ $(document).keypress(function (e) {
             $("#view-" + bone_name_key).parent().addClass('active')
             $.fn.switch_bone(bone_name_key)
             cropper.setData(bones[bone_name_key])
+            break;
+        }
+
+        /* 按r汇报错误任务（评测员）或拒绝通过审核（管理员） */
+        case(82):
+        case(114) : {
+            if (is_admin) {
+                switch (task.status) {
+                    case "reported":
+                        $("#confirm_reject_report").click();
+                        break;
+                    case "verifying":
+                        $("#confirm_reject_submit").click();
+                        break;
+                    default: break;
+                }
+            }
+            else{
+                if(task.status=="processing") {$("#confirm_report").click();}
+            }
             break;
         }
         /* 按w向上切换骨骼 */
