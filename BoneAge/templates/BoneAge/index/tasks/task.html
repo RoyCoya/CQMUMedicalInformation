@@ -18,7 +18,7 @@
             {% endif %}
             <td>{{task.allocated_datetime|date:"Y-n-j H:i"}}</td>
             <td>{{ task.get_status_display }}</td>
-            <td>{{ task.newest_log.get_operation_display }}</td>
+            <td class="{% if task.newest_log.operation == 'reject' %}text-danger{% endif %}">{{ task.newest_log.get_operation_display }}</td>
             <td><a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}">
                 {{task.dcm_file.base_dcm.patient.name}}｜{{task.dcm_file.base_dcm.patient.Patient_ID}}
             </a></td>

@@ -56,17 +56,29 @@
   {% include "BoneAge/evaluator/task/modal/history.html" %}
 </div>
 
-<div class="text-light text-center mb-3
-{% if task.status == 'finished' %}
-bg-success
-{% elif task.status == 'processing' %}
-bg-primary
-{% elif task.status == 'reported' %}
-bg-danger
-{% elif task.status == 'verifying' %}
-bg-warning
-{% endif %}"
->{{ task.get_status_display }}{% if read_only %}（只读）{% else %}（编辑模式）{% endif %}</div>
+{% if logs.0.operation == "reject" %}
+  <div class="text-center mb-3 bg-danger">
+    <a href="#" data-bs-toggle="modal" data-bs-target="#task_logs" class="text-light">
+      提交/报错未通过审核，
+      <br>
+      点击查看留言
+    </a>
+  </div>
+{% else %}
+  <div class="text-light text-center mb-3
+  {% if task.status == 'finished' %}
+  bg-success
+  {% elif task.status == 'processing' %}
+  bg-primary
+  {% elif task.status == 'reported' %}
+  bg-danger
+  {% elif task.status == 'verifying' %}
+  bg-warning
+  {% endif %}"
+  >{{ task.get_status_display }}{% if read_only %}（只读）{% else %}（编辑模式）{% endif %}</div>
+{% endif %}
+
+
 
 
 {% include 'BoneAge/evaluator/task/bone_selector.html' %}
