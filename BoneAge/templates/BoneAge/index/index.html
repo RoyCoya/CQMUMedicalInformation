@@ -20,17 +20,18 @@
 </div>
 
 <div class="row">
-    <!-- 未完成评测任务表 -->
-    <div class="col-9 border-end ps-5 pe-5">
-        {% block task %}
-            {% include 'BoneAge/index/tasks/tasks.html' with tasks_finished=False %}
-        {% endblock task %}
-    </div>
     <!-- 面板 -->
-    <div class="col-3">
+    <div class="col-3 border-end px-3">
         {% block pannel %}
             {% include 'BoneAge/index/pannel.html' with is_finished=True %}
         {% endblock pannel %}
+    </div>
+    
+    <!-- 任务表 -->
+    <div class="col-9 px-3">
+        {% block task %}
+            {% include 'BoneAge/index/tasks/tasks.html' with tasks_finished=False %}
+        {% endblock task %}
     </div>
 </div>
 {% include 'BoneAge/preference/preference.html' %}
@@ -50,6 +51,7 @@
     var tasks_finished = {% block is_task_finished %}false{% endblock is_task_finished %}
     var preference_shortcut = {% if preference.shortcut %}true{% else %}false{% endif %}
 </script>
+<script src="{% static 'BoneAge/js/index/url_para_update.js' %}"></script>
 <script src="{% static 'BoneAge/js/index/index.js' %}"></script>
 {% include "BoneAge/preference/preference_js.html" %}
 {% endblock js_BoneAge %}

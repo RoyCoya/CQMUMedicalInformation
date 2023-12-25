@@ -6,15 +6,22 @@
             table-danger
             {% elif task.status == 'verifying' %}
             table-warning
+            {% elif task.status == 'finished' %}
+            table-success
             {% else %}
             table-primary
             {% endif %}"
         >
             <td>{{task.id}} {% if task.marked %}<i class='bi bi-star-fill text-warning'></i>{% endif %}</td>
+            {% if tasks_finished %}
+                <td>{{task.closed_date|date:"Y-n-j H:i"}}</td>
+            {% endif %}
+            <td>{{task.allocated_datetime|date:"Y-n-j H:i"}}</td>
+            <td>{{ task.get_status_display }}</td>
+            <td>{{ task.newest_log.get_operation_display }}</td>
             <td><a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}">
-                {{task.dcm_file.base_dcm.patient.name}}
+                {{task.dcm_file.base_dcm.patient.name}}｜{{task.dcm_file.base_dcm.patient.Patient_ID}}
             </a></td>
-            <td>{{task.dcm_file.base_dcm.patient.Patient_ID}}</td>
             <td>
                 {{task.dcm_file.base_dcm.patient.get_sex_display}}
                 {% if task.dcm_file.base_dcm.patient.sex == 'Female' %}
@@ -30,10 +37,6 @@
                 未知
                 {% endif %}
             </td>
-            {% if tasks_finished %}
-                <td>{{task.closed_date|date:"Y-n-j H:i"}}</td>
-            {% endif %}
-            <td>{{task.allocated_datetime|date:"Y-n-j H:i"}}</td>
             <td>
                 {% if task.history > 0 %}
                     <a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge"

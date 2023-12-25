@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from BoneAge.apis.public_func import load_preference
-from BoneAge.models import Task
+from BoneAge.models import Task, TaskLog
 
 # 个人主页（未完结任务页面）
 @login_required
@@ -53,8 +53,9 @@ def index(request, page_number):
     has_previous_page = unfinished_tasks_current_page.has_previous()
     has_next_page = unfinished_tasks_current_page.has_next()
 
-    # 给当前页面的任务补充历史记录计数
+    # 给当前页面的任务补充最新操作、历史记录计数
     for task in unfinished_tasks_current_page:
+        task.newest_log = TaskLog.objects.filter(task=task).latest('create_time')
         task.history = Task.objects.filter(dcm_file__base_dcm__patient__id=task.dcm_file.base_dcm.patient.id).filter(closed=True).count()
 
     # 完结任务大于6个折叠，跳转给完结任务界面

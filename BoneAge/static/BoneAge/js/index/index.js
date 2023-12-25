@@ -11,6 +11,13 @@ $(document).ready(function () {
     is_descend == 1 ? 
         $("th[id^=order_" + order + "] i").addClass('bi-caret-down-fill') :
         $("th[id^=order_" + order + "] i").addClass('bi-caret-up-fill')
+    $("#task_list_standard").val(standard);
+});
+
+/* 切换任务标准 */
+$("#task_list_standard").change(function (e) { 
+    url = updateQueryStringParameter(window.location.href, 'standard', $(this).val());
+    window.location.href = url;
 });
 
 /* 列表表头排序跳转 */

@@ -81,11 +81,9 @@
     {% else %}
         <span class="text-secondary">暂未完成任务。</span>
     {% endif %}
-    {% if finished_tasks_count > 6 %}
-        <div class="text-end mt-3"><a class="text-success" href="{% url 'BoneAge_finished_tasks' 1 %}">
-            共 {{finished_tasks_count}} 项 >>>
-        </a></div>
-    {% endif %}
+    <div class="text-end mt-3"><a class="text-success" href="{% url 'BoneAge_finished_tasks' 1 %}?standard={{standard}}">
+        共 {{finished_tasks_count}} 项 >>>
+    </a></div>
 </div>
 {% else %}
 <div class="row mt-2">
@@ -117,7 +115,7 @@
     {% else %}
         <span class="text-secondary">暂未被分配任务。</span>
     {% endif %}
-    <div class="text-end mt-3"><a href="{% url 'BoneAge_index' 1 %}">
+    <div class="text-end mt-3"><a href="{% url 'BoneAge_index' 1 %}?standard={{standard}}">
         共 {{unfinished_tasks_count}} 项 >>>
     </a></div>
 </div>

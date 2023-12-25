@@ -1,28 +1,35 @@
-{% if tasks_finished %}
-<h2 class="text-center text-success">
-    <i class="bi bi-check2-all text-success"></i>
-    完结任务 （{{standard}}）
-</h2>
-{% else %}
-<h2 class="text-center">
-    <i class="bi bi-receipt"></i>
-    任务列表（{{standard}}）
-</h2>
-{% endif %}
+<div class="d-flex justify-content-between align-items-center">
+    {% if tasks_finished %}
+    <h2 class="bi bi-check2-all text-success"> 完结任务</h2>
+    {% else %}
+    <h2 class="bi bi-receipt"> 任务列表</h2>
+    {% endif %}
+    <div>
+        <div class="input-group">
+            <span class="input-group-text">标准</span>
+            <select id="task_list_standard" name="type" class="form-select form-control w-25">
+              <option value="CHN" selected>CHN</option>
+              <option value="RUS">RUS-CHN</option>
+            </select>
+        </div>
+    </div>
+</div>
+
 <table id="tasks" class="table table-hover">
     <thead>
         <tr>
             <th id="order_0"><a href="#">任务ID <i class="bi"></i></a></th>
-            <th>姓名</th>
-            <th id="order_1"><a href="#">患者ID <i class="bi"></i></a></th>
-            <th>性别</th>
-            <th id="order_2"><a href="#">检查时年龄 <i class="bi"></i></a></th>
-            <th id="order_3"><a href="#">检查日期 <i class="bi"></i></a></th>
             {% if tasks_finished %}
             <th id="order_5"><a href="#">任务完成时间 <i class="bi"></i></a></th>
             {% endif %}
             <th id="order_4"><a href="#">任务分配时间 <i class="bi"></i></a></th>
-            <th>历史记录</th>
+            <th>任务状态</th>
+            <th>最新操作</th>
+            <th id="order_1"><a href="#">患者｜ID <i class="bi"></i></a></th>
+            <th>性别</th>
+            <th id="order_2"><a href="#">检查时年龄 <i class="bi"></i></a></th>
+            <th id="order_3"><a href="#">检查日期 <i class="bi"></i></a></th>
+            <th>历史骨龄</th>
         </tr>
     </thead>
     {% if tasks_finished %}
