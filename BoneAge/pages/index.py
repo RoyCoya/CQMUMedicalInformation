@@ -25,6 +25,7 @@ def index(request, page_number):
     
     # 未完成任务
     unfinished_tasks = Task.objects.exclude(dcm_file__error=102).filter(standard=standard).filter(closed=False).filter(allocated_to=request.user)
+
     # 排序参数
     if order > 4:
         return HttpResponseRedirect(reverse('BoneAge_index',args=(1,)))

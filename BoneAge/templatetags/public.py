@@ -20,9 +20,14 @@ def convert_time_to_period(value):
 # 值相减
 @register.filter(name='subtract')
 def subtract(value, arg):
-    return value - arg
+    try:
+        return float(value) - float(arg)
+    except Exception as e: return e
 
 # 取绝对值
 @register.filter(name='abs')
 def abs(value):
-    return math.fabs(value)
+    try:
+        return math.fabs(float(value))
+    except Exception as e: return e
+    

@@ -56,14 +56,14 @@ class Task(models.Model):
     bone_age = models.FloatField(default=-1.0, verbose_name='骨龄')
     status_choice = (
         ('processing', '进行中'),
-        ('reported', '检错中'),
-        ('verifying', '审核中'),
+        ('reported', '等待检错'),
+        ('verifying', '等待审核'),
         ('finished', '已完成'),
     )
     status = models.CharField(choices=status_choice, max_length=10, default='processing',verbose_name='任务状态')
     closed = models.BooleanField(default=False, verbose_name='已完结')
     closed_date = models.DateTimeField(null=True, blank=True, verbose_name='完成时间')
-    remarks = models.TextField(null=True, blank=True, max_length=300, verbose_name="备注")
+    remarks = models.TextField(null=True, blank=True, max_length=5000, verbose_name="备注")
 
     '''系统信息'''
     id = models.AutoField(primary_key=True,verbose_name='ID')
@@ -72,6 +72,32 @@ class Task(models.Model):
     allocated_datetime = models.DateTimeField(null=True, blank=True, verbose_name="分配时间")
     modify_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_Task_modifier', verbose_name='最后修改者', on_delete=models.PROTECT)
     modify_date = models.DateTimeField(auto_now=True, verbose_name='最后修改时间')
+
+class TaskLog(models.Model):
+    class Meta:
+        verbose_name = '任务日志'
+        verbose_name_plural = '任务日志'
+    def __str__(self):
+        return "任务ID：str(self.task.id)" + "|" +  str(self.id)
+    
+    id = models.AutoField(primary_key=True,verbose_name='ID')
+    task = models.ForeignKey(Task,related_name='BoneAge_TaskLog_task', on_delete=models.CASCADE,verbose_name='所属任务')
+    operation_choice = (
+        ('create', '新建任务'),
+        ('update', '更新内容'),
+        ('report', '报错待审'),
+        ('submit', '完成待审'),
+        ('withdraw', '撤销提交'),
+        ('reject', '审核不通过'),
+        ('verify', '审核通过'),
+        ('finish', '快捷完成任务'),
+        ('delete', '删除任务'),
+        ('reopen', '重开任务'),
+    )
+    operation = models.CharField(choices=operation_choice, max_length=10, verbose_name='操作')
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='BoneAge_TaskLog_operator', verbose_name='', on_delete=models.DO_NOTHING)
+    comment = models.TextField(null=True, blank=True, max_length=5000, verbose_name='附言')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='记录时间')
 
 # 每根骨头的详细数据，和唯一的task为n:1关系
 class BoneDetail(models.Model):
@@ -125,9 +151,9 @@ class BoneDetail(models.Model):
         (14,'14级')
     )
     error_choice = (
-        (0,'正常'),
-        (202,'未初始化解析'),
-        (404,'无法定位'),
+        (0, '正常'),
+        (202, '未初始化解析'),
+        (404, '无法定位'),
     )
     task = models.ForeignKey(Task, related_name='BoneAge_BoneDetail_task', on_delete=models.CASCADE, verbose_name='所属任务')
     name = models.CharField(choices=bone_name_choice, max_length=23,verbose_name='骨名')

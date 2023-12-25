@@ -1,0 +1,12 @@
+<td class="align-middle table-light">
+  {% if task.bone_age >= 0 %}
+    {{ task.bone_age }}
+  {% else %}
+    识别出错
+  {% endif %}
+</td>
+<td class="align-middle table-light">{{ task.dcm_file.base_dcm.Study_Date }} {{ task.dcm_file.base_dcm.Study_Time }}</td>
+<td class="align-middle table-light">{{ task.dcm_file.base_dcm.id }}</td>
+<td class="align-middle table-light" style="width:10%">
+  <img src="{{ task.dcm_file.base_dcm.dcm_to_image.url }}" class="img-fluid" loading="lazy" />
+</td>

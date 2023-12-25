@@ -1,0 +1,23 @@
+<div class="modal fade" tabindex="-1" id="modal_delete" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">删除当前任务？</h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-label">删除方式：</div>
+        <select name="type" id="delete_type" class="form-select mb-2">
+          <option value="with_base_dcm" selected>连带源文件（从整个平台中删除）</option>
+          <option value="recall">召回（删除内容并返回待分配任务池）</option>
+          <option value="with_dcm">连带骨龄系统中的影像（源文件仍存在上层的“影像管理”中）</option>
+        </select>
+        <div class="form-label">附言：</div>
+        <textarea name="comment" id="comment_delete" type="text" class="form-control" rows="10" placeholder="不超过5000字" /></textarea>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-danger" id="confirm_delete" href="#" data-bs-dismiss="modal">确认</a>
+        <a class="btn btn-outline-secondary" href="#" data-bs-dismiss="modal">关闭</a>
+      </div>
+    </div>
+  </div>
+</div>

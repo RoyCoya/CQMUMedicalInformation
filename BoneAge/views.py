@@ -1,3 +1,6 @@
+from django.shortcuts import redirect
+from django.urls import reverse
+
 from BoneAge.pages import index, evaluator, library, admin
 from BoneAge.apis import preference as api_preference, evaluation as api_evaluation, task as api_task, admin as api_admin, superuser as api_superuser
 
@@ -6,7 +9,7 @@ from BoneAge.apis import preference as api_preference, evaluation as api_evaluat
 '''
 # 主页
 def page_index(request, page_number): 
-    if request.user.is_staff: return admin.admin(request)
+    if request.user.is_staff: return redirect(reverse('BoneAge_admin'))
     return index.index(request, page_number)
 def page_finished_tasks(request, page_number): return index.finished_tasks(request, page_number)
 # 管理员
@@ -27,7 +30,14 @@ def api_save_image_offset(request): return api_evaluation.save_image_offset(requ
 def api_modify_bone_detail(request): return api_evaluation.modify_bone_detail(request)
 def api_modify_bone_position(request): return api_evaluation.modify_bone_position(request)
 # 任务处理
-def api_finish_task(request): return api_task.finish_task(request)
+def api_task_report(request): return api_task.report(request)
+def api_task_submit(request): return api_task.submit(request)
+def api_task_withdraw(request): return api_task.withdraw(request)
+def api_task_verify(request): return api_task.verify(request)
+def api_task_reject(request): return api_task.reject(request)
+def api_task_finish(request): return api_task.finish(request)
+def api_task_reopen(request): return api_task.reopen(request)
+def api_task_delete(request): return api_task.delete(request)
 # def api_mark_task(request): return api_task.mark_task(request)
 # 管理员操作
 def api_upload_dcm(request): return api_admin.upload_dcm(request)

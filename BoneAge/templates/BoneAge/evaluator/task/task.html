@@ -1,0 +1,73 @@
+{% load static %}
+{% load public %}
+
+<div class="d-flex justify-content-between mb-2">
+  <h3>任务{{ task.id }}</h3>
+  <h3>{{ task.get_standard_display }}</h3>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="btn-group">
+    {% if task.status == 'processing' %}
+      {% if user.is_staff %}
+        <button id="finish" class="btn btn-outline-success" type="button"  data-bs-toggle="modal" data-bs-target="#modal_finish">完成</button>
+        <button id="delete" class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#modal_delete">删除</button>
+      {% else %}
+        <button id="submit" class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#modal_submit">提交</button>
+        <button id="report" class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#modal_report">报错</button>
+      {% endif %}
+    {% endif %}
+
+    {% if task.status == 'verifying' or task.status == 'reported' %}
+      {% if user.is_staff %}
+        {% if task.status == 'verifying' %}
+          <button id="verify" class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#modal_verify_submit">通过</button>
+          <button id="reject" class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#modal_reject_submit">拒绝</button>
+        {% else %}
+          <button id="verify" class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#modal_verify_report">确认</button>
+          <button id="reject" class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal_reject_report">退回</button>
+        {% endif %}
+      {% else %}
+        <button id="withdraw" class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal_withdraw">撤回</button>
+      {% endif %}
+    {% endif %}
+
+    {% if task.status == 'finished' and user.is_staff %}
+      <button id="reopen" class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#modal_reopen">重开</button>
+      <button id="delete" class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#modal_delete">删除</button>
+    {% endif %}
+
+    {% include "BoneAge/evaluator/task/modal/finish.html" %}
+    {% include "BoneAge/evaluator/task/modal/delete.html" %}
+    {% include "BoneAge/evaluator/task/modal/submit.html" %}
+    {% include "BoneAge/evaluator/task/modal/report.html" %}
+    {% include "BoneAge/evaluator/task/modal/verify_submit.html" %}
+    {% include "BoneAge/evaluator/task/modal/reject_submit.html" %}
+    {% include "BoneAge/evaluator/task/modal/verify_report.html" %}
+    {% include "BoneAge/evaluator/task/modal/reject_report.html" %}
+    {% include "BoneAge/evaluator/task/modal/withdraw.html" %}
+    {% include "BoneAge/evaluator/task/modal/reopen.html" %}
+
+  </div>
+  <a href="#" data-bs-toggle="modal" data-bs-target="#task_logs">
+    <strong class="bi bi-clock-history"></strong>
+    <strong class="align-self-middle">修改记录</strong>
+  </a>
+  {% include "BoneAge/evaluator/task/modal/history.html" %}
+</div>
+
+<div class="text-light text-center mb-3
+{% if task.status == 'finished' %}
+bg-success
+{% elif task.status == 'processing' %}
+bg-primary
+{% elif task.status == 'reported' %}
+bg-danger
+{% elif task.status == 'verifying' %}
+bg-warning
+{% endif %}"
+>{{ task.get_status_display }}{% if read_only %}（只读）{% else %}（编辑模式）{% endif %}</div>
+
+
+{% include 'BoneAge/evaluator/task/bone_selector.html' %}
+<input id="bone_age" type="number" class="form-control invisible" placeholder="" min="0" max="18" step="0.1" />

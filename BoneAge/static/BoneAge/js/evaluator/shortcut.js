@@ -5,12 +5,31 @@ var task_no_next_modal = new bootstrap.Modal($('#modal_task_no_next'), {keyboard
 
 $(document).keypress(function (e) { 
     keycode = e.keyCode
-    // console.log(keycode);
+    console.log(keycode);
     if($('.modal').hasClass('show')) return;
     if($("#bone_details_remarks").is(":focus")) return;
     switch(keycode){
         /* 回车保存骨骼信息，并自动向下切换 */
         case(13) : $("#modify_bone_detail").trigger('click');
+        /* 按r汇报错误任务（评测员）或拒绝通过审核（管理员） */
+        case(82):
+        case(114) : {
+            if (is_admin) {
+                switch (task.status) {
+                    case "reported":
+                        $("#confirm_reject_report").click();
+                        break;
+                    case "verifying":
+                        $("#confirm_reject_submit").click();
+                        break;
+                    default: break;
+                }
+            }
+            else{
+                if(task.status=="processing") {$("#confirm_report").click();}
+            }
+            break;
+        }
         /* 按s向下切换骨骼 */
         case(83) : 
         case(115) : {
@@ -67,10 +86,27 @@ $(document).keypress(function (e) {
             else task_no_next_modal.show()
             break;
         }
-        /* 按F完成任务 */
+        /* 按F完成/提交任务 */
         case(70) :
         case(102) : {
-            $("#task_closed").click();
+            if(is_admin) {
+                switch (task.status) {
+                    case "processing":
+                        $("#confirm_finish").click();
+                        break;
+                    case "reported":
+                        $("#confirm_verify_report").click();
+                        break;
+                    case "verifying":
+                        $("#confirm_verify_submit").click();
+                        break;
+                    default: break;
+                }
+                window.location.assign(url_task_next)
+            }
+            else{ 
+                if(task.status=="processing") {$("#confirm_submit").click();}
+            }
             break;
         }
         /* 按Q退出评分器 */

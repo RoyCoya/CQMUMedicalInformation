@@ -1,0 +1,33 @@
+<h2 class="text-center">任务列表</h2>
+<ul class="nav nav-tabs" id="evaluator_tabs">
+  <li class="nav-item">
+    <button class="nav-link unchecked_tasks active" data-bs-toggle="tab" data-bs-target="#task_check" type="button">
+      <span>待审核</span>
+      {% if unchecked_tasks %}
+        <span class="align-middle badge rounded-pill bg-danger">
+          {% if unchecked_tasks|length > 99 %}99+{% endif %}
+          {{ unchecked_tasks|length }}
+        </span>
+      {% endif %}
+    </button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link position-relative" data-bs-toggle="tab" data-bs-target="#task_allocate" type="button">
+      <span>待分配</span>
+      {% if unallocated_tasks %}
+        <span class="align-middle badge rounded-pill bg-danger">
+          {% if unallocated_tasks|length > 99 %}99+{% endif %}
+          {{ unallocated_tasks|length }}
+        </span>
+      {% endif %}
+    </button>
+  </li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane pt-3 active" id="task_check">
+    {% include 'BoneAge/admin/task_check.html' %}
+  </div>
+  <div class="tab-pane pt-3" id="task_allocate">
+    {% include 'BoneAge/admin/task_allocate.html' %}
+  </div>
+</div>

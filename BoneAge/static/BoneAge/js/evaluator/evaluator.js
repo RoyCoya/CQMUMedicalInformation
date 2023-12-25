@@ -2,10 +2,6 @@
 //csrf token
 const getCookie = (name) => document.cookie.match(`[;\s+]?${name}=([^;]*)`)?.pop();
 const csrftoken = getCookie('csrftoken');
-// 任务存在未完成内容的提示modal
-var task_notcompleted_modal = new bootstrap.Modal($('#modal_task_notcompleted'), {keyboard: false})
-// 完成任务的确认modal
-var finish_task_modal = new bootstrap.Modal($('#modal_finish_task'), {keyboard: false})
 // 进入页面时的默认骨骼调整
 if(bone_fixed != undefined){    
     default_bone = bone_fixed;
@@ -51,7 +47,7 @@ $("#brightness_up").click(function (e) {
     crop_brightness = brightness - 12
     $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ crop_brightness +'%)');
     $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
-    $("#save_offset").removeClass('invisible')
+    if(!task['closed']){ $("#save_offset").removeClass('invisible'); }
 });
 $("#brightness_down").click(function (e) {
     brightness -= 20
@@ -59,21 +55,21 @@ $("#brightness_down").click(function (e) {
     crop_brightness = brightness - 12
     $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ crop_brightness +'%)');
     $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
-    $("#save_offset").removeClass('invisible')
+    if(!task['closed']){ $("#save_offset").removeClass('invisible'); }
 });
 $("#contrast_up").click(function (e) {
     contrast += 5
     $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
     $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
     $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
-    $("#save_offset").removeClass('invisible')
+    if(!task['closed']){ $("#save_offset").removeClass('invisible'); }
 });
 $("#contrast_down").click(function (e) {
     contrast -= 5
     $("div[class=cropper-canvas] img").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
     $("div[class=cropper-crop-box]").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
     $("#img_preview").css('filter', 'contrast('+ contrast +'%)' + 'brightness('+ brightness +'%)');
-    $("#save_offset").removeClass('invisible')
+    if(!task['closed']){ $("#save_offset").removeClass('invisible'); }
 });
 
 /* 图像亮度对比度调整 */
@@ -201,42 +197,6 @@ $("#bone_age").change(function (e) {
     if(bone_age >= 0 && Math.abs(actual_age - bone_age) >= 1){
         $("#warning_age_misregistration").removeAttr('hidden');
     }
-});
-
-/* 将本条评测任务标记为已完成 */
-$("#task_closed").click(function (e) {
-    var is_valid = true
-    var bone_age = $("#bone_age").val()
-    $.each(bones, function(bone_name_key,bone_details){
-        if(bone_details['level'] < 0) is_valid = false
-        if(bone_details['error'] != 0) is_valid = false
-    })
-    if(bone_age == '') is_valid = false
-    if(is_valid){
-        if(!is_shortcut_enable) finish_task_modal.show();
-        this.checked = true
-        $('#label_task_status').text('已完成')
-        $('#label_task_status').removeClass('text-primary')
-        $('#label_task_status').addClass('text-success')
-        task['closed'] = true
-        task['bone_age'] = bone_age
-        $.ajax({
-            type: "post",
-            url: url_api_finish_task,
-            data: task,
-            dataType: "json",
-            headers:{'X-CSRFToken': csrftoken}
-        });
-    }
-    else{
-        task_notcompleted_modal.show()
-        this.checked = false
-    }
-});
-
-/* 完成任务，跳转至个人主页 */
-$("#finish_task").click(function (e) { 
-    window.location.assign(url_personal_index);
 });
 
 /* 收藏任务 */

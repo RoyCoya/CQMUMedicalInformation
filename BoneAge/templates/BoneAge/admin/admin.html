@@ -15,12 +15,8 @@
 {% endblock %}
 
 {% block content_BoneAge %}
-  <div class="alert alert-{% if error_dcm_count > 0 %}danger{% else %}primary{% endif %} d-flex justify-content-between" role="alert">
-    {% if error_dcm_count > 0 %}
-      <span>存在 {{ error_dcm_count }} 个待处理错误报告，<a id="analyze" href="#">点击此处处理</a></span>
-    {% else %}
+  <div class="alert alert-primary d-flex justify-content-between" role="alert">
       <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
-    {% endif %}
     <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
   </div>
 
@@ -31,7 +27,7 @@
     </div>
     <!-- 任务分配区 -->
     <div class="col-8">
-      {% include 'BoneAge/admin/task_allocation.html' %}
+      {% include 'BoneAge/admin/tasks.html' %}
     </div>
   </div>
 

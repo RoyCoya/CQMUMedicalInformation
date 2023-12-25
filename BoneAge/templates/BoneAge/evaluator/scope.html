@@ -1,0 +1,18 @@
+<h3>放大：<span id="bone_details_name">无</span></h3>
+<div style="height:47vh">
+  <div id="img_preview" class="img-preview border-top border border-primary" style="width:100%;height:100%;"></div>
+</div>
+<div id="form_bone_details">
+  <label class="mt-2">评级：<span id="bone_details_level_label">？</span>级</label>
+  <input id="bone_details_level" type="range" class="form-range" min="0" max="0" {% if read_only %}disabled{% endif %}/>
+  <label class="form-label">备注：</label>
+  <input id="bone_details_remarks" type="text" class="form-control" maxlength="50" {% if read_only %}disabled{% endif %}/>
+  <div class="text-end mt-2">
+    <button id="modify_bone_detail" class="btn btn-success" hidden>修改信息</button>
+    <button id="modify_bone_position" class="btn btn-primary" hidden>校准定位</button>
+  </div>
+  <div class="text-start" id="bone_discription" hidden>
+    <img class="img-fluid" id="bone_discription_img" />
+    {% include 'BoneAge/evaluator/bone_discription_'|add:task.standard|add:'.html' %}
+  </div>
+</div>

@@ -1,7 +1,15 @@
 {% load public %}
 <tbody>
     {% for task in task_list %}
-        <tr id="evaluator_{{task.id}}">
+        <tr id="evaluator_{{task.id}}"class="
+            {% if task.status == 'reported' %}
+            table-danger
+            {% elif task.status == 'verifying' %}
+            table-warning
+            {% else %}
+            table-primary
+            {% endif %}"
+        >
             <td>{{task.id}} {% if task.marked %}<i class='bi bi-star-fill text-warning'></i>{% endif %}</td>
             <td><a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}">
                 {{task.dcm_file.base_dcm.patient.name}}

@@ -32,6 +32,17 @@ class admin_task(admin.ModelAdmin):
     ]
 admin.site.register(Task, admin_task)
 
+class admin_task_log(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'task',
+        'operation',
+        'operator',
+        'comment',
+        'create_time',
+    ]
+admin.site.register(TaskLog, admin_task_log)
+
 class admin_bonedetail(admin.ModelAdmin):
     raw_id_fields = (
         'task',

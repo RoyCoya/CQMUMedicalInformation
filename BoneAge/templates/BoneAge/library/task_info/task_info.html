@@ -1,0 +1,13 @@
+<tr id="task_{{ task.id }}">
+  {% if task.status == 'processing' %}
+    {% include "BoneAge/library/task_info/task.html" with bg="primary" %}
+  {% elif task.status == 'verifying' %}
+    {% include "BoneAge/library/task_info/task.html" with bg="warning" %}
+  {% elif task.status == 'reported' %}
+    {% include "BoneAge/library/task_info/task.html" with bg="danger" %}
+  {% elif task.status == 'finished' %}
+    {% include "BoneAge/library/task_info/task.html" with bg="success" %}
+  {% endif %}
+  {% include "BoneAge/library/task_info/patient.html" %}
+  {% include "BoneAge/library/task_info/dcm.html" %}
+</tr>

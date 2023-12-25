@@ -9,36 +9,36 @@ var modal_delete_confirm = new bootstrap.Modal($('#modal_delete_confirm'), {keyb
 var modal_delete_submited = new bootstrap.Modal($('#modal_delete_submited'), {keyboard: false});
 
 // 全选
-$("#select_all").click(function (e) { 
-    if($("#select_all_checkbox").attr('checked') == 'checked'){
-        $("#unallocated_dcms tbody input").removeAttr('checked');
-        $("#select_all_checkbox").removeAttr('checked');
-        $("#unallocated_dcms tbody tr").css("background-color", "");
+$("#select_all_unallocated").click(function (e) { 
+    if($("#select_all_unallocated_checkbox").attr('checked') == 'checked'){
+        $("#unallocated_tasks tbody input").removeAttr('checked');
+        $("#select_all_unallocated_checkbox").removeAttr('checked');
+        $("#unallocated_tasks tbody tr").css("background-color", "");
     }
     else{
-        $("#unallocated_dcms tbody input").attr('checked', 'checked');
-        $("#select_all_checkbox").attr('checked', 'checked');
-        $("#unallocated_dcms tbody tr").css("background-color", "rgb(226,226,227)");
+        $("#unallocated_tasks tbody input").attr('checked', 'checked');
+        $("#select_all_unallocated_checkbox").attr('checked', 'checked');
+        $("#unallocated_tasks tbody tr").css("background-color", "rgb(226,226,227)");
     }
-    $("#selected_dcm_count").text($('#unallocated_dcms tbody input[checked="checked"]').length);
+    $("#selected_dcm_count").text($('#unallocated_tasks tbody input[checked="checked"]').length);
 });
 
 // 单个选中
-$("#unallocated_dcms tbody tr").click(function (e) {
-    var id = $(this).attr('id').substring(5)
+$("#unallocated_tasks tbody tr").click(function (e) {
+    var id = $(this).attr('id').replace('info_unallocated_', '')
     if($("#allocate_" + id).attr('checked') == 'checked'){
         $("#allocate_" + id).removeAttr('checked');
-        $("#info_" + id).css("background-color", "");
+        $("#info_unallocated_" + id).css("background-color", "");
     }
     else{
         $("#allocate_" + id).attr('checked', 'checked')
-        $("#info_" + id).css("background-color", "rgb(226,226,227)");
+        $("#info_unallocated_" + id).css("background-color", "rgb(226,226,227)");
     }
-    if($("#unallocated_dcms input[id^=allocate_]:not([checked])").length > 0){
-        $("#select_all_checkbox").removeAttr('checked');
+    if($("#unallocated_tasks input[id^=allocate_]:not([checked])").length > 0){
+        $("#select_all_unallocated_checkbox").removeAttr('checked');
     }
-    else $("#select_all_checkbox").attr('checked', 'checked');
-    $("#selected_dcm_count").text($('#unallocated_dcms tbody input[checked="checked"]').length);
+    else $("#select_all_unallocated_checkbox").attr('checked', 'checked');
+    $("#selected_dcm_count").text($('#unallocated_tasks tbody input[checked="checked"]').length);
 });
 
 // 回到顶端
@@ -96,8 +96,8 @@ $("#allocation_confirm").click(function (e) {
     modal_allocation_confirm.hide()
     modal_allocation_submited.show()
     dcm_id_list = ''
-    $.each($('#unallocated_dcms tbody input[checked^="checked"]'), function () { 
-        dcm_id_list += ($(this).attr('id').substring(9)) + ' '
+    $.each($('#unallocated_tasks tbody input[checked^="checked"]'), function () { 
+        dcm_id_list += ($(this).attr('id').replace('allocate_', '')) + ' '
     });
     standard_list = $('input.standard_select:checked').map(function() {return this.value;}).get();
     if(dcm_id_list.length > 0 && standard_list.length > 0){
@@ -126,8 +126,8 @@ $("#allocation_confirm").click(function (e) {
 $("#delete_confirm").click(function (e) { 
     modal_delete_submited.show()
     dcm_id_list = ''
-    $.each($('#unallocated_dcms tbody input[checked^="checked"]'), function () { 
-        dcm_id_list += ($(this).attr('id').substring(9)) + ' '
+    $.each($('#unallocated_tasks tbody input[checked^="checked"]'), function () { 
+        dcm_id_list += ($(this).attr('id').replace('allocate_', '')) + ' '
     });
     if(dcm_id_list.length > 0){
         $.ajax({
@@ -148,4 +148,10 @@ $("#delete_confirm").click(function (e) {
             },
         });
     }
+});
+
+// 点击审核列表进入评测器
+$("#unchecked_tasks tr[id^=check_]").click(function (e) { 
+    task_id = $(this).attr("id").replace("check_","");
+    window.location.assign("/boneage/evaluator/" + task_id);
 });

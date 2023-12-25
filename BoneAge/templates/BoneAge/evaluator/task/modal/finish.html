@@ -1,0 +1,25 @@
+<!-- 完成任务提示框 -->
+<div class="modal fade" id="modal_finish" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success">完成并关闭任务？</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <label>任务ID：</label>{{ task.id }}
+        </div>
+        <div class="mb-2">
+          <label>患者：</label>{{ patient.name }}（{{ patient.Patient_ID }}）
+        </div>
+        <div class="form-label">附言：</div>
+        <textarea name="comment" id="comment_finish" type="text" class="form-control" placeholder="不超过5000字" rows="10" /></textarea>
+      </div>
+      <div class="modal-footer">
+        <a id="confirm_finish" class="btn btn-success" href="#" data-bs-dismiss="modal">确认</a>
+        <a class="btn btn-secondary" href="#" data-bs-dismiss="modal">取消</a>
+      </div>
+    </div>
+  </div>
+</div>

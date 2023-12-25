@@ -19,7 +19,7 @@
             {% if historys > 0 %}
                 <a id="patient_historys" 
                 href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}?info_tab=BoneAge"
-                class="bi bi-clock-history"> {{historys}}份</a>                
+                class="bi bi-clock-history"> {{ patient_historys_count }}份</a>                
             {% else %}
                 无            
             {% endif %}

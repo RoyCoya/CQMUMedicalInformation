@@ -1,0 +1,50 @@
+<div class="modal fade" tabindex="-1" id="task_logs" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-primary">修改记录</h5>
+      </div>
+      <div class="modal-body">
+        {% if logs %}
+          <ul class="list-group list-group-flush">
+            {% for log in logs %}
+              <li class="list-group-item">
+                <div>{{ log.operator.username }} {{ log.operator.last_name }}{{ log.operator.first_name }}
+                  <span class="
+                  {% if log.operation == "create" %}
+                    text-info
+                  {% elif log.operation == "report" %}
+                    text-danger
+                  {% elif log.operation == "submit" %}
+                    text-warning
+                  {% elif log.operation == "reject" %}
+                    text-danger
+                  {% elif log.operation == "verify" %}
+                    text-success
+                  {% elif log.operation == "finish" %}
+                    text-success
+                  {% elif log.operation == "delete" %}
+                    text-danger
+                  {% elif log.operation == "reopen" %}
+                    text-warning
+                  {% else %}
+                    text-primary
+                  {% endif %}"
+                >{{ log.get_operation_display }}</span>，于 {{ log.create_time }}</div>
+                {% if log.comment %}
+                <div class="text-secondary">附言：</div>
+                <textarea class="form-control">{{ log.comment }}</textarea>
+              {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-center text-secondary">暂无记录</div>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-secondary" href="#" data-bs-dismiss="modal">关闭</a>
+      </div>
+    </div>
+  </div>
+</div>

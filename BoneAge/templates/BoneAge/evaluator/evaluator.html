@@ -2,104 +2,85 @@
 {% load static %}
 {% load public %}
 
-{% block title_BoneAge %}{{patient.name}}｜评测器{% endblock title_BoneAge %}
+{% block title_BoneAge %}
+  {{ patient.name }}｜评测器
+{% endblock %}
 
 {% block css_BoneAge %}
-<link rel="stylesheet" href="{% static '/BoneAge/image_cropper/cropper.min.css' %}">
-<link rel="stylesheet" href="{% static '/BoneAge/css/evaluator.css' %}">
-{% endblock css_BoneAge %}
+  <link rel="stylesheet" href="{% static '/BoneAge/image_cropper/cropper.min.css' %}" />
+  <link rel="stylesheet" href="{% static '/BoneAge/css/evaluator.css' %}" />
+{% endblock %}
 
 {% block content_BoneAge %}
-<div class="row mt-2">
+  <div class="row mt-2">
     <div class="col-xl-6 col-md-5 border-end">
-        <div class="row">
-            {% include 'BoneAge/evaluator/task_info.html' %}
-            {% include 'BoneAge/evaluator/img_operations.html' %}
-            {% include 'BoneAge/evaluator/main_image.html' %}
-        </div>
+      <div class="row">
+        {% include 'BoneAge/evaluator/task_info.html' %}
+        {% include 'BoneAge/evaluator/img_operations.html' %}
+        {% include 'BoneAge/evaluator/main_image.html' %}
+      </div>
     </div>
     <div class="col-xl-6 col-md-7">
-        <div class="row">
-            {% include 'BoneAge/evaluator/bone_details.html' %}
+      <div class="row">
+        <div class="col-5 border-end">
+          {% include 'BoneAge/evaluator/task/task.html' %}
         </div>
+        <div class="col-7">
+          {% include 'BoneAge/evaluator/scope.html' %}
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- 任务未完成提示框 -->
-<div class="modal fade" id="modal_task_notcompleted" tabindex="-1">
+  <!-- 任务未完成提示框 -->
+  <div class="modal fade" id="modal_task_notcompleted" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-danger">提交失败</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                有尚未完成的评分评级！
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger">提交失败</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
+        <div class="modal-body">有尚未完成的评分评级！</div>
+        <div class="modal-footer">
+          <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- 完成任务提示框 -->
-<div class="modal fade" id="modal_finish_task" tabindex="-1">
+  <!-- 快捷键切换任务无上一项提示框 -->
+  <div class="modal fade" id="modal_task_no_pre" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">任务完成</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div><label>任务ID：</label>{{task.id}}</div>
-                <div><label>患者：</label>{{patient.name}}（{{patient.Patient_ID}}）</div>
-            </div>
-            <div class="modal-footer">
-                <a id="finish_task" class="btn btn-primary" href="#" data-bs-dismiss="modal">确认</a>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger">切换失败</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
+        <div class="modal-body">已经是第一项任务！</div>
+        <div class="modal-footer">
+          <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- 快捷键切换任务无上一项提示框 -->
-<div class="modal fade" id="modal_task_no_pre" tabindex="-1">
+  <!-- 快捷键切换任务无下一项提示框 -->
+  <div class="modal fade" id="modal_task_no_next" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-danger">切换失败</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                已经是第一项任务！
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger">切换失败</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-    </div>
-</div>
-
-<!-- 快捷键切换任务无下一项提示框 -->
-<div class="modal fade" id="modal_task_no_next" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-danger">切换失败</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                已经是最后一项任务！
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
-            </div>
+        <div class="modal-body">已经是最后一项任务！</div>
+        <div class="modal-footer">
+          <a class="btn btn-danger" href="#" data-bs-dismiss="modal">确认</a>
         </div>
+      </div>
     </div>
-</div>
-
-{% endblock content_BoneAge %}
+  </div>
+{% endblock %}
 
 {% block js_BoneAge %}
-{% include "BoneAge/evaluator/evaluator_js.html" %}
-{% endblock js_BoneAge %}
+  {% include 'BoneAge/evaluator/evaluator_js.html' %}
+{% endblock %}

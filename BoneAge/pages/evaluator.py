@@ -1,11 +1,10 @@
 from django.conf import settings
 from django.http import *
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from BoneAge.apis.public_func import load_preference
-from BoneAge.models import BoneDetail, Task
+from BoneAge.models import BoneDetail, Task, TaskLog
 from BoneAge.apis.standard import GetJSON
 
 # 评分器
@@ -15,6 +14,7 @@ def evaluator(request, task_id):
     BoneAge_dcm = task.dcm_file
     patient = BoneAge_dcm.base_dcm.patient
     preference = load_preference(request)
+    user = request.user
 
     # 根据当前任务的标准，按偏好加载骨骼数据
     bone_details = []
@@ -37,14 +37,14 @@ def evaluator(request, task_id):
     if task.closed:
         pre_task = (
             Task.objects.filter(standard=task.standard)
-            .filter(allocated_to=request.user, closed=True)
+            .filter(allocated_to=user, closed=True)
             .filter(closed_date__gt=task.closed_date)
             .order_by("closed_date")
             .first()
         )
         next_task = (
             Task.objects.filter(standard=task.standard)
-            .filter(allocated_to=request.user, closed=True)
+            .filter(allocated_to=user, closed=True)
             .filter(closed_date__lt=task.closed_date)
             .order_by("closed_date")
             .last()
@@ -52,19 +52,30 @@ def evaluator(request, task_id):
     else:
         pre_task = (
             Task.objects.filter(standard=task.standard)
-            .filter(allocated_to=request.user, closed=False)
+            .filter(allocated_to=user, closed=False)
             .filter(id__lt=task.id)
             .last()
         )
         next_task = (
             Task.objects.filter(standard=task.standard)
-            .filter(allocated_to=request.user, closed=False)
+            .filter(allocated_to=user, closed=False)
             .filter(id__gt=task.id)
             .first()
         )
+    
+    unchecked_tasks = Task.objects.filter(
+        status__in=['reported', 'verifying'],
+        allocator = request.user
+    )
+    if user.is_staff:
+        pre_task = unchecked_tasks.filter(id__lt=task.id).last()
+        next_task = unchecked_tasks.filter(id__gt=task.id).first()
 
-    # 历史记录
-    historys = (
+    # 任务修改记录
+    logs = TaskLog.objects.filter(task=task).order_by('-create_time')
+
+    # 患者历史记录
+    patient_historys_count = (
         Task.objects.filter(
             dcm_file__base_dcm__patient__id=task.dcm_file.base_dcm.patient.id
         )
@@ -78,6 +89,11 @@ def evaluator(request, task_id):
     # 加载骨龄标准的内容
     standard = GetJSON(task.standard)
 
+    # 评分器只读状态
+    read_only = False
+    if task.status != "processing": read_only = True
+    if task.status == "verifying" and user.is_staff: read_only = False
+
     context = {
         "preference": preference,
         "patient": patient,
@@ -86,8 +102,10 @@ def evaluator(request, task_id):
         "pre_task": pre_task,
         "next_task": next_task,
         "bone_details": bone_details,
-        "historys": historys,
+        "logs" : logs,
+        "patient_historys_count": patient_historys_count,
         "bone_fixed": bone_fixed,
         "standard": standard,
+        "read_only" : read_only,
     }
     return render(request, "BoneAge/evaluator/evaluator.html", context)

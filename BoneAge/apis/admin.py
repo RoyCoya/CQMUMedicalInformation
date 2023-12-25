@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from BoneAge.apis.standard import GetBoneAge, GetBoneName
 from BoneAge.apis.bone_analysis import bone_detect
 from BoneAge.apis.dicom import create_dcm, delete_base_dcm
-from BoneAge.models import BoneDetail, DicomFile, Task
+from BoneAge.models import BoneDetail, DicomFile, Task, TaskLog
 
 # 手动上传dcm
 @login_required
@@ -48,7 +48,7 @@ def upload_dcm(request):
 @login_required
 def allocate_tasks(request):
     allocator = request.user
-    if not allocator.is_staff: return HttpResponseBadRequest("您无权分配任务")
+    if not allocator.is_staff: return JsonResponse({"message": "请求失败：权限不足"}, status=403)
 
     try:
         dcms_to_allocate_ids = [int(id) for id in str(request.POST.get('dcm_id_list', [])).split(' ')[0:-1] if id.isdigit()]
@@ -99,6 +99,7 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
     bone_detected = bone_detect(dcm.base_dcm.dcm_to_image.path, allocate_standard)
     bones = BoneDetail.objects.filter(task=new_task)
 
+    new_bone_details = []
     for name, details in bone_detected.items():
         try: 
             bone = bones.get(name=name)
@@ -109,6 +110,7 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
             bone.assessment = int(details['level'])
             bone.error = 0
             bone.save()
+            new_bone_details.append(bone)
         except: pass
     
     detection_accuracy = 1 - sum(1 for bone in bones if bone.error != 0) / bones.count()
@@ -141,13 +143,25 @@ def allocate_task(dcm : DicomFile, allocator, allocate_standard : str, allocated
     dcm.error = 0
     dcm.save()
 
+    comment = "AI评测结果：\n"
+    for bone_detail in new_bone_details: comment += (
+        bone_detail.get_name_display() + "：" +
+        str(bone_detail.assessment) + "级\n"
+    )
+
+    TaskLog.objects.create(
+        task = new_task,
+        operation = 'create',
+        operator = allocator,
+        comment = comment,
+    )
     return True
 
 # 删除任务
 # 删除方式：only_task（保留影像在DICOMManagement中）、with_source（连带删除影像）
 @login_required
 def delete_tasks(request):
-    if not request.user.is_staff: return JsonResponse({"message": "请求失败：您无权删除任务"}, status=403)
+    if not request.user.is_staff: return JsonResponse({"message": "请求失败：权限不足"}, status=403)
 
     dcms_to_delete_ids = str(request.POST.get('dcm_id_list')).split(' ')[0:-1]
     dcms_to_delete = DicomFile.objects.filter(id__in=dcms_to_delete_ids)

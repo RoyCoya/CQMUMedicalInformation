@@ -1,0 +1,43 @@
+<ul class="list-group mb-3 mt-2">
+  <div class="list-group-item p-2">
+    <strong>评测：</strong>
+    <span>
+      <strong data-bs-toggle="tooltip" data-bs-placement="top" title="单击复制年龄"><strong id="label_bone_age">？</strong>岁</strong>｜
+      <strong data-bs-toggle="tooltip" data-bs-placement="top" title="单击复制分数"><strong id="label_bone_grade">？</strong>分</strong>
+    </span>
+    <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="注意：判断年龄与实际年龄差距大于1年！" hidden></i>
+  </div>
+  <div class="list-group-item p-2">
+    <strong>实际：</strong>
+    <span>
+      <span>{{ task.dcm_file.base_dcm.study_age }}岁</span>｜
+      {{ patient.get_sex_display }}
+      {% if patient.sex == 'Female' %}
+        <i class="bi bi-gender-female" style="color:DeepPink"></i>
+      {% else %}
+        <i class="bi bi-gender-male" style="color:DodgerBlue"></i>
+      {% endif %}
+    </span>
+  </div>
+</ul>
+<ul class="list-group">
+  {% for bone in bone_details %}
+    <div class="list-group-item list-group-item-action d-flex justify-content-between row">
+      {% if bone.error == 0 %}
+        <span id="view-{{ bone.name|slugify }}" class="col-12">
+          <span>{{ bone.get_name_display }}</span>：{% if bone.assessment >= 0 %}
+            <span id="level-{{ bone.name|slugify }}">{{ bone.assessment }} 级</span>
+          {% else %}
+            <span id="level-{{ bone.name|slugify }}" class="text-danger"><i class="bi bi-exclamation-triangle-fill text-danger">未评估</i></span>
+          {% endif %}
+        </span>
+      {% else %}
+        <span id="error-{{ bone.name|slugify }}" class="col-11">
+          <span>{{ bone.get_name_display }}</span>：
+          <span id="level-{{ bone.name|slugify }}" class="text-danger"><i class="bi bi-exclamation-triangle-fill text-danger">{{ bone.get_error_display }}</i></span>
+        </span>
+        <a id="fix-{{ bone.name|slugify }}" href="#" class="bi bi-wrench col-1" hidden></a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</ul>

@@ -26,6 +26,7 @@ $("#tasks th[id^=order_]").click(function () {
         is_descend
     if(tasks_finished) url = "/boneage/finished/" + url
     else url = "/boneage/" + url
+    if(standard) url += "&standard=" + standard
     window.location.href = url
 });
 

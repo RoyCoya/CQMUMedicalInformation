@@ -1,17 +1,18 @@
 {% load static %}
-<script src="{% static '/BoneAge/image_cropper/cropper.min.js' %}" ></script>
-<script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}" ></script>
+<script src="{% static '/BoneAge/image_cropper/cropper.min.js' %}"></script>
+<script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}"></script>
 <script>
     var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
-    var img_width = {{dcm.base_dcm.dcm_to_image.width}}
-    var img_height = {{dcm.base_dcm.dcm_to_image.height}}
+    var img_width = {{ dcm.base_dcm.dcm_to_image.width }}
+    var img_height = {{ dcm.base_dcm.dcm_to_image.height }}
     var task = {
         "id" : {{task.id}},
         "bone_age" : -1,
         "closed" : {{task.closed|lower}},
+        "status" : "{{ task.status }}",
     }
     var bones = {
         {% for bone in bone_details %}
@@ -38,7 +39,6 @@
     var url_static = '{% get_static_prefix %}'
     var url_api_modify_bone_detail = "{% url 'api_BoneAge_modify_bone_detail' %}"
     var url_api_modify_bone_position = "{% url 'api_BoneAge_modify_bone_position' %}"
-    var url_api_finish_task = "{% url 'api_BoneAge_finish_task' %}"
     var url_personal_index = "{% url 'BoneAge_index' 1 %}"
     var url_personal_index_task_finished = "{% url 'BoneAge_finished_tasks' 1 %}"
     var url_api_save_image_offset = "{% url 'api_BoneAge_save_image_offset' %}"
@@ -58,10 +58,23 @@
     let bone_age_copy_format = "{{ preference.bone_age_copy_format }}"
     let grade_copy_format = "{{ preference.grade_copy_format }}"
 </script>
-<script src="{% static '/BoneAge/js/evaluator/'|add:task.standard|add:'.js' %}" ></script>
+<script src="{% static '/BoneAge/js/evaluator/'|add:task.standard|add:'.js' %}"></script>
 <script src="{% static '/BoneAge/js/evaluator/evaluator.js' %}"></script>
-{% if preference.shortcut %}
+<!-- 任务管理 -->
 <script>
+    let is_admin = {{ user.is_staff|lower }}
+    let url_api_task_submit = '{% url "api_BoneAge_task_submit" %}'
+    let url_api_task_report = '{% url "api_BoneAge_task_report" %}'
+    let url_api_task_delete = '{% url "api_BoneAge_task_delete" %}'
+    let url_api_task_finish = '{% url "api_BoneAge_task_finish" %}'
+    let url_api_task_reopen = '{% url "api_BoneAge_task_reopen" %}'
+    let url_api_task_withdraw = '{% url "api_BoneAge_task_withdraw" %}'
+    let url_api_task_verify = '{% url "api_BoneAge_task_verify" %}'
+    let url_api_task_reject = '{% url "api_BoneAge_task_reject" %}'
+</script>
+<script src="{% static 'BoneAge/js/evaluator/task.js' %}"></script>
+{% if preference.shortcut %}
+  <script>
     is_shortcut_enable = true
     var bone_order = [{% for bone in preference.bone_order %}'{{bone|slugify}}',{% endfor %}]
     var is_task_has_pre = false
@@ -75,5 +88,5 @@
         var url_task_next = '{% url 'BoneAge_evaluator' next_task.id %}'
     {% endif %}
 </script>
-<script src="{% static '/BoneAge/js/evaluator/shortcut.js' %}"></script>
+  <script src="{% static '/BoneAge/js/evaluator/shortcut.js' %}"></script>
 {% endif %}

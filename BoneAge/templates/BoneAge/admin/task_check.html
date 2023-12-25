@@ -1,0 +1,49 @@
+{% load public %}
+{% if unchecked_tasks %}
+  <table class="table table-hover mt-3" id="unchecked_tasks">
+    <thead>
+      <tr>
+        <th>任务ID</th>
+        <th>患者</th>
+        <th>实际年龄</th>
+        <th>评测结果</th>
+        <th>状态</th>
+        <th>最新操作</th>
+        <th>附言</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in unchecked_tasks %}
+        <tr id="check_{{ task.id }}" class="
+          {% if task.status == 'verifying' %}
+            table-warning
+          {% elif task.status == 'reported' %}
+            table-danger
+          {% endif %}">
+          <td class="align-middle unchecked_info_task">{{ task.id }}</td>
+          <td class="align-middle unchecked_info_patient">
+            <a href="{% url 'PatientManagement_profile' task.dcm_file.base_dcm.patient.id %}">
+              {{ task.dcm_file.base_dcm.patient.name }}（{{ task.dcm_file.base_dcm.patient.Patient_ID }}）
+            </a>
+          </td>
+          <td class="align-middle unchecked_info_evaluator">{{ task.dcm_file.base_dcm.study_age }}</td>
+          <td class="align-middle unchecked_info_evaluator">
+            {{ task.bone_age }}
+            {% if task.bone_age|subtract:task.dcm_file.base_dcm.study_age|abs > 1 %}
+              <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="注意：判断年龄与实际年龄差距大于1年！"></i>
+            {% endif %}
+          </td>
+          <td class="align-middle unchecked_info_evaluator">{{ task.get_status_display }}</td>
+          <td class="align-middle unchecked_info_evaluator">{{ task.newest_log.get_operation_display }}</td>
+          <td class="align-middle unchecked_info_evaluator">{{ task.newest_log.comment }}</td>
+          <td>
+            <a href="{% url 'BoneAge_evaluator' task.id %}" class="bi btn btn-primary text-center">详情</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  暂无待审核任务。
+{% endif %}
