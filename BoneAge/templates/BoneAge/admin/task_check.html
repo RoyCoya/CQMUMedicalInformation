@@ -31,7 +31,9 @@
           <td class="align-middle unchecked_info_evaluator">
             {{ task.bone_age }}
             {% if task.bone_age|subtract:task.dcm_file.base_dcm.study_age|abs > 1 %}
-              <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="注意：判断年龄与实际年龄差距大于1年！"></i>
+              <i id="warning_age_misregistration" class="bi bi-exclamation-triangle-fill text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="注意：判断年龄与实际年龄差距大于1年！"
+                style="font-size:1.3rem;"
+              ></i>
             {% endif %}
           </td>
           <td class="align-middle unchecked_info_evaluator">{{ task.get_status_display }}</td>

@@ -1,5 +1,5 @@
 {% extends 'BoneAge/base.html' %}
-
+{% load static %}
 {% block title_BoneAge %}
   Dicom数据库
 {% endblock %}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block css_BoneAge %}
-
+<link rel="stylesheet" href="{% static '/css/popover/danger.css' %}" />
 {% endblock %}
 
 {% block content_BoneAge %}

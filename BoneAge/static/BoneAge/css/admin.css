@@ -9,9 +9,16 @@
     outline: none;
     cursor: pointer;
 }
+
 #back_to_top:hover {
     color: #0ea3f9 !important;
 }
-#unallocated_tasks,#unchecked_tasks tbody tr{ cursor:pointer;}
 
-#unallocated_tasks input:disabled{ opacity: 1 !important;}
+#unallocated_tasks,
+#unchecked_tasks tbody tr {
+    cursor: pointer;
+}
+
+#unallocated_tasks input:disabled {
+    opacity: 1 !important;
+}

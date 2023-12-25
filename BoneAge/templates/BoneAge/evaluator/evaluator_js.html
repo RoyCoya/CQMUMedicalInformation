@@ -1,11 +1,8 @@
 {% load static %}
+<script src="{% static '/js/popover.js' %}"></script>
 <script src="{% static '/BoneAge/image_cropper/cropper.min.js' %}"></script>
 <script src="{% static '/BoneAge/image_cropper/jquery-cropper.min.js' %}"></script>
 <script>
-    var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
     var img_width = {{ dcm.base_dcm.dcm_to_image.width }}
     var img_height = {{ dcm.base_dcm.dcm_to_image.height }}
     var task = {

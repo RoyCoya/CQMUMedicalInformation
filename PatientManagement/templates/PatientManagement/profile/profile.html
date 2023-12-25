@@ -2,60 +2,63 @@
 {% load static %}
 
 {% block title_PatientManagement %}
-    {% block title_PatientManagement_profile %}患者资料{% endblock title_PatientManagement_profile %}｜{{ patient.name }}
-{% endblock title_PatientManagement %}
+  {% block title_PatientManagement_profile %}
+    患者资料
+  {% endblock %}｜{{ patient.name }}
+{% endblock %}
 
 {% block css_PatientManagement %}
-<link rel="stylesheet" href="{% static 'PatientManagement/css/profile/profile.css' %}">
-{% endblock css_PatientManagement %}
+  <link rel="stylesheet" href="{% static 'PatientManagement/css/profile/profile.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/popover/danger.css' %}" />
+{% endblock %}
 
-{% block nav_sticky_top %}{% endblock nav_sticky_top %}
+{% block nav_sticky_top %}
+
+{% endblock %}
 
 {% block content_PatientManagement %}
-<div class="container sticky-top bg-light mt-3">
+  <div class="container sticky-top bg-light mt-3">
     <div class="row">
-        <div class="col-3 align-self-center">
-        </div>
-        <div class="col-9">
-            <ul class="nav nav-tabs" id="nav_tabs">
-              <li class="nav-item">
-                <button class="nav-link" id="nav_overview" data-bs-toggle="tab" data-bs-target="#tab_overview" type="button">概览</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" id="nav_BoneAge" data-bs-toggle="tab" data-bs-target="#tab_BoneAge" type="button">骨龄记录</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link" id="nav-Else" data-bs-toggle="tab" data-bs-target="#tab_Else" type="button">开发中...</button>
-              </li>
-            </ul>
-        </div>
+      <div class="col-3 align-self-center"></div>
+      <div class="col-9">
+        <ul class="nav nav-tabs" id="nav_tabs">
+          <li class="nav-item">
+            <button class="nav-link" id="nav_overview" data-bs-toggle="tab" data-bs-target="#tab_overview" type="button">概览</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="nav_BoneAge" data-bs-toggle="tab" data-bs-target="#tab_BoneAge" type="button">骨龄记录</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="nav-Else" data-bs-toggle="tab" data-bs-target="#tab_Else" type="button">开发中...</button>
+          </li>
+        </ul>
+      </div>
     </div>
-</div>
-<div class="container">
+  </div>
+  <div class="container">
     <div class="row">
-        <div class="col-3">
-            {% include 'PatientManagement/profile/base_info.html' %}
+      <div class="col-3">
+        {% include 'PatientManagement/profile/base_info.html' %}
+      </div>
+      <div class="col-9 bg-white border-start border-end border-bottom rounded shadow">
+        <div class="tab-content">
+          <div class="tab-pane pt-3" id="tab_overview">
+            {% include 'PatientManagement/profile/overview.html' %}
+          </div>
+          <div class="tab-pane pt-3" id="tab_BoneAge">
+            {% include 'BoneAge/PatientManagement_profile/profile.html' %}
+          </div>
+          <div class="tab-pane pt-3" id="tab_Else">开发中...</div>
         </div>
-        <div class="col-9 bg-white border-start border-end border-bottom rounded shadow">
-            <div class="tab-content">
-                <div class="tab-pane pt-3" id="tab_overview">
-                    {% include 'PatientManagement/profile/overview.html' %}
-                </div>
-                <div class="tab-pane pt-3" id="tab_BoneAge">
-                    {% include 'BoneAge/PatientManagement_profile/profile.html' %}
-                </div>
-                <div class="tab-pane pt-3" id="tab_Else">
-                    开发中...
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-</div>
-{% endblock content_PatientManagement %}
+  </div>
+{% endblock %}
 
 {% block js_PatientManagement %}
-<script>
-    var info_tab="{% if info_tab %}{{info_tab}}{% endif %}"
-</script>
-<script src="{% static 'PatientManagement/js/profile/profile.js' %}"></script>
-{% endblock js_PatientManagement %}
+  <script src="{% static '/js/popover.js' %}"></script>
+  <script>
+    var info_tab = '{% if info_tab %}{{info_tab}}{% endif %}'
+  </script>
+  <script src="{% static 'PatientManagement/js/profile/profile.js' %}"></script>
+{% endblock %}

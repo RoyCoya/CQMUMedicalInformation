@@ -12,11 +12,12 @@
 
 {% block css_BoneAge %}
   <link rel="stylesheet" href="{% static '/BoneAge/css/admin.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/popover/danger.css' %}" />
 {% endblock %}
 
 {% block content_BoneAge %}
   <div class="alert alert-primary d-flex justify-content-between" role="alert">
-      <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
+    <span>{{ user.last_name|time_period_alert }}。欢迎使用骨龄评分系统。</span>
     <a data-bs-toggle="offcanvas" href="#account_settings">个人设置 <i class="bi bi-gear"></i></a>
   </div>
 
@@ -37,19 +38,15 @@
   {% include 'BoneAge/admin/modal_task_allocation.html' %}
   <!-- 删除任务弹窗 -->
   {% include 'BoneAge/admin/modal_task_delete.html' %}
-
 {% endblock %}
 
 {% block js_BoneAge %}
+  <script src="{% static '/js/popover.js' %}"></script>
   <script src="{% static 'js/Sortable.min.js' %}"></script>
   <script src="{% static 'BoneAge/js/admin/admin.js' %}"></script>
   <script>
-    var tooltipTriggerList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
     var url_api_allocate_tasks = "{% url 'api_BoneAge_allocate_tasks' %}"
     var url_api_delete_tasks = "{% url 'api_BoneAge_delete_tasks' %}"
   </script>
-  {% include "BoneAge/preference/preference_js.html" %}
+  {% include 'BoneAge/preference/preference_js.html' %}
 {% endblock %}
