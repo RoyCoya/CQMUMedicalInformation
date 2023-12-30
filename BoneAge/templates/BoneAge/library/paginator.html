@@ -1,5 +1,8 @@
-<div class="row">
-  <nav class="col-8 align-middle">
+<div class="d-flex justify-content-between">
+  <div class="text-secondary">
+    共 {{tasks_count}} 项，合 {{ pages_count }} 页
+  </div>
+  <nav class="align-middle">
     <ul class="pagination">
       {% for page_number in page_numbers %}
         <li class="page-item {% if page_number == current_page_number %}active{% endif %}">

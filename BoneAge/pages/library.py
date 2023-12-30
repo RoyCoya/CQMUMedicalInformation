@@ -49,6 +49,8 @@ def library(request):
     # TODO: 排序结果
     tasks = tasks.order_by("-allocated_datetime")
 
+    tasks_count = tasks.count()
+
     # 查询内容分页
     current_page_number = int(query.get("page", 1))
     pages = Paginator(tasks, 15)
@@ -59,6 +61,8 @@ def library(request):
     admins = get_user_model().objects.filter(is_active=True).exclude(is_staff=False)
     evaluators = get_user_model().objects.filter(is_active=True).exclude(is_staff=True)
 
+    pages_count = pages.num_pages
+
     context = {
         "query_str": None,
         "tasks": tasks,
@@ -68,6 +72,8 @@ def library(request):
         "has_next": tasks.has_next(),
         'admins' : admins,
         'evaluators' : evaluators,
+        'tasks_count' : tasks_count,
+        'pages_count' : pages_count,
     }
 
     # 单独取出filter相关的查询参数
